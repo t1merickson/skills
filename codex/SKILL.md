@@ -33,12 +33,23 @@ Keep for yourself:
 
 ## Running Codex
 
-The CLI may not be on PATH; resolve it like this (the app-bundled binary
-auto-updates with Codex.app):
+Codex installs a few ways, so don't assume `codex` is on PATH. Resolve
+whichever exists — prefer the user's own CLI, fall back to the Codex.app
+bundle (which auto-updates with the app):
 
 ```bash
-CODEX=$(command -v codex || echo "/Applications/Codex.app/Contents/Resources/codex")
+CODEX=$(command -v codex \
+  || ls /Applications/Codex.app/Contents/Resources/codex \
+        "$HOME/Applications/Codex.app/Contents/Resources/codex" 2>/dev/null \
+     | head -1)
+[ -x "$CODEX" ] || echo "Codex not found — install the CLI (npm i -g @openai/codex, or brew install codex) or the Codex.app desktop app, then re-resolve"
 ```
+
+Covers the usual cases:
+- **CLI on PATH** — npm, Homebrew, or a manual install; `command -v` finds it.
+- **Codex.app** — the desktop app bundles the binary at
+  `Contents/Resources/codex`, in `/Applications` or `~/Applications`.
+- **Neither** — surface the install options instead of failing mid-run.
 
 Core invocations — pick by job:
 
