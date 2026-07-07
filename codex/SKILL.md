@@ -61,10 +61,9 @@ Mechanics that matter:
   Use Bash `run_in_background` and keep planning while Codex works. The `-o`
   file makes results easy to collect when it finishes.
 - **Effort** — default to `-c model_reasoning_effort="xhigh"` for anything
-  involving real thinking: implementation, diagnosis, review. The user's usage
-  limits are extremely generous and GPT-5.5 xhigh is still fast — don't
-  economize on quality they aren't paying for. Drop to low/minimal only for
-  trivially mechanical bulk runs. Values: minimal, low, medium, high, xhigh.
+  involving real thinking: implementation, diagnosis, review. Drop to
+  low/minimal only for trivially mechanical bulk runs. Values: minimal, low,
+  medium, high, xhigh.
 - **Model** — defaults to gpt-5.5; leave it. `-m gpt-5.4-mini` or
   `-m gpt-5.3-codex-spark` only for trivially mechanical bulk runs.
 - **Git requirement** — `codex exec` refuses to run outside a git repo unless
@@ -130,12 +129,9 @@ runs can share freely.
 
 ## Workspace geography (mixed Claude + Codex fleets)
 
-Hard-learned on pindex-app: a Claude session did weeks-worth of work inside a
-session-named worktree under the main checkout's untracked `.claude/` dir. The
-canonical checkout became a husk (no deps, no env, wrong branch), every agent
-had to be aimed by absolute path, the repo had no remote, and the whole
-project sat one `git clean -fd` away from deletion. Rules to never rebuild
-that mess:
+When Claude and Codex agents share a repo, the failure mode is durable work
+stranded in a throwaway worktree while the canonical checkout rots — no deps,
+wrong branch, one `git clean -fd` from gone. Rules that prevent it:
 
 - **One canonical checkout; the branch is the product.** Durable work lands on
   a real branch in the primary checkout. Worktrees — Claude's EnterWorktree,
@@ -167,10 +163,8 @@ that mess:
 
 ## Mid-epic handoff (Claude → Codex)
 
-The economic core of this setup: when an epic starts on Claude agents and
-the user's Claude limits are the scarce resource, the labor force swaps to Codex
-mid-stream while judgment stays here (judging is cheap; implementing is
-expensive). Two facts shape the protocol:
+When an epic starts on Claude agents and the labor swaps to Codex mid-stream
+(judgment stays here; execution moves), two facts shape the protocol:
 
 - There is **no cross-vendor resume**. `codex exec resume` only continues
   Codex-started threads. A Claude→Codex handoff is always a cold start, and
@@ -202,14 +196,11 @@ even if Codex ends up not being used.
 
 ## Browser / UI verification
 
-Chrome on this machine is dedicated to agent use (the user's other browsers are
-personal — never touch them; the same rule lives in `~/.codex/AGENTS.md` for
-Codex runs). Codex's browser runtime loads under
-`codex exec`, but as of 2026-07 no backend is paired: the OpenAI Codex Chrome
-extension isn't installed/connected (`~/.codex/chrome-native-hosts-v2.json`
-has empty entries), so browser tasks fail with "No browser is available."
-Until it's paired, do UI verification yourself via claude-in-chrome, or ask
-the user for a visual review. If a Codex run needs to
+Codex's browser runtime loads under `codex exec` but needs a paired backend
+(the OpenAI Codex Chrome extension, connected via
+`~/.codex/chrome-native-hosts-v2.json`); unpaired, browser tasks fail with
+"No browser is available." When it's unpaired, do UI verification yourself via
+claude-in-chrome, or ask the user for a visual review. If a Codex run needs to
 check a page, have it report what it needs rather than shell out via curl.
 
 Codex agents testing web work will often spin up their own sandboxed
@@ -228,20 +219,11 @@ generate UI mockups, icons, and design directions that you then view and
 judge (Read renders PNGs). Anthropic models can't generate images; this is
 the bridge's imagegen arm.
 
-**The gate — off by default.** The user may have strong opinions on UI.
-If they have provided mocks, design-system tokens, reference screenshots, or any
-articulated visual direction, do NOT reach for imagegen: generating
-"improvements" against existing design intent is the agent overwriting their
-design, not helping it. Implement what they designed.
-
-Reach for it only when the user signals they want generative direction:
-- explicit: "use imagegen", "re-imagine this design", "generate some mockups"
-- implicit: they ask for UI improvement while providing few or no design
-  artifacts, or says they don't know what direction to take — "give me a
-  first pass", "not sure what I want here"
-
-When the signal is ambiguous, ask in one line before generating — cheap
-compared to an unwanted redesign direction.
+**Off by default.** Only invoke when the user explicitly asks for generative
+or exploratory UI direction ("use imagegen", "generate some mockups", "give me
+a first pass", "not sure what I want here"). If they've already given visual
+direction — mocks, tokens, reference screenshots — implement that; don't
+generate alternatives. When the signal is ambiguous, ask in one line first.
 
 **The subroutine, when on:**
 1. **Generate** — brief Codex with real art direction, not vibes: use case,
@@ -249,11 +231,10 @@ compared to an unwanted redesign direction.
    exist), style, and target context ("must read at 24px" / "1440px marketing
    hero"). Codex structures the imagegen prompt from these fields — what you
    specify passes through; what you omit gets invented.
-2. **Judge visually** — Read every generated image yourself; check it against
-   the brief the way you'd check a diff (the first test run produced a
-   beautiful illustration when the brief said *icon* — that class of drift is
-   the norm, not the exception). Steer via `resume --last` with concrete
-   visual deltas.
+2. **Judge visually** — Read every generated image yourself and check it
+   against the brief the way you'd check a diff; drift from the spec (an
+   illustration when you asked for an icon) is common. Steer via
+   `resume --last` with concrete visual deltas.
 3. **User verdict before implementation** — present the direction(s) to the user.
    A generated mock is a proposal, never an approved target. Only after their
    yes does it become a spec to implement toward.
