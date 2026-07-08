@@ -1,266 +1,299 @@
 ---
 name: hopper-mcp
 description: >
-  Guide for reverse engineering macOS binaries using the Hopper Disassembler MCP Server.
-  Use this skill whenever the user wants to analyze, reverse engineer, disassemble, or
-  decompile a macOS application or binary. Triggers on: Hopper, disassembly, decompilation,
-  binary analysis, reverse engineering macOS apps, understanding how an app works internally,
-  "what does this app do", analyzing .app bundles, inspecting helper daemons, examining
-  Mach-O binaries, or any request involving the Hopper MCP tools. Also use when the user
-  has a binary open in Hopper and asks questions about its behavior, classes, methods, or
-  data flow.
+  Guide for reverse-engineering compiled macOS binaries using the Hopper Disassembler MCP
+  Server. Use this skill whenever the user wants to inspect, analyze, decompile, or reverse
+  engineer a macOS application or binary at the machine-code level. Triggers on: Hopper,
+  disassembly, decompilation, reverse engineering, binary analysis, static analysis,
+  understanding how an app works internally, "what does this app do", analyzing .app
+  bundles, inspecting helper daemons and XPC services, examining Mach-O binaries, or any
+  request involving the Hopper MCP tools. Also use when the user has a binary open in Hopper
+  and asks questions about its behavior, classes, methods, or data flow.
 ---
 
 # Reverse Engineering macOS Binaries with Hopper
 
-You have access to Hopper Disassembler's MCP tools, which let you read and navigate
-disassembled/decompiled binary code. This skill teaches you how to use those tools
-effectively and how to communicate your findings clearly to the user.
+Hopper's MCP tools read and navigate a binary the user has open in the Hopper app. You
+drive; the user watches. Priorities: locate relevant code fast, interpret Hopper's output
+without being misled by it, and separate confirmed findings from guesses.
 
-## Communicating with the user
+Typical tasks: understanding what a background daemon does, auditing what data an app
+collects or transmits, verifying a security or privacy claim, learning how a feature is
+implemented, recovering an undocumented file format for interoperability. Scope is analysis
+and documentation of behavior. If a request shifts to modifying software the user doesn't
+own — bypassing licensing, defeating copy protection, patching out authentication — pause
+and confirm intent first.
 
-The user likely does not know assembly language, Objective-C runtime internals, or
-binary formats. Your job is to be the expert and translate what you find into clear,
-plain-language explanations. When you discover what a method does, explain its *behavior*
-("this function scans your Applications folder for apps matching certain keywords")
-rather than its implementation details ("this calls objc_msgSend with selector
-contentsOfDirectoryAtPath:error:").
+## Reporting to the user
 
-Use implementation details only when the user specifically asks for them or when they
-help explain *why* something behaves a certain way.
+Assume the user doesn't read assembly or know Objective-C runtime internals. Report
+*behavior* ("on launch it scans /Applications for names matching a hardcoded keyword list")
+over *mechanism* ("calls `objc_msgSend` with `contentsOfDirectoryAtPath:error:`"). Give
+mechanism only when asked, or when it's the actual explanation for something they care about.
+
+Two honesty rules:
+
+- **"Can" vs "does."** A code path that uploads a file proves the binary *contains* the
+  capability, not that it runs in normal use. State which you've established. Overclaiming
+  from one decompiled function is the classic error, and it alarms the user when wrong.
+- **Corroborate before asserting.** Pseudo-code is lossy and Hopper guesses. Before stating
+  a conclusion, line up two or three agreeing signals — a string, its `xrefs`, and the
+  `callees` of the function using it. One suggestive name is a lead, not a finding.
 
 ## Before you start
 
-### Verify Hopper is ready
+Confirm the target:
 
-Always begin by confirming you can talk to Hopper and that the right binary is loaded:
+1. `current_document` — the active binary. Errors or empty → no document open.
+2. `list_documents` — all open documents, if you need to choose.
 
-1. Call `list_documents` to see what's open
-2. Call `current_document` to confirm which binary is active
+If nothing's loaded, have the user open a binary and let Hopper finish analyzing (progress
+bar at the bottom of its window). The MCP reads Hopper's analysis database; mid-analysis
+results are partial and misleading.
 
-If nothing is open, tell the user they need to open a binary in Hopper first and wait
-for its analysis to complete (the status bar at the bottom of Hopper shows progress).
+### The cursor model
 
-### Multiple documents
+Hopper tracks a *current* document, procedure, and address, and most tools default to it
+when the argument is omitted: `procedure_pseudo_code`, `procedure_info`, `procedure_assembly`,
+`xrefs`, and the comment/name setters all fall back to current. Efficient loop: `goto_address`
+(or `set_current_document`) once to park the cursor, then call a cluster of tools with no
+arguments. `current_address`/`next_address`/`prev_address` move the cursor.
 
-Prefer working with one document at a time. Hopper 6.2.5 fixed a crash when switching
-documents while the app was minimised, but having multiple documents with similar names
-can still cause confusion in the MCP's document lookup. If you do need to switch, make
-sure Hopper is in the foreground and the document names are distinct.
+### Search, don't dump
 
-### Finding the right binary
+`list_procedures`, `list_strings`, and `list_names` return the entire table — often tens of
+thousands of entries; Hopper's docs advise against them. Use the `search_*` tools; fall back
+to a full list only if a targeted search comes up empty. `list_segments` is the exception:
+small, and worth reading early.
 
-For macOS .app bundles, the interesting code is often NOT in the main app binary. Helpers,
-daemons, and XPC services live inside the bundle:
+### Find the right binary in the bundle
 
-- `MyApp.app/Contents/MacOS/MyApp` — often just the UI shell
-- `MyApp.app/Contents/Library/LoginItems/...` — background daemons
-- `MyApp.app/Contents/XPCServices/...` — XPC service helpers
-- `MyApp.app/Contents/Frameworks/...` — shared framework code
+In a `.app`, the interesting code is often not the main executable (frequently just the UI
+shell):
 
-If the user asks about a specific feature and you can't find it in the loaded binary,
-suggest they check these other locations. A quick terminal command can help:
+- `Contents/MacOS/AppName` — main binary
+- `Contents/Library/LoginItems/*` — background/login helpers
+- `Contents/XPCServices/*.xpc` — privilege-separated services
+- `Contents/Helpers/*`, `Contents/MacOS/*Helper` — auxiliary tools
+- `Contents/Frameworks/*.framework` — shared logic, often the bulk of it
+- `Contents/PlugIns/*` — extensions
+
+If a feature isn't in the loaded binary, check these. Locate it before opening in Hopper:
 
 ```bash
-strings -arch arm64 /path/to/binary | grep -i "keyword"
+grep -rl "keyword" /path/to/App.app/Contents 2>/dev/null   # which binary mentions it
+strings -a /path/to/binary | grep -i "keyword"             # one binary's strings (see arch note)
 ```
 
-## The analysis workflow
+## Analysis workflow
 
-Work through these phases in order. Each phase builds on the previous one.
+Broad to narrow. Establish vocabulary and structure before reading any single function.
 
-### Phase 1: Discovery — Map the territory
+### Phase 1 — Map the territory
 
-Start broad. Your goal is to understand what's in this binary before diving into any
-specific method.
-
-**Step 1: Search strings for keywords**
-
-`search_strings` is your most valuable starting tool. Search for words related to
-whatever the user is asking about:
+**Strings first.** `search_strings` is the best starting point.
 
 ```
-search_strings pattern="keyword|Keyword|KEYWORD"
+search_strings(pattern="keyword|Keyword|KEYWORD")   # regex; case_sensitive defaults false
 ```
 
-This returns UI text, class names, method selectors, file paths, error messages — the
-vocabulary of the feature. It gives you a roadmap before you decompile anything.
+Returns `{address: string}` and surfaces a feature's whole vocabulary: UI text, selector
+names, class names, file paths, URLs, error messages, format strings. Each address is a
+thread to pull with `xrefs`.
 
-**Step 2: Find relevant classes and methods**
-
-Once you have class names from the string search, use `search_procedures` to find all
-methods on those classes:
+**Classes/methods.** Turn class names from the strings into procedures:
 
 ```
-search_procedures pattern="ClassName"
+search_procedures(pattern="ClassName")   # returns {address: procedureName}
 ```
 
-This returns every method with its address. Scan the method names to understand the
-class's responsibilities before decompiling.
+Scan method names to infer the class's responsibilities before reading one. `procedure_address(procedure="name or 0xADDR")`
+resolves a name — or any interior address — to the entrypoint.
 
-**Step 3: Understand the call graph**
+**Call graph without reading bodies:**
 
-Use `procedure_callees` and `procedure_callers` to map relationships without
-decompiling everything:
+- `procedure_callers(procedure=…)` — callers → entry points, how a feature is reached
+- `procedure_callees(procedure=…)` — callees → what it does (network, filesystem, crypto,
+  `NSTask`/`posix_spawn`, `defaults`/preferences APIs)
 
-- `procedure_callees` — "what does this method call?" (shows dependencies)
-- `procedure_callers` — "who calls this method?" (shows entry points)
+Start at the plausible entry point, expand callees one level, and the feature's shape is
+usually clear before reading pseudo-code.
 
-Start with the method that looks like the main entry point for the feature, check its
-callees, and you'll have the full call tree.
+**`list_segments` once.** Gives this binary's real section layout (names, address ranges,
+writable/executable flags) so you're not guessing which section an address is in.
 
-### Phase 2: Decompilation — Read the code
+### Phase 2 — Read the code
 
-Now you know which methods matter. Time to read them.
+**Gate on complexity.** `procedure_info` reports `basicblock_count`, `length`, the `signature`
+(if recovered), and stack locals. Decompilation time scales badly with block count — Hopper
+warns to keep `procedure_pseudo_code` under ~50 blocks. Most interesting methods are 6–30 and
+process instantly. If it's large, use callees plus assembly of the key blocks instead of the
+full run.
 
-**Always check complexity first**
-
-Before decompiling, call `procedure_info` and check `basicblock_count`. Methods with
-more than 50 basic blocks can take a very long time to decompile. Most interesting
-methods have 6-30 blocks and decompile instantly.
-
-```
-procedure_info procedure="methodName"
-```
-
-If a method has >50 blocks, mention this to the user and consider whether you really
-need the full decompilation or whether `procedure_callees` gives enough insight.
-
-**Decompile with `procedure_pseudo_code`**
-
-This is your primary tool. It produces C-like pseudo-code from the binary:
+**Decompile.**
 
 ```
-procedure_pseudo_code procedure="methodName"
+procedure_pseudo_code(procedure="name")   # or omit for the current procedure
 ```
 
-The output requires interpretation — see "Reading decompiled output" below.
+C-like pseudo-code; needs interpretation (see "Reading the output").
 
-**Fall back to assembly when needed**
-
-When the pseudo-code is ambiguous (especially for `+initialize` methods or constant
-data references), use `procedure_assembly` to see the actual instructions:
+**Assembly when pseudo-code hides or misleads** — `+initialize`/`+load`, constant-data loads,
+tail calls, inline data:
 
 ```
-procedure_assembly procedure="methodName"
+procedure_assembly(procedure="name or 0xADDR")   # accepts an address, not just a name
 ```
 
-### Phase 3: Data extraction
+### Phase 3 — Annotate as you go
 
-Some information lives in static data sections that the MCP cannot read directly.
+Annotations persist for the session and are visible in the user's Hopper window. Record
+confirmed facts to avoid re-deriving them.
 
-**Tracing data references**
+- `set_address_name(address, name)` — rename `sub_100abcd` → `scanApplicationsForKeywords`;
+  propagates everywhere it's referenced. Clear with an empty string. `set_addresses_names`
+  takes an `{address: name}` map — the intended way to rename many at once.
+- `set_comment(address, comment)` — full-line note above an address.
+- `set_inline_comment(address, comment)` — short note at the end of an instruction's line.
+- `set_bookmark(address, name)` — mark entry points and landmarks. `list_bookmarks` recalls
+  them; `unset_bookmark(address)` removes one.
 
-Use `xrefs` to find where a constant or data address is referenced:
+Read-side mirrors — `address_name`, `comment`, `inline_comment`, `list_bookmarks` — report
+existing annotations, so a resumed document shows prior work instead of being relabeled over.
 
+Clearing differs by tool: empty (or omitted) argument for the name/comment setters;
+`unset_bookmark` for bookmarks.
+
+### Phase 4 — Static data pseudo-code won't inline
+
+Constant arrays, string tables, and lookup tables in `__DATA_CONST` don't appear in
+pseudo-code.
+
+1. `xrefs(address="0x…")` returns every instruction referencing the address.
+2. In assembly, `adrp` + `add` forms a data pointer (page + offset); `adrp` + `ldr` loads
+   *through* it. That's where a constant address is formed.
+3. Pull the bytes from the terminal:
+
+```bash
+xcrun dyld_info -fixups /path/to/binary                    # resolved pointer targets
+otool -s __DATA_CONST __objc_arraydata /path/to/binary     # dump a section
 ```
-xrefs address="0x100040728"
-```
 
-**Reading static data from the binary**
+**Chained fixups:** arm64 Mach-O rebases pointers in `__DATA*` using chained fixups — the raw
+8-byte on-disk value is *encoded* (packed with rebase/bind metadata), not a usable address.
+Read raw, it's garbage. `xcrun dyld_info -fixups` prints the resolved targets.
 
-The Hopper MCP cannot read raw data sections (constant arrays, string tables stored as
-data). When you need this data:
+## Reading the output
 
-1. Get the address from assembly — look for the `adrp` + `add` instruction pattern
-   that loads a data pointer
-2. Use terminal tools to extract it:
-   ```bash
-   xcrun dyld_info -fixups /path/to/binary
-   ```
+### Objective-C (MRC-style noise)
 
-Modern arm64 Mach-O binaries use **chained fixup rebasing** — pointers stored in
-`__DATA_CONST` sections are encoded and won't make sense if read raw. The `dyld_info`
-command shows the actual resolved targets.
+Hopper renders Objective-C in manual-retain-release style; roughly half the lines are
+bookkeeping.
 
-## Reading decompiled output
+- **`retain`/`release`/`autorelease`** — memory management. Ignore; the logic is the calls
+  between them.
+- **`objc_msgSend(obj, sel, args…)`** — a method call. The selector is the payload, shown as
+  `@selector(foo:bar:)` or a `sel_` symbol. Read as `[obj foo:… bar:…]`.
+- **Fast enumeration** — `for (x in collection)` expands into a
+  `countByEnumeratingWithState:objects:count:` loop with a mutation guard. Read as for-each.
+- **Ivar access** — `*(self + 0x20)`, `self->field`, `self[0x…]` are ivar reads at byte
+  offsets. Map offset → field via the ivar list (`__objc_const` metadata, or ivar name strings
+  via `search_strings`). Offset `0x0` is `isa`; real ivars follow.
+- **Callee-saved registers** — `r19`–`r28` / `x19`–`x28` shown as locals are just variables;
+  the register names are a decompilation artifact.
+- **Blocks** — a struct whose `invoke` field is a function pointer; follow it for the closure
+  body. Captured variables sit in the struct's later fields.
 
-Hopper's pseudo-code for Objective-C uses Manual Reference Counting (MRC) style, which
-adds a lot of noise. Here's how to read through it:
+### Swift (the modern default — don't assume ObjC)
 
-### Ignore retain/release
+Most current apps are Swift or mixed. Tells: `swift_retain`/`swift_release`/`swift_bridgeObject*`,
+witness-table and metadata-accessor calls, symbol names starting `$s`/`_$s` (or older `_T`).
 
-About half the lines will be `retain`, `release`, or `autorelease` calls. These are
-memory management bookkeeping — skip them entirely and focus on the actual method calls
-between them.
-
-### Fast enumeration loops
-
-The decompiler expands `for (id item in collection)` into a verbose pattern using
-`countByEnumeratingWithState:objects:count:`. When you see this pattern, just read it
-as a simple for-each loop.
-
-### Instance variable access
-
-`self[0x1]`, `self[0x2]`, etc. are instance variable (ivar) accesses at byte offsets.
-The decompiler can't always resolve ivar names, so you see these numeric offsets instead.
-Cross-reference with the class's ivar list (visible in `search_strings` or the ObjC
-metadata) to figure out what each offset corresponds to.
-
-### Register reuse
-
-`r19` through `r28` are callee-saved registers that the decompiler often shows as local
-variables. They're just regular variables — the register names are an artifact of
-decompilation.
+- **Demangle:** `swift demangle '$s…'` or pipe assembly through `xcrun swift-demangle`.
+  `_$s4MyApp10NetworkKitC4sendyyF` → `MyApp.NetworkKit.send()`.
+- Swift string literals and type/field names still appear in `search_strings` and the
+  `__swift5_*` sections; only the function names are mangled until demangled.
+- Value types are passed in registers and copied by value-witness functions, so pseudo-code
+  looks busier than the ObjC equivalent. Focus on the named calls.
 
 ### Common constants
 
-NSString search method options often appear as bitmask integers:
-- `0x1` = case-insensitive search
-- `0x4` = backwards search
-- `0x8` = anchored search (prefix/suffix match)
-- `0x9` = case-insensitive + anchored
+`NSString` search/compare options are bitmask ints:
 
-## Useful terminal commands
+| Value | Meaning |
+|---|---|
+| `0x1` | case-insensitive (`NSCaseInsensitiveSearch`) |
+| `0x2` | literal, no Unicode normalization (`NSLiteralSearch`) |
+| `0x4` | backwards (`NSBackwardsSearch`) |
+| `0x8` | anchored — prefix/suffix match (`NSAnchoredSearch`) |
+| `0x9` | case-insensitive + anchored |
 
-When the MCP tools aren't enough, these commands help fill gaps:
+For an unfamiliar magic constant, check whether it's a known option-set or errno before
+treating it as data.
+
+## Mach-O sections
+
+`list_segments` gives this binary's real layout; this table is what common ObjC/Swift sections
+hold when an address lands in one:
+
+| Section | Contents |
+|---|---|
+| `__cstring` | plain C strings |
+| `__cfstring` | constant `NSString`/`CFString` objects (pointer + length, not the bytes) |
+| `__objc_methname` | selector strings |
+| `__objc_classname` | class name strings |
+| `__objc_const` | class metadata: method lists, ivar lists, protocol lists |
+| `__objc_selrefs` / `__objc_classrefs` | selector/class reference pointers (indirection) |
+| `__objc_arraydata` | constant array element storage |
+| `__swift5_types` / `__swift5_proto` / `__swift5_fieldmd` | Swift type, protocol-conformance, field metadata |
+| `__DATA_CONST` | const pointers subject to chained fixups (Phase 4) |
+
+## Terminal commands
 
 ```bash
-# Find which binary in an .app bundle contains a feature
-strings -arch arm64 /path/to/binary | grep -i "keyword"
+# Locate a feature in a bundle
+grep -rl "keyword" /path/to/App.app/Contents
+strings -a /path/to/binary | grep -i "keyword"
 
-# Dump a specific section's contents
-otool -arch arm64 -s __DATA_CONST __cfstring /path/to/binary
+# Bundle / entitlement / signing context (often answers "why" faster than code)
+codesign -d --entitlements :- /path/to/App.app       # sandbox, network, hardware access
+otool -L /path/to/binary                             # linked libraries → capabilities
+plutil -p /path/to/App.app/Contents/Info.plist       # URL schemes, XPC names, min OS
 
-# Resolve chained fixup pointers (essential for static data)
-xcrun dyld_info -fixups /path/to/binary
+# Symbols and data
+xcrun dyld_info -exports /path/to/binary             # exported symbols
+xcrun dyld_info -fixups  /path/to/binary             # resolved chained-fixup pointers
+otool -s __SEG __sect    /path/to/binary             # raw section dump
+xcrun swift-demangle '$s…'                           # decode Swift symbol names
 
-# List exports
-xcrun dyld_info -exports /path/to/binary
-
-# Read BOM files (package receipts)
+# Package receipts
 /usr/bin/lsbom -sf /path/to/Archive.bom
 ```
 
-Always specify `-arch arm64` on Apple Silicon Macs — binaries are often universal
-(fat) with both x86_64 and arm64 slices, and you want the native one.
+**Architecture:** on Apple Silicon most binaries are universal (fat) with `x86_64` and
+`arm64`/`arm64e` slices. Pass `-arch arm64` (or `arm64e`) to `otool`/`strings`/`dyld_info` to
+work the native slice.
 
-## Key Mach-O sections for ObjC data
+## Scenario playbook
 
-When you encounter addresses in these sections, here's what they contain:
+- **How does the app do X?** — Phase 1 keyword search; the strings usually name the class.
+  Confirm with `callers`/`callees`, then read the entry point.
+- **What data does it collect or transmit?** — search URL patterns (`https?://`), HTTP verbs,
+  analytics/telemetry SDK names, `JSONSerialization`, `URLSession`. Trace `callees` on the
+  network methods to see the payload. State whether the path is reachable in normal use or
+  only present in the binary.
+- **Why does it behave unexpectedly under condition Y?** — find the entry point and trace the
+  conditional logic. Error/log strings sit near branch points and usually name the condition.
+- **What files does it touch?** — search strings for path fragments: `Application Support`,
+  `Preferences`, `Caches`, `Library`, `~/`, `.plist`, bundle IDs. Cross-check the filesystem
+  APIs in the relevant callees.
+- **Auditing capabilities and data handling** — start with `codesign --entitlements` and
+  `otool -L` (they bound what the app *can* do), then confirm the relevant capabilities in
+  code. Report capability and evidence separately.
 
-| Section | What's stored there |
-|---|---|
-| `__objc_methname` | Method name strings (selectors) |
-| `__cfstring` | Constant NSString/CFString objects |
-| `__cstring` | Plain C strings |
-| `__objc_const` | Class metadata, method lists |
-| `__objc_classname` | Class name strings |
-| `__objc_arraydata` | Constant array element storage |
+## Multiple documents
 
-## Tips for specific scenarios
-
-**"How does this app do X?"** — Start with Phase 1 discovery using keywords related
-to X. The string search will usually reveal the relevant classes immediately.
-
-**"What data does this app collect/send?"** — Search for URL patterns, HTTP method
-strings, analytics keywords. Check `procedure_callees` on network-related methods to
-see what data they package up.
-
-**"Why does this app behave strangely when..."** — Find the feature's entry point
-method, decompile it, and trace the conditional logic. Look for error strings near
-branch points — they often explain what condition triggers each code path.
-
-**"What files does this app read/write?"** — Search strings for file paths, directory
-names, and common path components like `Application Support`, `Preferences`, `Caches`,
-`Library`.
+Work one document at a time. `set_current_document` switches the active one; keep Hopper in
+the foreground when switching and prefer distinct document names, since similar names confuse
+the MCP's lookup. If results look like they're from the wrong binary, re-check
+`current_document` before trusting anything downstream.
