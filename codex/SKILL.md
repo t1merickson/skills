@@ -31,27 +31,26 @@ Keep for yourself:
   Codex take explicitly.
 - Small edits where writing the handoff prompt costs more than doing the work.
 
-## Sol is a peer, not a bigger subcontractor
+## Sol: peer consultation
 
-Tier choice carries intent, not just cost. If you're the tenured professor
-here, Sol is the professor down the hall who drinks too much coffee and can
-match you on even the hardest problems. That's a statement of trust, not
-rivalry: when you're stuck at the highest level — an architecture that won't
-settle, a diagnosis that keeps slipping, orchestration design, deeply
-technical or research-heavy work — bring Sol in as a thought partner, and do
-it *because you're uncertain*, not merely because the task is large.
+Sol is the one tier at your level — a peer to think with, not a bigger
+subcontractor. The trigger for bringing it in is *your own uncertainty*, not
+task size: a design that won't settle after two passes, a diagnosis that
+keeps slipping, orchestration you can't get clean, research-heavy questions
+where a second frontier take would change what you commit to. Run it
+read-only at xhigh/max and hand it your actual position with the weak points
+named — "here's my plan and where it creaks; find the flaw" — not a neutral
+summary that hides what you're unsure about.
 
-This is consultation, not delegation, so it sits outside the "keep
-taste-heavy work for yourself" rule above: a read-only Sol run at xhigh/max
-that attacks your plan ("here's my design and where it creaks — find the
-flaw") leaves the judgment with you while borrowing a second frontier mind.
+This is consultation, not delegation, so the "keep taste-heavy work for
+yourself" rule above doesn't apply: judgment never leaves here — you're
+stress-testing yours. Sol's take enters the same judge loop as any other run;
+when you and Sol disagree, that's signal — resolve it on the merits and
+surface it to the user when it matters.
 
-Never hand Sol menial work. Mechanical bulk goes to luna, routine
-well-specified implementation to terra; Sol on a rename sweep is a category
-error, not generosity. And peer doesn't mean oracle — Sol's take enters the
-same judge loop as any other Codex output. When you and Sol disagree, that
-disagreement is signal: resolve it on the merits, and surface it to the user
-when it matters.
+Never send Sol menial work. Bulk goes to luna, routine implementation to
+terra; if a prompt could be executed well without hard thinking, it's
+mis-tiered.
 
 ## Running Codex
 
