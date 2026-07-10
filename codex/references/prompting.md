@@ -1,4 +1,4 @@
-# Prompting GPT-5.5 / Codex
+# Prompting GPT-5.6 / Codex
 
 Adapted from OpenAI's [codex-plugin-cc](https://github.com/openai/codex-plugin-cc)
 prompting guide (Apache-2.0), tuned for the Claude-plans / Codex-implements /
@@ -6,7 +6,7 @@ Claude-judges workflow.
 
 Prompt Codex like an operator, not a collaborator. Compact, block-structured,
 XML-tagged. State the task, the output contract, the follow-through default,
-and only the extra constraints that matter. GPT-5.5 is extremely steerable:
+and only the extra constraints that matter. GPT-5.6 is extremely steerable:
 it does what the contract says, including the parts you forgot to write.
 
 Core rules:

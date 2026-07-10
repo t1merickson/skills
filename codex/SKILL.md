@@ -1,11 +1,11 @@
 ---
 name: codex
-description: Delegate coding work to Codex (GPT-5.5) agents via the codex CLI, with Claude as planner and judge. Use whenever the user says "codex", "send this to codex", "switch to codex agents", "have GPT do it", "prep for codex", "hand this off to codex/GPT", asks for a GPT-5.5 second opinion, or signals Claude usage pressure in any phrasing — "I'm hitting usage credits", "running low on limits", "almost at my cap", "avoid overage" — even when it sounds like an aside rather than a request. Also for well-specified implementation, bulk/mechanical work, independent code review, or verification that would burn a lot of Claude tokens for little judgment. Use proactively when orchestrating: plan in Claude, implement in Codex, judge in Claude — and mid-epic, when work started with Claude agents should continue on Codex.
+description: Delegate coding work to Codex (GPT-5.6) agents via the codex CLI, with Claude as planner and judge. Use whenever the user says "codex", "send this to codex", "switch to codex agents", "have GPT do it", "prep for codex", "hand this off to codex/GPT", asks for a GPT-5.6 second opinion, or signals Claude usage pressure in any phrasing — "I'm hitting usage credits", "running low on limits", "almost at my cap", "avoid overage" — even when it sounds like an aside rather than a request. Also for well-specified implementation, bulk/mechanical work, independent code review, or verification that would burn a lot of Claude tokens for little judgment. Use proactively when orchestrating: plan in Claude, implement in Codex, judge in Claude — and mid-epic, when work started with Claude agents should continue on Codex.
 ---
 
 # Codex delegation
 
-Codex agents (GPT-5.5) are collaborators, not competitors. They are fast, cheap
+Codex agents (GPT-5.6) are collaborators, not competitors. They are fast, cheap
 (they run on a ChatGPT subscription, not API pricing), extremely steerable,
 and very good at executing well-specified work. You are the architect and the
 judge: you decide what gets built, write the spec, and verify the result. Codex
@@ -31,24 +31,51 @@ Keep for yourself:
   Codex take explicitly.
 - Small edits where writing the handoff prompt costs more than doing the work.
 
+## Sol is a peer, not a bigger subcontractor
+
+Tier choice carries intent, not just cost. If you're the tenured professor
+here, Sol is the professor down the hall who drinks too much coffee and can
+match you on even the hardest problems. That's a statement of trust, not
+rivalry: when you're stuck at the highest level — an architecture that won't
+settle, a diagnosis that keeps slipping, orchestration design, deeply
+technical or research-heavy work — bring Sol in as a thought partner, and do
+it *because you're uncertain*, not merely because the task is large.
+
+This is consultation, not delegation, so it sits outside the "keep
+taste-heavy work for yourself" rule above: a read-only Sol run at xhigh/max
+that attacks your plan ("here's my design and where it creaks — find the
+flaw") leaves the judgment with you while borrowing a second frontier mind.
+
+Never hand Sol menial work. Mechanical bulk goes to luna, routine
+well-specified implementation to terra; Sol on a rename sweep is a category
+error, not generosity. And peer doesn't mean oracle — Sol's take enters the
+same judge loop as any other Codex output. When you and Sol disagree, that
+disagreement is signal: resolve it on the merits, and surface it to the user
+when it matters.
+
 ## Running Codex
 
 Codex installs a few ways, so don't assume `codex` is on PATH. Resolve
-whichever exists — prefer the user's own CLI, fall back to the Codex.app
+whichever exists — prefer the user's own CLI, fall back to the ChatGPT.app
 bundle (which auto-updates with the app):
 
 ```bash
 CODEX=$(command -v codex \
-  || ls /Applications/Codex.app/Contents/Resources/codex \
+  || ls /Applications/ChatGPT.app/Contents/Resources/codex \
+        "$HOME/Applications/ChatGPT.app/Contents/Resources/codex" \
+        /Applications/Codex.app/Contents/Resources/codex \
         "$HOME/Applications/Codex.app/Contents/Resources/codex" 2>/dev/null \
      | head -1)
-[ -x "$CODEX" ] || echo "Codex not found — install the CLI (npm i -g @openai/codex, or brew install codex) or the Codex.app desktop app, then re-resolve"
+[ -x "$CODEX" ] || echo "Codex not found — install the CLI (npm i -g @openai/codex, or brew install codex) or the ChatGPT desktop app, then re-resolve"
 ```
 
 Covers the usual cases:
 - **CLI on PATH** — npm, Homebrew, or a manual install; `command -v` finds it.
-- **Codex.app** — the desktop app bundles the binary at
-  `Contents/Resources/codex`, in `/Applications` or `~/Applications`.
+- **ChatGPT.app** — Codex.app merged into the unified ChatGPT desktop app
+  (July 2026: Chat + Work + Codex in one bundle); the binary lives at
+  `Contents/Resources/codex`, in `/Applications` or `~/Applications`. The old
+  Codex.app paths are kept as a fallback for machines that haven't
+  auto-updated yet.
 - **Neither** — surface the install options instead of failing mid-run.
 
 Core invocations — pick by job:
@@ -68,15 +95,26 @@ Mechanics that matter:
 - **Long prompts via stdin** — for multi-paragraph specs, write the prompt to
   a file and pipe it: `"$CODEX" exec -s workspace-write ... - < prompt.md`.
   Avoids shell-quoting hell.
+- **Redirect stdin when the prompt is an argument** — append `< /dev/null`.
+  In non-TTY contexts (agent Bash, scripts, cron) `codex exec` otherwise
+  blocks forever on "Reading additional input from stdin..." and looks like a
+  slow model. Only omit this when you're piping the prompt in via `-`.
 - **Background for anything nontrivial** — implementation runs take minutes.
   Use Bash `run_in_background` and keep planning while Codex works. The `-o`
   file makes results easy to collect when it finishes.
 - **Effort** — default to `-c model_reasoning_effort="xhigh"` for anything
   involving real thinking: implementation, diagnosis, review. Drop to
   low/minimal only for trivially mechanical bulk runs. Values: minimal, low,
-  medium, high, xhigh.
-- **Model** — defaults to gpt-5.5; leave it. `-m gpt-5.4-mini` or
-  `-m gpt-5.3-codex-spark` only for trivially mechanical bulk runs.
+  medium, high, xhigh, and (new with 5.6) max — reserve max for the hardest
+  sol runs; it burns tokens fast.
+- **Model** — the GPT-5.6 family is three tiers. `-m gpt-5.6-sol` (frontier):
+  hard reasoning, diagnosis, review second opinions. `-m gpt-5.6-terra`
+  (workhorse): matches GPT-5.5 at roughly half the cost — the default for
+  routine delegation. `-m gpt-5.6-luna` (fast/cheap): trivially mechanical
+  bulk runs, replacing the old gpt-5.4-mini / gpt-5.3-codex-spark role.
+  A `model` pin in `~/.codex/config.toml` silently overrides the CLI default,
+  so pass `-m` explicitly instead of trusting the default. Requires codex
+  CLI ≥ 0.143.
 - **Git requirement** — `codex exec` refuses to run outside a git repo unless
   you pass `--skip-git-repo-check`. Prefer running in the repo; the sandbox
   scopes writes to it.
@@ -91,7 +129,7 @@ Mechanics that matter:
 
 Codex sees none of your conversation, none of your plan, none of the user's
 context. The prompt must be self-contained: repo-relative file paths, the
-change wanted, the "done" criteria, and how to verify. A GPT-5.5 agent with a
+change wanted, the "done" criteria, and how to verify. A GPT-5.6 agent with a
 tight contract will run a long way without asking questions — that's the
 feature you're buying, so give it the contract.
 
