@@ -38,10 +38,9 @@ subcontractor. The trigger for bringing it in is *your own uncertainty*, not
 task size: a design that won't settle after two passes, a diagnosis that
 keeps slipping, orchestration you can't get clean, research-heavy questions
 where a second frontier take would change what you commit to. Run it
-read-only at `ultra` — sol's exclusive top effort tier, and consultation is
-the one place it's the default rather than a splurge. Hand it your actual
-position with the weak points named — "here's my plan and where it creaks;
-find the flaw" — not a neutral summary that hides what you're unsure about.
+read-only at `xhigh` and hand it your actual position with the weak points
+named — "here's my plan and where it creaks; find the flaw" — not a neutral
+summary that hides what you're unsure about.
 
 This is consultation, not delegation, so the "keep taste-heavy work for
 yourself" rule above doesn't apply: judgment never leaves here — you're
@@ -110,7 +109,7 @@ Mechanics that matter:
 
   | Job | Model / effort |
   |---|---|
-  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `ultra` |
+  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `xhigh` |
   | Implementing a written plan; general coding | `gpt-5.6-sol` / `medium` |
   | Review and diagnosis second opinions | `gpt-5.6-sol` / `high` |
   | Context subagents — read, search, trace the codebase | `gpt-5.6-terra` / `high` |
@@ -119,11 +118,15 @@ Mechanics that matter:
   Sol/medium for coding is deliberate: once the plan is written, a frontier
   model at moderate effort beats a mid-tier model at high effort. Don't
   escalate effort to fix output that a tighter prompt would fix.
-- **Effort values are model-dependent** (verified 2026-07, codex 0.144,
-  OpenAI provider): every tier accepts none, minimal, low, medium, high,
-  xhigh; `ultra` exists on sol only (the API rejects it on terra — xhigh is
-  terra's ceiling); `max` is Bedrock-only. An invalid value fails fast with
-  the supported list in the error, so probing is cheap if this drifts.
+- **Effort values** (verified 2026-07, codex 0.144, OpenAI provider): every
+  tier accepts none, minimal, low, medium, high, xhigh; `max` is
+  Bedrock-only. An invalid value fails fast with the supported list in the
+  error, so probing is cheap if this drifts.
+- **Never pass `ultra`.** Sol accepts it as an effort string, but it isn't a
+  deeper thinking level — it's GPT's internal agent fan-out (their Workflow
+  equivalent: the run decomposes into parallel subagents, multiplying token
+  burn). In this skill's division of labor, orchestration stays on the
+  Claude side; a delegated Codex run should be one agent doing one job.
 - **Git requirement** — `codex exec` refuses to run outside a git repo unless
   you pass `--skip-git-repo-check`. Prefer running in the repo; the sandbox
   scopes writes to it.
