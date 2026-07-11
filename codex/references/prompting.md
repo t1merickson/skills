@@ -27,7 +27,7 @@ Core rules:
 | `<default_follow_through_policy>` | What to do instead of asking routine questions | Always |
 | `<completeness_contract>` | "Resolve fully before stopping" | Implementation, fixes |
 | `<verification_loop>` | Check the work before finalizing | Implementation, debugging, risky fixes |
-| `<action_safety>` | Stay narrow, no unrelated refactors | Any write-capable run |
+| `<action_safety>` | Stay narrow, no unrelated refactors, destructive-op rules | Every write-capable run, verbatim |
 | `<grounding_rules>` | Anchor claims to code/tool output, label inferences | Review, research |
 | `<missing_context_gating>` | Don't guess absent facts; name what's unknown | Diagnosis, investigation |
 | `<dig_deeper_nudge>` | Check second-order failures before finalizing | Review |
@@ -67,6 +67,16 @@ If it fails, fix and re-run before reporting.
 <action_safety>
 Keep changes tightly scoped to the stated task.
 No unrelated refactors, cleanup, or dependency changes.
+Destructive-operation rules, non-negotiable:
+- No recursive deletes (rm -r, git clean, find -delete) on any path this
+  run did not itself create.
+- Never build a deletion path from a variable or expansion. If a computed
+  path must be removed, verify it with ls first and guard the expansion:
+  rm -rf -- "${VAR:?}" (aborts on empty instead of expanding to /).
+- Remove tracked files only via git rm. For anything else, move it to
+  <repo>/.trash/ and list it in your final message instead of deleting.
+- Treat every path outside this repository as read-only, even if the
+  sandbox would permit the write.
 </action_safety>
 ```
 

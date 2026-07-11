@@ -135,7 +135,39 @@ Mechanics that matter:
   Schema for the final message.
 - **Sandbox discipline** — `read-only` for investigation/review,
   `workspace-write` for implementation. Never
-  `--dangerously-bypass-approvals-and-sandbox`.
+  `--dangerously-bypass-approvals-and-sandbox`. Full rules in
+  "Blast radius" below.
+
+## Blast radius
+
+Prompt contracts lower the *odds* of a destructive command; the sandbox
+decides whether it *executes*. The known incident shape (July 2026, public):
+a review subagent improvised "cleanup", a variable expanded wrong, and
+`rm -rf` hit the user's home directory. Every layer below independently
+stops that — run all of them:
+
+- **Read-only unless the task writes.** Review, investigation, diagnosis:
+  `-s read-only`, no exceptions. A non-write task that improvises cleanup
+  then hits the sandbox instead of the filesystem.
+- **`-C` is the blast radius.** `workspace-write` scopes writes to the `-C`
+  directory, so the sandbox is exactly as wide as the workspace you hand it.
+  Point it at the repo root — never $HOME, never a broad parent directory.
+  A recursive delete *inside* the workspace is sandbox-legal by definition.
+- **Commit before write runs.** Committed files are the recoverable class;
+  untracked scratch and ignored files (.env) are what a bad command destroys
+  permanently. `git status` before dispatch — anything precious gets
+  committed (or copied out) or the run doesn't go.
+- **Deletion is never delegated as a side effect.** If removal is the task,
+  it's `git rm` of named tracked files. Cleanup sweeps, cache pruning,
+  "remove build artifacts" — do those yourself, or have Codex *report*
+  candidates and delete after judging. The `<action_safety>` block in
+  [references/prompting.md](references/prompting.md) carries the matching
+  contract language; include it in every write-capable run.
+- **Judge for destruction, not just correctness.** After any write run, scan
+  the progress stream for `rm -rf`, `git clean`, `git reset --hard`,
+  `find ... -delete` before trusting the diff — the summary won't confess
+  what a subshell did. Pair with `git status`: files that *vanished* are as
+  much a finding as files that changed.
 
 ## Writing the handoff prompt
 
