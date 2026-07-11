@@ -38,9 +38,10 @@ subcontractor. The trigger for bringing it in is *your own uncertainty*, not
 task size: a design that won't settle after two passes, a diagnosis that
 keeps slipping, orchestration you can't get clean, research-heavy questions
 where a second frontier take would change what you commit to. Run it
-read-only at xhigh/max and hand it your actual position with the weak points
-named — "here's my plan and where it creaks; find the flaw" — not a neutral
-summary that hides what you're unsure about.
+read-only at `ultra` — sol's exclusive top effort tier, and consultation is
+the one place it's the default rather than a splurge. Hand it your actual
+position with the weak points named — "here's my plan and where it creaks;
+find the flaw" — not a neutral summary that hides what you're unsure about.
 
 This is consultation, not delegation, so the "keep taste-heavy work for
 yourself" rule above doesn't apply: judgment never leaves here — you're
@@ -48,9 +49,10 @@ stress-testing yours. Sol's take enters the same judge loop as any other run;
 when you and Sol disagree, that's signal — resolve it on the merits and
 surface it to the user when it matters.
 
-Never send Sol menial work. Bulk goes to luna, routine implementation to
-terra; if a prompt could be executed well without hard thinking, it's
-mis-tiered.
+Never send Sol menial work. Chat-grade asks and small mechanical actions go
+to luna, context-gathering to terra; sol does real coding but at `medium` —
+its high efforts are for judgment, not labor. If a prompt could be executed
+well without hard thinking, it's mis-tiered.
 
 ## Running Codex
 
@@ -101,19 +103,27 @@ Mechanics that matter:
 - **Background for anything nontrivial** — implementation runs take minutes.
   Use Bash `run_in_background` and keep planning while Codex works. The `-o`
   file makes results easy to collect when it finishes.
-- **Effort** — default to `-c model_reasoning_effort="xhigh"` for anything
-  involving real thinking: implementation, diagnosis, review. Drop to
-  low/minimal only for trivially mechanical bulk runs. Values: minimal, low,
-  medium, high, xhigh, and (new with 5.6) max — reserve max for the hardest
-  sol runs; it burns tokens fast.
-- **Model** — the GPT-5.6 family is three tiers. `-m gpt-5.6-sol` (frontier):
-  hard reasoning, diagnosis, review second opinions. `-m gpt-5.6-terra`
-  (workhorse): matches GPT-5.5 at roughly half the cost — the default for
-  routine delegation. `-m gpt-5.6-luna` (fast/cheap): trivially mechanical
-  bulk runs, replacing the old gpt-5.4-mini / gpt-5.3-codex-spark role.
-  A `model` pin in `~/.codex/config.toml` silently overrides the CLI default,
-  so pass `-m` explicitly instead of trusting the default. Requires codex
+- **Model × effort — pick from this matrix.** Always pass both `-m` and
+  `-c model_reasoning_effort=...` explicitly: a `model` pin in
+  `~/.codex/config.toml` silently overrides the CLI default. Requires codex
   CLI ≥ 0.143.
+
+  | Job | Model / effort |
+  |---|---|
+  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `ultra` |
+  | Implementing a written plan; general coding | `gpt-5.6-sol` / `medium` |
+  | Review and diagnosis second opinions | `gpt-5.6-sol` / `high` |
+  | Context subagents — read, search, trace the codebase | `gpt-5.6-terra` / `high` |
+  | Chat-grade asks; small mechanical actions (moving files, organizing) | `gpt-5.6-luna` / any |
+
+  Sol/medium for coding is deliberate: once the plan is written, a frontier
+  model at moderate effort beats a mid-tier model at high effort. Don't
+  escalate effort to fix output that a tighter prompt would fix.
+- **Effort values are model-dependent** (verified 2026-07, codex 0.144,
+  OpenAI provider): every tier accepts none, minimal, low, medium, high,
+  xhigh; `ultra` exists on sol only (the API rejects it on terra — xhigh is
+  terra's ceiling); `max` is Bedrock-only. An invalid value fails fast with
+  the supported list in the error, so probing is cheap if this drifts.
 - **Git requirement** — `codex exec` refuses to run outside a git repo unless
   you pass `--skip-git-repo-check`. Prefer running in the repo; the sandbox
   scopes writes to it.
