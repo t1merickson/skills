@@ -38,7 +38,7 @@ subcontractor. The trigger for bringing it in is *your own uncertainty*, not
 task size: a design that won't settle after two passes, a diagnosis that
 keeps slipping, orchestration you can't get clean, research-heavy questions
 where a second frontier take would change what you commit to. Run it
-read-only at `xhigh` and hand it your actual position with the weak points
+read-only at `high` and hand it your actual position with the weak points
 named — "here's my plan and where it creaks; find the flaw" — not a neutral
 summary that hides what you're unsure about.
 
@@ -109,7 +109,7 @@ Mechanics that matter:
 
   | Job | Model / effort |
   |---|---|
-  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `xhigh` |
+  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `high` |
   | Implementing a written plan; general coding | `gpt-5.6-sol` / `medium` |
   | Review and diagnosis second opinions | `gpt-5.6-sol` / `high` |
   | Context subagents — read, search, trace the codebase | `gpt-5.6-terra` / `high` |
