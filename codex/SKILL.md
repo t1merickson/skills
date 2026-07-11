@@ -109,9 +109,8 @@ Mechanics that matter:
 
   | Job | Model / effort |
   |---|---|
-  | Planning, architecture, peer consultation | `gpt-5.6-sol` / `high` |
+  | Judgment work — planning, architecture, peer consultation, review and diagnosis second opinions | `gpt-5.6-sol` / `high` |
   | Implementing a written plan; general coding | `gpt-5.6-sol` / `medium` |
-  | Review and diagnosis second opinions | `gpt-5.6-sol` / `high` |
   | Context subagents — read, search, trace the codebase | `gpt-5.6-terra` / `high` |
   | Chat-grade asks; small mechanical actions (moving files, organizing) | `gpt-5.6-luna` / any |
 
