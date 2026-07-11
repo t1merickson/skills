@@ -13,7 +13,7 @@ Core rules:
 - One clear task per run. Unrelated asks get separate runs.
 - Say what "done" looks like. Codex will not infer the end state you meant.
 - Prefer a better contract over more effort or longer explanations. If output
-  quality disappoints, tighten the blocks before reaching for xhigh.
+  quality disappoints, tighten the blocks before raising effort.
 - Everything must be in the prompt: repo-relative paths, commands to run,
   conventions to follow. Codex has no access to your conversation or plan.
 
