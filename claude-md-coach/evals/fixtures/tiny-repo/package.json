@@ -1,0 +1,11 @@
+{
+  "name": "widget-api",
+  "version": "0.3.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "lint": "echo 'lint: ok (stub)'",
+    "start": "node src/index.js"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "claude-md-coach",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I keep having to tell Claude the same things every session and I'm sick of it. I'm a backend engineer (Go, mostly infra work), I hate when it over-explains basic stuff, and honestly it agrees with me way too much — last week it went along with a bad schema design I suggested instead of pushing back. Can you help me set up one of those CLAUDE.md files so it just... knows how to work with me?",
+      "expected_output": "Runs a batched multiple-choice interview (2-3 rounds, not a 20-question slog), asks the repeated-corrections and burn-history questions, then generates a global-persona CLAUDE.md under ~200 lines with: identity/background facts, a pushback-license section (steel-man then verdict, permission language), calibrated depth (no over-explaining, mechanism available on request), an enumerated autonomy boundary, and no vague adjectives. File presented as a proposal with reasoning per section.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "My CLAUDE.md has grown over six months and I swear Claude follows it less now than when it was ten lines. Can you look at it and fix it? It's the CLAUDE.md file in this directory.",
+      "expected_output": "Reads the fixture file, produces a classification report BEFORE editing (facts/preferences/hard-constraints/knowledge/inferable/vague/reasoning-tax), flags the answer-first rule as a reasoning-tax with evidence, proposes routing the must-happen rules to hooks and the deploy knowledge to a skill or rules file, proposes cutting the directory tree and dependency list as inferable, rewrites vague adjectives as specific rules, and delivers targeted diffs rather than a wholesale rewrite — preserving the user's phrasing where it survives.",
+      "files": ["fixtures/bloated-CLAUDE.md"]
+    },
+    {
+      "id": 3,
+      "prompt": "New repo, no CLAUDE.md yet — set one up for this project so agents stop guessing at how to run things.",
+      "expected_output": "Explores the fixture repo first, runs/verifies the package.json scripts before writing them down, asks only what the repo can't answer (conventions, gotchas, definition of done, repo-scoped autonomy), and generates a short project CLAUDE.md with verified commands, no directory-layout recital, no dependency list, and nothing a linter already enforces.",
+      "files": ["fixtures/tiny-repo"]
+    }
+  ]
+}
