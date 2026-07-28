@@ -66,6 +66,8 @@ Skip empty sections; don't pad to fill the shape. Keep the rewritten regions tig
 
 Commit it with the work. The diff history of a checkpoint is a genuinely useful artifact — it shows how the thinking moved, which the code history doesn't. For work outside a repo, write to `~/.claude/checkpoints/<slug>.md`.
 
+Same pass, while you're in it: sweep the session's temp and scratch dirs, and record in Terrain anything deliberately left in place and why. Scratch that outlives the context explaining it is just litter for the next session to be confused by.
+
 ## Reading one back
 
 A checkpoint is a claim about a world that has since moved. Trust it for reasoning, verify it for action:
