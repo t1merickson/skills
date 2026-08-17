@@ -73,7 +73,7 @@ Session rules the server enforces:
    instead of guessing twice.
 4. **Exports land in `~/Downloads/<NodeName>.<ext>`** — the tool result gives
    the path. There is no way to choose the destination; copy the file out.
-   (`~/Downloads` is timmy's personal folder: touch only the file you just
+   (`~/Downloads` is the user's personal folder: touch only the file you just
    exported.)
 5. **`overflow:hidden` on a plain div did not clip a child image** in one
    test. Don't rely on it for cropping; bake crops into the asset, use

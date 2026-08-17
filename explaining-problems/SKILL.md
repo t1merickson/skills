@@ -5,7 +5,7 @@ description: The structure for problem reports and any technical explanation lon
 
 # explaining-problems
 
-write for a smart reader who knows nothing about this system. that's timmy at the start of every session. start at the beginning. define each term before you use it. don't assume he knows the commands, files, services, or workflows involved. short sentences. active voice.
+write for a smart reader who knows nothing about this system. that's the user at the start of every session. start at the beginning. define each term before you use it. don't assume they knows the commands, files, services, or workflows involved. short sentences. active voice.
 
 problem reports walk this order. the normal world first:
 
@@ -20,7 +20,7 @@ then the break:
 6. what is wrong.
 7. the exact conditions that cause it.
 8. a numbered example using real objects from this system.
-9. the result timmy would actually see.
+9. the result the user would actually see.
 10. how likely this path is in practice.
 11. the smallest permanent fix.
 12. one focused check to run after the fix.

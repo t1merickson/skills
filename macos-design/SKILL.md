@@ -5,7 +5,7 @@ description: Design direction and HIG grounding for native macOS app UI.
 
 # macos-design
 
-timmy builds Mac apps that should feel like Mac apps. the direction: quiet, dense but cohesive, standard controls doing standard things, with a few precise custom moments where the app's identity lives. when a specific control's rules matter, check the current Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines) instead of trusting recall — the HIG moves.
+the user builds Mac apps that should feel like Mac apps. the direction: quiet, dense but cohesive, standard controls doing standard things, with a few precise custom moments where the app's identity lives. when a specific control's rules matter, check the current Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines) instead of trusting recall — the HIG moves.
 
 ## what makes an app feel properly Mac
 
@@ -21,7 +21,7 @@ timmy builds Mac apps that should feel like Mac apps. the direction: quiet, dens
 - color: semantic colors only (`labelColor`, `separatorColor`, accent) so dark mode is free and correct. near-monochrome base; the accent color and content supply the color.
 - SF Symbols at text-matching weights for iconography. no emoji in UI, ever.
 - materials and vibrancy: sparingly and semantically — sidebars and overlays where the system uses them, not as decoration.
-- density: macOS tolerates real density, and timmy likes information-dense. cohesion is the constraint — one idea per region, aligned to a consistent grid, not many ideas crammed together.
+- density: macOS tolerates real density, and the user likes information-dense. cohesion is the constraint — one idea per region, aligned to a consistent grid, not many ideas crammed together.
 - spacing: standard control spacing comes from the system; custom layouts use one spacing scale, 4 or 8pt base.
 
 ## motion

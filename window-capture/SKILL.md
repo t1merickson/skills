@@ -7,7 +7,7 @@ description: Screenshot one macOS app window by window id. Read before any scree
 
 This is a live, shared daily-driver machine. A full-screen grab can expose
 unrelated private content, and rearranging windows to line up a shot interrupts
-whatever timmy was doing. Capture exactly one window, leave the desktop alone.
+whatever the user was doing. Capture exactly one window, leave the desktop alone.
 
 ## The procedure
 
@@ -21,7 +21,7 @@ swift "$CLAUDE_SKILL_DIR/windowid.swift" Xcode
 Filter by any substring of the owning app's name (case-insensitive). Output is
 `id / size / owner`, one per line. If several windows match and you can't tell
 them apart by size, re-run with `--titles` — that's opt-in because a window
-title is often a document or folder name, and timmy's standing rule is no
+title is often a document or folder name, and the user's standing rule is no
 inspection beyond what the current task needs.
 
 **2. Capture it.**
@@ -36,7 +36,7 @@ occluded — which is the entire reason to do it this way rather than bringing
 the app forward.
 
 **3. Read the PNG back** to confirm you captured what you meant to, before
-showing it to timmy. A silent fallback (see below) looks like a successful
+showing it to the user. A silent fallback (see below) looks like a successful
 command.
 
 ## The trap that matters
@@ -45,7 +45,7 @@ command.
 Accessibility API report a *different* number for `id of window 1`. Passing that
 number does not error — `screencapture` falls back to capturing the whole
 screen and exits 0. That is the exact failure this skill exists to prevent:
-silent, successful-looking, and it dumps timmy's entire desktop into the
+silent, successful-looking, and it dumps the user's entire desktop into the
 transcript.
 
 Only ever source the id from `CGWindowListCopyWindowInfo` (what `windowid.swift`
@@ -68,5 +68,5 @@ uses). Never from `osascript`.
 To merely confirm a change compiles or behaves, a clean build plus tests is
 better evidence than a screenshot, and cheaper. Reach for a capture when the
 question is genuinely visual — spacing, weight, color, motion end-state — or
-when timmy asked to see it. He likes being offered visual reviews, so offer;
+when the user asked to see it. They likes being offered visual reviews, so offer;
 just don't substitute a picture for a passing test.

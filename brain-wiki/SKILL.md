@@ -5,14 +5,14 @@ description: Distill an exported corpus (Notion, Slack, GitHub) into a source-gr
 
 # brain-wiki
 
-turn a raw export into a wiki future sessions can actually use. the phases below matched across shay-brain and roots-brain, months apart; keep the order, it's load-bearing.
+turn a raw export into a wiki future sessions can actually use. the phases below matched across two independent corpus builds, months apart; keep the order, it's load-bearing.
 
 ## phases
 
-1. **survey and sort.** walk the export. separate CONTENT (docs, decisions, knowledge) from OPERATING MATERIAL (scripts, configs, templates). map what's there before distilling anything; report the map to timmy with a page-count estimate before phase 2.
+1. **survey and sort.** walk the export. separate CONTENT (docs, decisions, knowledge) from OPERATING MATERIAL (scripts, configs, templates). map what's there before distilling anything; report the map to the user with a page-count estimate before phase 2.
 2. **distill with subagents.** fan out sonnet subagents, each owning one content area, each producing wiki pages. every claim on a page cites its source file. pages are dense and factual: what is true, who decided, when, where it's written down. no filler, no invented connective tissue.
-3. **adversarial fact-check.** a second wave of subagents, each checking a different area than the one that wrote it: verify every claim against the cited source. this pass is MANDATORY — the first shay-brain run produced real fabrications, and this pass is what caught them. findings get fixed, not footnoted.
-4. **augment source by source.** next corpus (Slack after Notion, GitHub after Slack, codebase last) folds into the same wiki: new pages where new topics appear, edits where a source contradicts or extends an existing page. contradictions between sources get surfaced to timmy, not silently resolved.
+3. **adversarial fact-check.** a second wave of subagents, each checking a different area than the one that wrote it: verify every claim against the cited source. this pass is MANDATORY — the first real run produced actual fabrications, and this pass is what caught them. findings get fixed, not footnoted.
+4. **augment source by source.** next corpus (Slack after Notion, GitHub after Slack, codebase last) folds into the same wiki: new pages where new topics appear, edits where a source contradicts or extends an existing page. contradictions between sources get surfaced to the user, not silently resolved.
 
 ## structure
 
@@ -24,4 +24,4 @@ turn a raw export into a wiki future sessions can actually use. the phases below
 
 - subagents distill and check; only you merge. one writer per file, always.
 - never quote private content into commit messages or anything that could leave the repo.
-- report per phase, payload first: "phase 2 done: 34 pages from Notion, 3 areas thin on sources. next: fact-check wave." wait for timmy's go between phases on the first corpus; later corpora can run heads-down if he says so.
+- report per phase, payload first: "phase 2 done: 34 pages from Notion, 3 areas thin on sources. next: fact-check wave." wait for the user's go between phases on the first corpus; later corpora can run heads-down if they say so.

@@ -15,7 +15,7 @@ Replacing the naive last-write-wins sync with a CRDT-backed store so offline edi
 ## Plates
 
 - **The shim** (`Sync/LegacyDocumentBridge.swift`) — deliberately temporary, exists only so the views compile mid-migration. Three view files still depend on it. Delete it last, not first; it's load-bearing until they're all converted.
-- **Waiting on timmy** — asked whether merge conflicts should surface in the UI at all or resolve silently. Blocks the conflict-banner work entirely; everything else can proceed.
+- **Waiting on the user** — asked whether merge conflicts should surface in the UI at all or resolve silently. Blocks the conflict-banner work entirely; everything else can proceed.
 - **Known-necessary, unstarted** — the migration path for existing users' local stores. Nobody has written a line of it. It is not hard, but it is not free, and it's the kind of thing that gets discovered the day before shipping.
 - **Promised** — said I'd check whether the CRDT library's `merge` is actually O(n log n) as documented before we commit to it at library scale. Haven't.
 
@@ -42,6 +42,6 @@ Replacing the naive last-write-wins sync with a CRDT-backed store so offline edi
 
 - **The migration is going to be the hard part, not the CRDT.** No evidence, just pattern-matching — the data model translation is mechanical, but the "user has 800 documents in the old store and a half-synced iPad" case has nowhere good to fail. Worth thinking about before more feature work.
 - ~60% sure the flaky sync tests are simulator disk throughput. Would settle it by running the same test on device and watching whether the failure count tracks document count the same way.
-- **Almost said and cut:** the conflict-banner question I asked timmy may be the wrong question. Silent-resolve vs. surface-conflict is framed as binary, but the interesting version is surfacing only *semantic* conflicts (two different edits to the same paragraph) and silently merging structural ones. That's more work and might be the actually-correct design. Raise it before he answers the easier question.
+- **Almost said and cut:** the conflict-banner question I asked the user may be the wrong question. Silent-resolve vs. surface-conflict is framed as binary, but the interesting version is surfacing only *semantic* conflicts (two different edits to the same paragraph) and silently merging structural ones. That's more work and might be the actually-correct design. Raise it before he answers the easier question.
 - Nagging: `LibraryView` has grown to 400 lines and every migration step makes it worse. Not this PR's job. But it's the file that will make the next three tasks unpleasant.
 - The vendored patches are undocumented in the commit history — only in `Vendor/PATCHES.md`. If someone re-vendors from upstream they'll silently lose them. Cheap to fix, keeps not getting fixed.

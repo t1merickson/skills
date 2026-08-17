@@ -1,8 +1,6 @@
 # skills
 
-My live [Agent Skills](https://agentskills.io) for Claude Code — the actual, personalized setup, published as a working reference. They're plain markdown; any agent (or human) that reads the format can pick them up.
-
-Fair warning: these are not de-personalized. "timmy" is me, the paths are my machine's, and several skills encode my taste on purpose. Read them as a real example of a tuned setup and adapt to your own workflow rather than installing verbatim.
+My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrally so anyone can use them. They're plain markdown; any agent (or human) that reads the format can pick them up. Skills refer to "the user" — that's whoever runs them. A few encode opinionated defaults (design taste, workflow shape); treat those as starting points and tune to your own.
 
 ## What's here
 
@@ -35,7 +33,7 @@ Fair warning: these are not de-personalized. "timmy" is me, the paths are my mac
 | Skill | What it does |
 |---|---|
 | **[macos-design](macos-design/)** | Design direction and HIG grounding for native macOS app UI. |
-| **[web-design-defaults](web-design-defaults/)** | My base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism. |
+| **[web-design-defaults](web-design-defaults/)** | A base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism. |
 
 ### Media, files, archives
 

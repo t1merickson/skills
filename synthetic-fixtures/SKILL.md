@@ -1,18 +1,18 @@
 ---
 name: synthetic-fixtures
-description: Recipes for synthetic test media — images, audio, video, data — instead of timmy's personal files.
+description: Recipes for synthetic test media — images, audio, video, data — instead of the user's personal files.
 ---
 
 # synthetic-fixtures
 
-timmy's files are never test material. synthetic is the first choice, and it's usually the better one: you control every property, it reproduces exactly, and nothing private can leak into a commit or screenshot.
+the user's files are never test material. synthetic is the first choice, and it's usually the better one: you control every property, it reproduces exactly, and nothing private can leak into a commit or screenshot.
 
 ## rules
 
 - **seed everything.** a fixture that renders differently on the next run is a bug. pass explicit seeds to noise, random layouts, and generated data.
 - fixtures live in a `fixtures/` directory in the project, named by what they test: `gradient-16bit.png`, `speech-like-3s.wav`, not `test1.png`.
 - generate the properties the code under test actually exercises. testing color handling needs strong casts and wide gamuts, not pretty photos. testing edge cases needs the edges: 1px images, zero-length audio, empty arrays, huge files.
-- when synthetic genuinely can't do it (you need real-world messiness, real photography, real speech), escalate: ask timmy for reference material, or pull open-access (Unsplash, Wikimedia Commons, freesound.org) into the project with the source noted in the repo.
+- when synthetic genuinely can't do it (you need real-world messiness, real photography, real speech), escalate: ask the user for reference material, or pull open-access (Unsplash, Wikimedia Commons, freesound.org) into the project with the source noted in the repo.
 
 ## image recipes
 

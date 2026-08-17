@@ -5,7 +5,7 @@ description: Diagnose macOS and iOS crash reports: read the log, symbolicate, na
 
 # crash-debugging
 
-timmy pastes a crash log and wants the root cause, not a tour of the file. read the log, name the cause in plain words, point at the code.
+the user pastes a crash log and wants the root cause, not a tour of the file. read the log, name the cause in plain words, point at the code.
 
 ## read it in this order
 

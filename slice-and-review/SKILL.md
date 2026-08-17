@@ -5,7 +5,7 @@ description: The slice, commit, adversarial review, fix, commit loop for larger 
 
 # slice-and-review
 
-timmy's loop for bigger builds, previously retyped by hand every time. the shape:
+the user's loop for bigger builds, previously retyped by hand every time. the shape:
 
 1. **cut the work into slices.** a slice is one coherent, testable change: a feature, a refactor, a migration step. small enough to review in one sitting, big enough to mean something. list the slices before starting; that list is the plan.
 2. **build the slice. verify it.** build passes, tests green, or you ran it.
@@ -19,5 +19,5 @@ timmy's loop for bigger builds, previously retyped by hand every time. the shape
 - the reviewer never edits. it reports; you fix. two agents writing the same files collide.
 - an empty review is a valid review. never invent findings to make the loop look rigorous, and don't accept invented ones.
 - scope is fixed at slice-list time. a good idea mid-loop goes to the discard pile or the plan doc, not into the current slice.
-- report to timmy per slice, one line each: "slice 3 of 6 done: parser swapped, review found an off-by-one in chunking, fixed, committed." payload first.
+- report to the user per slice, one line each: "slice 3 of 6 done: parser swapped, review found an off-by-one in chunking, fixed, committed." payload first.
 - if two consecutive reviews come back clean and the remaining slices are mechanical, say so and offer to drop the review step for the rest. the loop serves the quality, never the ritual.

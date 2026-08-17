@@ -9,12 +9,12 @@ These rules were learned through actual lost files. Read them before the first b
 
 ## Policies (non-negotiable)
 
-- **Duplicates don't mean delete.** Identical bytes don't mean timmy wanted the copy gone — where a file sits carries intent. Report duplicates (paths, sizes, hashes); delete only with his explicit OK for that specific operation.
-- **Quarantine instead of `rm`.** Move to a clearly-named quarantine directory; tell timmy where it is and how to restore.
+- **Duplicates don't mean delete.** Identical bytes don't mean the user wanted the copy gone — where a file sits carries intent. Report duplicates (paths, sizes, hashes); delete only with their explicit OK for that specific operation.
+- **Quarantine instead of `rm`.** Move to a clearly-named quarantine directory; tell the user where it is and how to restore.
 - **No recursive delete for cleanup.** Never `shutil.rmtree` a directory you only assume is empty. Use `os.rmdir` — it fails loudly if you're wrong.
-- **Adversarial pass before running.** Before a script touches many real files, trace 2–3 input shapes that could break the logic — not just the case that motivated the script. Ask timmy about worst-case inputs when unsure.
+- **Adversarial pass before running.** Before a script touches many real files, trace 2–3 input shapes that could break the logic — not just the case that motivated the script. Ask the user about worst-case inputs when unsure.
 - **Backup before batch.** A reversible action taken and reported beats a question asked and waited on.
-- **Read-only volumes.** When timmy names a disk or directory as a backup, an archive, or "real data" (his backup drives, Patreon archive content), treat it as read-only: no moves, no renames, no cleanup, no "helpful" reorganization. Reading is fine; extracting is done to a temp location outside it. This has come up on real backup disks where loss would be unrecoverable — when in doubt about a volume's status, ask before the first write, not after.
+- **Read-only volumes.** When the user names a disk or directory as a backup, an archive, or "real data" (their backup drives, Patreon archive content), treat it as read-only: no moves, no renames, no cleanup, no "helpful" reorganization. Reading is fine; extracting is done to a temp location outside it. This has come up on real backup disks where loss would be unrecoverable — when in doubt about a volume's status, ask before the first write, not after.
 
 ## macOS traps
 
