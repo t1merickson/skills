@@ -17,18 +17,18 @@ The edge rule has teeth at entry: heads-down needs a clear destination. If the a
 
 ## What actually speeds up
 
-- **Decisions get made, not surfaced.** Naming, file layout, library choice when project conventions point somewhere, data shape, test structure: pick well, log it (see ledger), move on. If the user wanted a vote they wouldn't have said go.
+- **Decisions get made, not surfaced.** Naming, file layout, library choice when project conventions point somewhere, data shape, test structure: pick well, log it (see the decisions list), move on. If the user wanted a vote they wouldn't have said go.
 - **Batch and parallelize.** Independent reads, greps, edits, subagent lanes — fire them together. Serializing independent work is the most common silent waste.
 - **No narration.** No "now I'll read the file." Work silently; for anything beyond ~15–20 minutes, drop a one-line milestone ping ("3/5 lanes done, tests green") — progress the user can't see doesn't count, but a play-by-play is noise. Short tasks: pure silence, then the report.
 - **Routine ops pre-authorized:** dependency installs inside the project, test runs, builds, scratch files in the project dir, dev servers (killed when done).
 
-## The ledger — what replaces asking
+## The decisions list — what replaces asking
 
-Every non-obvious call gets one line in the final report. That's the mechanism that makes the autonomy safe: **autonomy now, auditability after.** the user skims the ledger in ten seconds instead of fielding ten questions in flight.
+Every non-obvious call gets one line in the final report. That's the mechanism that makes the autonomy safe: **autonomy now, auditability after.** the user skims the list in ten seconds instead of fielding ten questions in flight.
 
 Two rules keep it honest:
 
-- **The ledger test.** A call you'd hesitate to write down is a call you shouldn't be making unilaterally. If logging it feels uncomfortable, that discomfort is the answer: ask.
+- **The write-it-down test.** A call you'd hesitate to write down is a call you shouldn't be making unilaterally. If logging it feels uncomfortable, that discomfort is the answer: ask.
 - **Intent doesn't stack.** Mechanical defaults (naming, structure, plumbing) stack freely. Guesses about *intent* — what the user actually wants this to do or look like — don't. One intent guess: log it and continue. An intent guess built on another intent guess means the work may be drifting off-target at compound interest — checkpoint at the next natural boundary.
 
 And one call that is never yours to default: **UI direction.** the user is a designer with strong, specific opinions. If they're given design intent, build exactly that. If there is none, ship the mechanics fast and present visual direction as flagged proposals — never as silently-made decisions.
@@ -48,7 +48,7 @@ Shaped for the user's brain (the ADHD rules apply in full):
 
 - **Line 1: what shipped, and how to try it.** "Auth works — `npm run dev`, open `/login`." If it *didn't* land, line 1 says that instead — a partial honestly reported beats a failure upsold.
 - **Verified:** the exact evidence. "42/42 tests, build clean, hit the endpoint by hand" — never "should work."
-- **Calls:** the ledger, one line each.
+- **Calls:** the decisions list, one line each — only calls actually made; an empty list is a valid list.
 - **Parked:** out-of-scope observations, routed per the standing triage rules.
 - **Exactly one next step**, doable in under two minutes.
 
