@@ -118,6 +118,19 @@ lean on it when the user asks why.
    the reasoning for each. The user's voice is their design; incorporate their
    edits verbatim rather than paraphrasing them away.
 
+## Field lessons (Aug 2026, from tuning a live persona file against the 5-family)
+
+These came out of a month of real tuning and one full transcript audit; apply them in both modes.
+
+1. **The file's prose is a style sample first and instructions second.** Models imitate *how* the file is written more reliably than they follow *what* it says. A literary config produced literary output ("the thesis and three doors"); the fix that actually worked was rewriting the file in the exact register it asks for — plain words asking for plain words. When a user reports "LLM-speak" or invented jargon, audit the file's own prose before adding rules against it.
+2. **Named slots get filled.** Any named artifact — a "ledger," a mistakes log, a discard pile — becomes a form field an eager model invents content for (fabricated mistakes, invented dead ends). Never write a named slot without an "empty is a valid state" guard beside it.
+3. **Score lines by pull from baseline.** In tune-up, score each line 0–10 on how far it moves the model off default behavior. Strong pulls: contradictions of the harness's own defaults ("commit early and often" vs commit-only-when-asked), structures with zero baseline (a discard pile, restate-state-every-turn), and short absolutes. Weak pulls: duplicates of the harness prompt, descriptions of a voice the file's register already demonstrates, and non-binding appeals — a benchmark chart shames but doesn't bind; "under 150 words" binds. Facts (identity, paths) are their own category: no pull, but load-bearing, and they never rot.
+4. **Hedges gut absolutes.** "Questions are *often* read-only" invites the model to decide this one's the exception. If a rule is a boundary, write it as one.
+5. **Layer the file by shelf life.** Facts keep forever. The working contract (autonomy, message shaping) gets reviewed occasionally. Behavioral counterweights (anti-verbosity, anti-jargon) patch the *current* model generation — delete them at each major release and re-earn them from observed failures, or the file rots into fossil patches for models that no longer exist.
+6. **Evidence beats vibes for new lines.** A transcript audit — subagents over session history counting repeated corrections, repeated workflows, and failure modes per model — is cheap and turns "it keeps doing X" into numbers. Working thresholds: 3+ repeats earns a line; a workflow retyped across 3+ sessions earns a skill; failures concentrated in one model earn routing around that model, not a permanent rule.
+7. **An every-turn hook reminder didn't work.** Injecting register rules via a UserPromptSubmit hook produced no visible change over two weeks; the file itself was the lever. Don't reach for hooks to fix voice — hooks are for must-happen invariants, per rule 5 above.
+8. **Progressive disclosure has one law:** traps the model won't see coming stay resident in the file; procedures it deliberately invokes move to skills with a one-line pointer left behind. A guardrail in a skill the model doesn't know to fetch is not a guardrail.
+
 ## Tune-up mode — the audit
 
 Read the existing file completely. Classify **every line** into one of:
