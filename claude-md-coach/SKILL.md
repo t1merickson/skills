@@ -1,17 +1,13 @@
 ---
 name: claude-md-coach
 description: >-
-  Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files —
-  both the project memory file (commands, conventions, gotchas) and the
-  usually-neglected global persona file (~/.claude/CLAUDE.md: voice, autonomy,
-  pushback, affect, message shaping). Use this skill whenever the user wants to
-  create, improve, audit, trim, or rethink a CLAUDE.md or AGENTS.md; asks what
-  belongs in one; complains that the agent ignores their instructions, keeps
-  repeating a mistake, or needs the same correction every session; or wants to
-  change how their agent talks or works with them across sessions ("make Claude
-  stop doing X", "I want more pushback", "set up my preferences", "my agent
-  feels generic"). Trigger even when no file is named — repeated-correction
-  complaints and cross-session preference requests are this skill's job.
+  Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files,
+  project or global persona. Use when timmy wants to create, improve, audit,
+  trim, or rethink one; asks what belongs in one; complains the agent ignores
+  instructions or needs the same correction every session; or wants to change
+  how his agent talks across sessions ("make Claude stop doing X", "I want
+  more pushback", "my agent feels generic"). Trigger even when no file is
+  named — repeated-correction complaints are this skill's job.
 ---
 
 # claude-md-coach

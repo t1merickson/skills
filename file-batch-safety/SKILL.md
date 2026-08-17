@@ -1,6 +1,6 @@
 ---
 name: file-batch-safety
-description: Guardrails for scripts and commands that move, delete, rename, copy, or dedupe many real files on Tim's Mac. Use BEFORE writing or running any batch file operation, cleanup script, dedupe pass, or bulk reorganization — the traps here have caused real file loss on this machine.
+description: Guardrails for scripts and commands that move, delete, rename, copy, or dedupe many real files on timmy's Mac. Use BEFORE writing or running any batch file operation, cleanup script, dedupe pass, or bulk reorganization — the traps here have caused real file loss on this machine.
 ---
 
 # file-batch-safety
@@ -9,10 +9,10 @@ These rules were learned through actual lost files. Read them before the first b
 
 ## Policies (non-negotiable)
 
-- **Duplicates don't mean delete.** Identical bytes don't mean Tim wanted the copy gone — where a file sits carries intent. Report duplicates (paths, sizes, hashes); delete only with his explicit OK for that specific operation.
-- **Quarantine instead of `rm`.** Move to a clearly-named quarantine directory; tell Tim where it is and how to restore.
+- **Duplicates don't mean delete.** Identical bytes don't mean timmy wanted the copy gone — where a file sits carries intent. Report duplicates (paths, sizes, hashes); delete only with his explicit OK for that specific operation.
+- **Quarantine instead of `rm`.** Move to a clearly-named quarantine directory; tell timmy where it is and how to restore.
 - **No recursive delete for cleanup.** Never `shutil.rmtree` a directory you only assume is empty. Use `os.rmdir` — it fails loudly if you're wrong.
-- **Adversarial pass before running.** Before a script touches many real files, trace 2–3 input shapes that could break the logic — not just the case that motivated the script. Ask Tim about worst-case inputs when unsure.
+- **Adversarial pass before running.** Before a script touches many real files, trace 2–3 input shapes that could break the logic — not just the case that motivated the script. Ask timmy about worst-case inputs when unsure.
 - **Backup before batch.** A reversible action taken and reported beats a question asked and waited on.
 
 ## macOS traps

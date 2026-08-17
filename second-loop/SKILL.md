@@ -1,6 +1,6 @@
 ---
 name: second-loop
-description: Interview-driven setup of a human-gated improvement loop for any repeated "send things into the world" task — job applications, client outreach, pitches, proposals, grant submissions. The agent interviews the user to externalize their judgment into versioned config, sets up an outcomes ledger with reasons, an eval gate, and a weekly cadence where the agent proposes ONE evidenced change and the human approves it. Use when the user wants to "systematize my job hunt", "make my outreach improve from outcomes", "set up a self-improving loop for X", "build a second loop", "Karpathy-loop my applications/pipeline", or describes repeatedly sending similar things (applications, DMs, pitches) and wanting to get better at it deliberately. Not for domains with cheap automatic ground truth (benchmarks, test suites) — those can run true volume search and barely need this.
+description: Interview-driven setup of a human-gated improvement loop for repeated outbound work — job applications, outreach, pitches, proposals. Builds versioned judgment config, an outcomes log with reasons, and a weekly cadence of one evidenced change. Use when timmy says "systematize my job hunt", "build a second loop", "Karpathy-loop my applications", or describes repeatedly sending similar things and wanting to improve deliberately. Not for domains with cheap automatic ground truth.
 ---
 
 # Second loop: a human-gated improvement loop for outbound-shaped work
