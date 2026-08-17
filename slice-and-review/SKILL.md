@@ -1,6 +1,6 @@
 ---
 name: slice-and-review
-description: The slice → commit → adversarial review → fix → commit loop for larger builds. Use when timmy says "slice it", "phase it and review each", "adversarial review each step", or hands over multi-hour work where quality per step matters more than raw speed.
+description: The slice, commit, adversarial review, fix, commit loop for larger builds.
 ---
 
 # slice-and-review

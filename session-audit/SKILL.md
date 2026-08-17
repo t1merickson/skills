@@ -1,6 +1,6 @@
 ---
 name: session-audit
-description: Audit timmy's Claude Code transcripts with subagents to find repeated corrections, repeated workflows, and per-model failure modes — evidence for CLAUDE.md and skill changes. Use when timmy says "run the audit", "audit my sessions", "what keeps going wrong", or after a major new model release.
+description: Audit transcripts with subagents for repeated corrections, workflows, and per-model failures.
 ---
 
 # session-audit

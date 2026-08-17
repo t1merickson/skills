@@ -1,6 +1,6 @@
 ---
 name: window-capture
-description: Screenshot one macOS app window by CoreGraphics window id, without touching the desktop or unrelated content. Use for screenshots of the app under development, visual reviews for timmy, checking UI, or capturing a backgrounded window. Covers the AppleScript trap that silently turns a window capture into a full-screen capture.
+description: Screenshot one macOS app window by window id. Read before any screen capture; never the full screen.
 ---
 
 # window-capture

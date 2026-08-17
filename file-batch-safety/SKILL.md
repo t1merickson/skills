@@ -1,6 +1,6 @@
 ---
 name: file-batch-safety
-description: Guardrails for scripts and commands that move, delete, rename, copy, or dedupe many real files on timmy's Mac. Use BEFORE writing or running any batch file operation, cleanup script, dedupe pass, or bulk reorganization — the traps here have caused real file loss on this machine.
+description: Read before any batch file operation — moving, deleting, renaming, or deduping many files. Real file loss lives here.
 ---
 
 # file-batch-safety

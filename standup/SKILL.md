@@ -1,6 +1,6 @@
 ---
 name: standup
-description: Cross-project "where did we leave off" recap. Use when timmy says "standup", "catch me up across projects", "what's in flight", "where did we leave things", or opens a session without a task and seems to be orienting.
+description: Cross-project recap of where everything stands and what's next.
 ---
 
 # standup

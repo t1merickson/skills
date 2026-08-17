@@ -1,6 +1,6 @@
 ---
 name: ship-macos
-description: Release flow for timmy's macOS apps — archive, Developer ID export, notarize, staple, package as DMG or push to TestFlight. Use when timmy says "ship it" about a macOS app, "notarize", "release build", "make a DMG", "put it on TestFlight", or asks to distribute an app outside Xcode.
+description: Release a macOS app: archive, Developer ID export, notarize, staple, DMG or TestFlight.
 ---
 
 # ship-macos

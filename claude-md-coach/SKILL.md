@@ -1,13 +1,6 @@
 ---
 name: claude-md-coach
-description: >-
-  Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files,
-  project or global persona. Use when timmy wants to create, improve, audit,
-  trim, or rethink one; asks what belongs in one; complains the agent ignores
-  instructions or needs the same correction every session; or wants to change
-  how his agent talks across sessions ("make Claude stop doing X", "I want
-  more pushback", "my agent feels generic"). Trigger even when no file is
-  named — repeated-correction complaints are this skill's job.
+description: Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files.
 ---
 
 # claude-md-coach

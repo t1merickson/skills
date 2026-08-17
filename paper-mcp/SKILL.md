@@ -1,6 +1,6 @@
 ---
 name: paper-mcp
-description: Drive the Paper (paper.design) desktop app over its local MCP server — place images, compose layers, apply masks and blend modes, export PNGs. Use when working with Paper files or building collage/design output in Paper.
+description: Drive the Paper (paper.design) app over its local MCP server: layers, masks, blends, exports.
 ---
 
 # paper-mcp

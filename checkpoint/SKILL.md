@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Save or reload full session state via CHECKPOINT.md, including the hunches, discards, and open threads a compaction summary loses. Use when timmy says "checkpoint", "flush state", "save context", "dump context", "before you compact", when auto-compact approaches, at a phase boundary, or when handing work to another agent. Read path: "catch me up", "where were we", or starting real work in a project that has a CHECKPOINT.md.
+description: Save session state to CHECKPOINT.md, or reload it when resuming a project.
 ---
 
 # Checkpoint: reload the state, not the summary

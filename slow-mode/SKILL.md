@@ -1,6 +1,6 @@
 ---
 name: slow-mode
-description: Teaching-pace collaboration where timmy's understanding is the deliverable and code is the byproduct. One decision per beat, built with him rather than for him. Use on /slow-mode or "slow mode", "teaching mode", "walk me through it", "go slow", "one step at a time", "explain as we go", "I want to understand this" — and lean toward triggering whenever he's clearly trying to learn. Counterpart to heads-down.
+description: Teaching-pace collaboration: one decision per beat. timmy's understanding is the deliverable.
 ---
 
 # Slow mode: the deliverable is understanding

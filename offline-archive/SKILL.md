@@ -1,6 +1,6 @@
 ---
 name: offline-archive
-description: Scrape a web page or web tool into a self-contained offline copy — assets, styles, and working logic. Use when timmy says "offline archive this", "archive this URL", "save this page/tool locally", or wants a web thing preserved or made reusable.
+description: Scrape a page or web tool into a self-contained offline copy that still works.
 ---
 
 # offline-archive

@@ -1,6 +1,6 @@
 ---
 name: codex
-description: Delegate coding work to Codex (GPT-5.6) agents via the codex CLI; Claude plans and judges. Use when timmy says "codex", "hand this to codex/GPT", wants a GPT-5.6 second opinion, or signals usage pressure in any phrasing ("hitting usage credits", "running low on limits", "avoid overage") even as an aside. Also for well-specified implementation, bulk mechanical work, or independent review that would burn Claude tokens for little judgment.
+description: Delegate coding to Codex (GPT-5.6) via the codex CLI, with Claude planning and judging. Also use when Claude usage limits loom.
 ---
 
 # Codex delegation

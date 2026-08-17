@@ -1,6 +1,6 @@
 ---
 name: mock-and-pick
-description: The a/b/c mock workflow for UI, layout, and copy changes with no stated direction. Use when timmy asks for a visual or copy change without giving a direction, says "mock it up", "show me options", "explore some directions", or when you'd otherwise start editing real components on taste.
+description: The a/b/c static-mock workflow for UI or copy changes with no stated direction. Use before editing real components on taste.
 ---
 
 # mock-and-pick

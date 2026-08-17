@@ -1,6 +1,6 @@
 ---
 name: web-design-defaults
-description: timmy's base design direction for anything built with web technologies — components, styling, type, color. Use when starting or styling web UI in his projects, choosing a component library, or making visual decisions in HTML/CSS/React without a project-specific design system in place.
+description: timmy's base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism.
 ---
 
 # web-design-defaults

@@ -1,6 +1,6 @@
 ---
 name: heads-down
-description: Maximum autonomy with the guardrails hot. Use when timmy says "heads down", "ship it", "just do it", "run with it", "you have the wheel", "stop asking", "full speed", "send it", legacy "yolo", or hands over a well-scoped task wanting throughput over dialogue. Speed cuts questions and narration, never verification, reversibility, or scope. Don't auto-trigger for security-sensitive changes or over an active slow-mode.
+description: Maximum autonomy with the guardrails hot. Throughput over dialogue.
 ---
 
 # Heads-down: guardrails hot

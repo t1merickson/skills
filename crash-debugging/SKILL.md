@@ -1,6 +1,6 @@
 ---
 name: crash-debugging
-description: Diagnose macOS and iOS crash reports — .ips files, stack traces, and pasted crash logs. Use when timmy pastes a crash report or stack trace, says "it crashed", "why did this crash", or hands over a .ips / .crash file to explain.
+description: Diagnose macOS and iOS crash reports: read the log, symbolicate, name the root cause.
 ---
 
 # crash-debugging

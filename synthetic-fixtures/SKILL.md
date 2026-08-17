@@ -1,6 +1,6 @@
 ---
 name: synthetic-fixtures
-description: Recipes for generating good synthetic test media — images, audio, video, data — instead of using timmy's personal files. Use when a task needs test material: sample images, audio clips, datasets, placeholder video, or fixtures for an image/audio/data pipeline.
+description: Recipes for synthetic test media — images, audio, video, data — instead of timmy's personal files.
 ---
 
 # synthetic-fixtures

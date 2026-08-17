@@ -1,6 +1,6 @@
 ---
 name: explaining-problems
-description: The structure timmy wants for explaining a bug, design decision, architecture, or deployment surprise at depth. Use for any problem report or technical explanation longer than a few lines.
+description: The structure for problem reports and any technical explanation longer than a few lines.
 ---
 
 # explaining-problems

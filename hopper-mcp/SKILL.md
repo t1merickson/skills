@@ -1,14 +1,6 @@
 ---
 name: hopper-mcp
-description: >
-  Guide for reverse-engineering compiled macOS binaries using the Hopper Disassembler MCP
-  Server. Use this skill whenever the user wants to inspect, analyze, decompile, or reverse
-  engineer a macOS application or binary at the machine-code level. Triggers on: Hopper,
-  disassembly, decompilation, reverse engineering, binary analysis, static analysis,
-  understanding how an app works internally, "what does this app do", analyzing .app
-  bundles, inspecting helper daemons and XPC services, examining Mach-O binaries, or any
-  request involving the Hopper MCP tools. Also use when the user has a binary open in Hopper
-  and asks questions about its behavior, classes, methods, or data flow.
+description: Reverse-engineering macOS binaries with the Hopper Disassembler MCP server.
 ---
 
 # Reverse Engineering macOS Binaries with Hopper

@@ -1,6 +1,6 @@
 ---
 name: obsess
-description: Structured deep-immersion on a named topic so the session runs on dense, verified, in-context expertise instead of shallow parametric recall. Use when timmy says "become obsessed with X", "obsess over X", "go deep on X", "study up on X", "immerse yourself in X", "read up on X before we talk", "teach me about X", or frames the session as student/teacher on a topic. Works at session start or mid-session.
+description: Deep immersion on a named topic so the session runs on verified in-context knowledge. Then teach.
 ---
 
 # obsess

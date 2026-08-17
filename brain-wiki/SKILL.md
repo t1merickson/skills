@@ -1,6 +1,6 @@
 ---
 name: brain-wiki
-description: Distill an exported corpus (Notion, Slack, GitHub, a codebase) into a curated wiki of source-grounded pages. Use when timmy says "build a brain", "distill this export", "make a wiki from this corpus", or hands over a dump of company/project knowledge to organize (shay-brain, roots-brain style).
+description: Distill an exported corpus (Notion, Slack, GitHub) into a source-grounded wiki.
 ---
 
 # brain-wiki

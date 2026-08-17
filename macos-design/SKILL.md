@@ -1,6 +1,6 @@
 ---
 name: macos-design
-description: Design direction and HIG grounding for native macOS app UI — layout, controls, type, materials, and what makes an app feel properly Mac. Use when building or reviewing macOS app interfaces, making visual or layout decisions in AppKit/SwiftUI for the Mac, or when timmy asks "does this look right" about native UI.
+description: Design direction and HIG grounding for native macOS app UI.
 ---
 
 # macos-design

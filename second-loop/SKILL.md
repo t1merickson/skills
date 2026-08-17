@@ -1,6 +1,6 @@
 ---
 name: second-loop
-description: Interview-driven setup of a human-gated improvement loop for repeated outbound work — job applications, outreach, pitches, proposals. Builds versioned judgment config, an outcomes log with reasons, and a weekly cadence of one evidenced change. Use when timmy says "systematize my job hunt", "build a second loop", "Karpathy-loop my applications", or describes repeatedly sending similar things and wanting to improve deliberately. Not for domains with cheap automatic ground truth.
+description: Set up a human-gated improvement loop for repeated outbound work like applications and pitches.
 ---
 
 # Second loop: a human-gated improvement loop for outbound-shaped work

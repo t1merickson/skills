@@ -1,11 +1,6 @@
 ---
 name: hopper-discovery
-description: >
-  Reference for the Hopper MCP tools, which read a program the user already has open in the
-  Hopper app. Use when the user wants to explore a program's symbols, procedures, strings,
-  call graph, or annotations through those tools. Triggers on: Hopper, the Hopper MCP,
-  reading a Mach-O binary's structure, listing or searching procedures/strings/names,
-  navigating by address, or annotating a document.
+description: Reference for the Hopper MCP tools: explore an open binary's symbols, procedures, strings, and annotations.
 ---
 
 # Hopper MCP tools
