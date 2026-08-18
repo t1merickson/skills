@@ -33,7 +33,8 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 
 | Skill | What it does |
 |---|---|
-| **[macos-design](macos-design/)** | Design direction and HIG grounding for native macOS app UI. |
+| **[macos-design](macos-design/)** | Best practices for native macOS apps: real-app behavior, menu bar, targets, AppKit vs SwiftUI, HIG design. |
+| **[ios-design](ios-design/)** | Best practices for native iOS apps: real-app setup, targets, UIKit vs SwiftUI, platform conventions. |
 | **[web-design-defaults](web-design-defaults/)** | A base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism. |
 
 ### Media, files, archives
