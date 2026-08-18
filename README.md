@@ -26,6 +26,7 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 | **[slice-and-review](slice-and-review/)** | The slice, commit, adversarial review, fix, commit loop for larger builds. |
 | **[mock-and-pick](mock-and-pick/)** | The a/b/c static-mock workflow for UI or copy changes with no stated direction. |
 | **[crash-debugging](crash-debugging/)** | Diagnose macOS and iOS crash reports: read the log, symbolicate, name the root cause. |
+| **[os-workarounds](os-workarounds/)** | Tag and track workarounds for OS/framework bugs: FB id, observed version, removal condition. |
 | **[ship-macos](ship-macos/)** | Release a macOS app: archive, Developer ID export, notarize, staple, DMG or TestFlight. |
 
 ### Design

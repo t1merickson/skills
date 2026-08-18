@@ -32,4 +32,6 @@ unsymbolicated frames (raw addresses) need the matching dSYM:
 
 follow the `explaining-problems` skill: what the crashing component is, what triggers it, the mechanism in plain words, the smallest fix, one check after. include a reproduction if the log gives enough to construct one; say so plainly when it doesn't ("this needs the dSYM from build 214" or "this one needs a repro — the log alone can't distinguish X from Y").
 
+when the root cause turns out to be Apple's — a framework defect, not our code — prove it and tag the workaround per the `os-workarounds` skill, so the verdict survives in the codebase.
+
 never present a plausible-sounding cause as confirmed. "the crash is in the thumbnail cache eviction, and the two likely causes are A and B — here's the log line that would settle it" beats a confident guess.
