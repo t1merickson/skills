@@ -49,9 +49,19 @@ Prefer SwiftUI for new work; it is the current default and where the platform is
 - Iconography: SF Symbols at text-matching weights. No emoji in UI.
 - Materials and vibrancy: sparingly and semantically — sidebars and overlays where the system uses them, not as decoration.
 - Density: macOS tolerates real density, and this user prefers information-dense interfaces. Cohesion is the constraint: one idea per region, aligned to a consistent grid.
-- Windows behave: resizable with sensible minimums, content that stretches correctly, state restored on relaunch, full keyboard navigation.
+- Windows behave: resizable with sensible minimums and maximums, content that stretches correctly, state restored on relaunch, full keyboard navigation.
+- Size windows to their content. A window's default size should fit what it presents — sized by its ideal content dimensions, not an arbitrary 800×600. A settings window hugs its controls; a document window opens at a size that shows a useful amount of document. The wrong default size is one of the most common tells of a generated app.
 - Drag and drop wherever content moves.
 - Motion: small, physical, interruptible, and rarer than on iOS — windows and panels mostly appear. See the `apple-design` skill for the physics; `find-animation-opportunities` decides what earns motion.
+
+## Interface copy
+
+Write interface text the way the HIG does: say what a thing does in a few plain words, and stop. Do not narrate — a toggle labeled "Show grid" needs no sentence beneath it explaining why grids are useful or when someone might want one. People learn an interface by using it, not by reading about it.
+
+- Labels are short verb or noun phrases: "Show grid," "Export…," "Auto-save." If a label needs a paragraph, the design is unclear, not under-explained.
+- Reserve helper text for genuine consequences people can't see ("Deletes originals after import"), not for restating the label.
+- Match the platform's capitalization: title case for menu items and buttons, sentence case for descriptive text.
+- Every ellipsis means "asks for more input before acting" — use it exactly that way, nowhere else.
 
 ## Bug ownership
 
@@ -59,4 +69,6 @@ When behavior is wrong and the minimal repro shows the framework at fault, tag t
 
 ## Before calling it done
 
-Launch the built app and confirm: Dock and Cmd-Tab presence; menus populated and shortcuts firing; Cmd-Comma opens Settings; Cmd-Z undoes; Dark Mode holds up; the window resizes to its minimum without breaking. Capture the window for review per `window-capture`. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
+Launch the built app and confirm: Dock and Cmd-Tab presence; menus populated and shortcuts firing; Cmd-Comma opens Settings; Cmd-Z undoes; Dark Mode holds up; the default window size fits the content, and the window resizes to its minimum without breaking. Capture the window for review per `window-capture`. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
+
+Then give the user a build they can keep. A path deep in DerivedData goes stale the moment the session ends. Copy the built .app to a stable, project-local location (such as `<project>/build/<App>.app` — record the convention in the project's CLAUDE.md) and report that path, so the app stays usable between sessions. Replace it on each new build rather than accumulating stale copies.

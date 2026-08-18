@@ -43,6 +43,10 @@ Prefer SwiftUI for new work. Drop to UIKit deliberately:
 - Motion: physical, interruptible, and driven by gestures where possible; respect Reduce Motion. See the `apple-design` skill for the physics; `find-animation-opportunities` decides what earns motion.
 - Density: iOS forgives less density than macOS. One primary action per screen region; whitespace does the grouping.
 
+## Interface copy
+
+Write interface text the way the HIG does: say what a thing does in a few plain words, and stop. A toggle labeled "Show grid" needs no sentence beneath it explaining why grids are useful. Labels are short verb or noun phrases; helper text is reserved for genuine consequences people can't see ("Deletes originals after import"), never for restating the label. Match platform capitalization: title case for buttons and bar items, sentence case for descriptive text.
+
 ## Bug ownership
 
 When behavior is wrong and a minimal repro shows the framework at fault, tag the workaround per the `os-workarounds` skill — bug id, observed OS version, removal condition — and retest tags on every iOS update.
