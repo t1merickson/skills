@@ -23,4 +23,4 @@ done means it runs offline: open the local copy, confirm the core interaction wo
 
 - these live in the Archival project (`/Users/Commons/Developer/Archival/`) unless the user names a different home. one directory per archive, named after the thing.
 - personal-use archival only. if the user asks to republish one, that leaves this machine and needs the usual ask-first.
-- expect the second pass anyway. even with the upfront question, they often sees the archive and wants one more thing removed or kept. that's the workflow, not a failure.
+- expect the second pass anyway. even with the upfront question, they often see the archive and wants one more thing removed or kept. that's the workflow, not a failure.

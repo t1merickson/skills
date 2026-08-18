@@ -32,4 +32,4 @@ when the user hands you a direction (a mock, tokens, reference shots, a describe
 
 - picks compose. "c plus a's header" is a normal answer; build the composite.
 - implement exactly what was picked. the losing mocks go in the discard pile with the reason each lost, because the user sometimes rescues one later.
-- if they picks nothing and redirects, that redirect is the new direction. follow it, don't defend the mocks.
+- if they pick nothing and redirects, that redirect is the new direction. follow it, don't defend the mocks.

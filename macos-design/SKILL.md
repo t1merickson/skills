@@ -5,7 +5,7 @@ description: Design direction and HIG grounding for native macOS app UI.
 
 # macos-design
 
-the user builds Mac apps that should feel like Mac apps. the direction: quiet, dense but cohesive, standard controls doing standard things, with a few precise custom moments where the app's identity lives. when a specific control's rules matter, check the current Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines) instead of trusting recall — the HIG moves.
+the user builds Mac apps that should feel like Mac apps. one standing convention across all their Apple-platform projects: code that routes around an OS or framework defect gets tagged per the `os-workarounds` skill, so fault attribution stays greppable. the direction: quiet, dense but cohesive, standard controls doing standard things, with a few precise custom moments where the app's identity lives. when a specific control's rules matter, check the current Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines) instead of trusting recall — the HIG moves.
 
 ## what makes an app feel properly Mac
 

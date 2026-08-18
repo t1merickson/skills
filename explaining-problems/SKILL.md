@@ -5,7 +5,7 @@ description: The structure for problem reports and any technical explanation lon
 
 # explaining-problems
 
-write for a smart reader who knows nothing about this system. that's the user at the start of every session. start at the beginning. define each term before you use it. don't assume they knows the commands, files, services, or workflows involved. short sentences. active voice.
+write for a smart reader who knows nothing about this system. that's the user at the start of every session. start at the beginning. define each term before you use it. don't assume they know the commands, files, services, or workflows involved. short sentences. active voice.
 
 problem reports walk this order. the normal world first:
 

@@ -14,7 +14,7 @@ transcripts live in `~/.claude/projects/*/` as .jsonl files, one JSON object per
 launch three sonnet subagents, read-only, each over the ~25 most recently modified transcripts:
 
 1. **corrections**: complaints and redirections the user repeats ("too long", "no, i meant", "stop", "undo", instructions retyped across sessions). cluster, count, quote.
-2. **workflows**: multi-step flows they re-explains each session — candidate skills. name, session count, projects, one-line shape.
+2. **workflows**: multi-step flows they re-explain each session — candidate skills. name, session count, projects, one-line shape.
 3. **failure modes**: incidents where their next message signals the model got it wrong, classified (overbuild, verbosity, wrong interpretation, broke something, stopped early, didn't verify, invented content), broken down by model where the transcript says.
 
 subagents are read-only. no writes, no deletes, and they never quote anything private back beyond short correction snippets.
