@@ -52,7 +52,9 @@ Prefer SwiftUI for new work; it is the current default and where the platform is
 - Windows behave: resizable with sensible minimums and maximums, content that stretches correctly, state restored on relaunch, full keyboard navigation.
 - Size windows to their content. A window's default size should fit what it presents — sized by its ideal content dimensions, not an arbitrary 800×600. A settings window hugs its controls; a document window opens at a size that shows a useful amount of document. The wrong default size is one of the most common tells of a generated app.
 - Drag and drop wherever content moves.
-- Motion: small, physical, interruptible, and rarer than on iOS — windows and panels mostly appear. See the `apple-design` skill for the physics; `find-animation-opportunities` decides what earns motion.
+- Motion: small, physical, interruptible, and rarer than on iOS — windows and panels mostly appear. See the `apple-design` skill for the physics and `apple-native-motion` for the SwiftUI code; `find-animation-opportunities` decides what earns motion.
+- VoiceOver: every control needs a label and a sane reading order.
+- Contrast passes in both Light and Dark Mode, not just one.
 
 ## Interface copy
 
@@ -69,6 +71,6 @@ When behavior is wrong and the minimal repro shows the framework at fault, tag t
 
 ## Before calling it done
 
-Launch the built app and confirm: Dock and Cmd-Tab presence; menus populated and shortcuts firing; Cmd-Comma opens Settings; Cmd-Z undoes; Dark Mode holds up; the default window size fits the content, and the window resizes to its minimum without breaking. Capture the window for review per `window-capture`. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
+Launch the built app and confirm: Dock and Cmd-Tab presence; menus populated and shortcuts firing; Cmd-Comma opens Settings; Cmd-Z undoes; Dark Mode holds up; the default window size fits the content, and the window resizes to its minimum without breaking. Then: navigate the whole app by keyboard alone; run VoiceOver through the core flow once; turn on Reduce Motion and confirm nothing relies on motion to communicate state; scroll the longest list or table and watch for dropped frames; if multi-window or multi-display is supported, confirm state restores. Capture the window for review per `window-capture`. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
 
 Then give the user a build they can keep. A path deep in DerivedData goes stale the moment the session ends. Copy the built .app to a stable, project-local location (such as `<project>/build/<App>.app` — record the convention in the project's CLAUDE.md) and report that path, so the app stays usable between sessions. Replace it on each new build rather than accumulating stale copies.

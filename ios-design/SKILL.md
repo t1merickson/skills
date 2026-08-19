@@ -40,7 +40,11 @@ Prefer SwiftUI for new work. Drop to UIKit deliberately:
 - Dark Mode from the start via semantic colors, never hardcoded values.
 - Iconography: SF Symbols at text-matching weights. No emoji in UI.
 - Haptics for meaningful moments — confirmation, boundaries, selection — not decoration.
-- Motion: physical, interruptible, and driven by gestures where possible; respect Reduce Motion. See the `apple-design` skill for the physics; `find-animation-opportunities` decides what earns motion.
+- Motion: physical, interruptible, and driven by gestures where possible; respect Reduce Motion. See the `apple-design` skill for the physics and `apple-native-motion` for the SwiftUI code; `find-animation-opportunities` decides what earns motion.
+- VoiceOver: every interactive element needs a label, a trait, and a sane reading order.
+- Contrast passes in both Light and Dark Mode, not just one.
+- Tab bar holds 2–5 top-level sections and nothing else — no actions living in tab items.
+- Large titles on top-level screens, collapsing on scroll; detail screens stay inline.
 - Density: iOS forgives less density than macOS. One primary action per screen region; whitespace does the grouping.
 
 ## Interface copy
@@ -53,4 +57,4 @@ When behavior is wrong and a minimal repro shows the framework at fault, tag the
 
 ## Before calling it done
 
-Drive the built app in the simulator: safe areas respected in both orientations you support, keyboard behavior correct, Dynamic Type at a large size, Dark Mode, back-swipe working, no dead ends without a way back. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
+Drive the built app in the simulator: safe areas respected in both orientations you support, keyboard behavior correct, Dynamic Type at a large size, Dark Mode, back-swipe working, no dead ends without a way back. Then the accessibility and performance pass: run VoiceOver through the core flow once (labels present, order sensible, nothing silent); set text to the largest accessibility size and confirm nothing clips; turn on Reduce Motion and confirm big transitions fall back to a crossfade; scroll the longest list and watch for dropped frames; if iPad is in scope, check Split View and landscape. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
