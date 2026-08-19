@@ -1,31 +1,40 @@
 ---
 name: standup
-description: Cross-project recap of where everything stands and what's next.
+description: Recap of where projects stand and what's next, scoped to the folder the session started in.
 ---
 
 # standup
 
-the user can't hold the state of five projects in their head. this skill rebuilds it in one message.
+the user can't hold the state of their projects in their head. this skill rebuilds it in one message. **scope comes from the working directory** — where the session was started decides what gets reported.
+
+## pick the scope
+
+look at the cwd and classify it:
+
+- **a single project** (it has a `.git`, an Xcode project, a package manifest, or a CHECKPOINT.md at its root): report that one project, in depth.
+- **an org or container folder** (it contains multiple project directories — e.g. an org folder full of apps): report EVERY project inside it, one level down. all of them. no recency cutoff, no count cap.
+- **neither** (home directory, or somewhere that isn't code): fall back to all of the user's code directories (on this machine: `/Users/Commons/Developer` and `~/Developer` — adjust per setup) and report at the org level.
 
 ## gather (read-only)
 
-1. checkpoints: list `CHECKPOINT.md` files one and two levels deep under the user's code directories (on this machine: `/Users/Commons/Developer` and `~/Developer` — adjust per setup). read each one found, newest first.
-2. recent activity: for repos with commits or file changes in the last two weeks (`git -C <repo> log --since="2 weeks ago" --oneline | head`), note the last real commit message and date.
-3. loose ends: `git -C <repo> status --porcelain | head` — flag repos with uncommitted changes, because an uncommitted afternoon is the standing risk.
-4. this account's memory: skim MEMORY.md for project entries that mention in-flight work.
+per project in scope:
 
-don't scan everything under the sun. mtime within two weeks is the cut. cap the sweep at the first ten candidate repos.
+1. `CHECKPOINT.md` if present — the Now, Plates, and Live wires sections carry the state.
+2. git: last real commit (message and date), current branch, and `git status --porcelain` for uncommitted changes.
+3. the project's CLAUDE.md header or README first line when nothing else says what the thing is.
+
+recency orders the report; it never filters it. a project untouched since spring still gets its line — "quiet" is state, not noise.
 
 ## report
 
-one line per project, newest activity first, five projects max shown (the rest as a one-line "also quiet: x, y, z"):
+**org scope:** one entry per project, every project, ordered newest-activity first. each entry: name, last touched when, plain-words state, the recorded next step if a checkpoint names one, ⚠ if uncommitted changes exist. quiet projects get the same line with their real dates. this report is allowed to be long — completeness is the point of running it at org level; the under-150-words default does not apply here.
 
-- **project — last touched <when>.** what state it's in, in plain words. the open next step if a checkpoint names one. ⚠ if uncommitted changes exist.
+**single-project scope:** a fuller picture of the one project — what it is, current phase from the checkpoint, the last few commits in plain words, plates in motion, uncommitted changes, and the recorded next step.
 
-then finish with exactly one question: which one are we picking up? if one project is obviously hot (touched yesterday, checkpoint says "next: X"), lead with it as the recommendation.
+either way, finish with exactly one question: which thread are we picking up? if one is obviously hot, lead with it as the recommendation.
 
 ## rules
 
-- payload first, no inventory prose. this is orientation, not a report card.
+- payload first. this is orientation, not a report card.
 - never invent a next step for a project whose checkpoint doesn't name one. "no recorded next step" is a valid state.
 - uncommitted changes get flagged, not fixed. fixing starts after the user picks.
