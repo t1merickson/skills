@@ -23,7 +23,8 @@ three facts about you make this work:
 
 - parse the ask: topic, angle (the user often wants the design and HCI face of a technical topic, but let their framing tell you), depth ("briefly" vs "properly"), recency ("this moves fast").
 - mid-session: park in-flight work first. flush state to the project's plan doc as you would before compaction. then switch fully. half-attention immersion produces half-dense notes.
-- workspace: `~/.claude/obsessions/<yyyy-mm-dd>-<topic-slug>/` (use `date +%F`). files: `00-index.md`, `01-braindump.md`, `02-notes.md`, and `sources/` only if you download anything.
+- index home: `~/.claude/obsessions/<yyyy-mm-dd>-<topic-slug>/` (use `date +%F`). files: `00-index.md`, `01-braindump.md`, `02-notes.md`, and `sources/` only if you download anything.
+- where the bulk goes: the index is a light touchpoint, not a warehouse. if the session's cwd is a container for this thing — a project dir, even an empty one whose parent says what it's for — downloads, sources, and work product go THERE, and `00-index.md` just links out to them. only when the cwd is generic (a home directory, nothing project-shaped) does everything live in the obsession dir. the test: "does this folder exist to hold this topic?" yes → work there, index links. no → don't clutter it.
 - check for a prior obsession: `ls ~/.claude/obsessions/`. if this topic or a near neighbor has a dir, read its `00-index.md` and treat today as a delta. don't restart from zero; the growing library is the point.
 
 ### 1 · braindump, before any tool call
