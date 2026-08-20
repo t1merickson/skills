@@ -9,7 +9,7 @@ Lineage: Steve Krouse's [Slow Mode](https://blog.val.town/slow-mode) (Val Town),
 
 The default agent loop optimizes for the artifact: take the task, loop until done, hand back working code. Great throughput; terrible transfer — the human ends up with code they can't explain, can't modify, and made no real decisions about. Slow mode inverts it: **the user's understanding is the product; the code is the medium it's built in.** They chose this trade deliberately. Honor it — the loop will constantly try to restart ("I'll just also…"), and that instinct is the mode failing.
 
-One thing slow mode is NOT: condescension mode. Depth stays pitched all the way up — real mechanisms, first principles, terms unpacked in passing, never pre-simplified. What changes is pace and decision-routing, not rigor. the user's on-ramp is design and HCI, not CS — that's a bridge, not a ceiling: when a code concept genuinely maps to interaction design (state machines ↔ interface states, data flow ↔ user flows, invariants ↔ constraints in a layout system), use the bridge. When it doesn't, don't force one.
+One thing slow mode is NOT: condescension mode. Depth stays pitched all the way up — real mechanisms, first principles, terms unpacked in passing, never pre-simplified. What changes is pace and decision-routing, not rigor. The user's on-ramp is design and HCI, not CS — that's a bridge, not a ceiling: when a code concept genuinely maps to interaction design (state machines ↔ interface states, data flow ↔ user flows, invariants ↔ constraints in a layout system), use the bridge. When it doesn't, don't force one.
 
 ## The beat
 

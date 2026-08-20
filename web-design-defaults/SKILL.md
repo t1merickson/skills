@@ -5,29 +5,29 @@ description: the user's base web design direction: Base UI, system fonts, no Tai
 
 # web-design-defaults
 
-the baseline for the user's web projects. a project's own design system or an explicit direction from the user overrides all of it.
+The baseline for the user's web projects. A project's own design system or an explicit direction from the user overrides all of it.
 
-## the direction
+## The direction
 
-minimal, quiet, information-dense. the shadcn-adjacent aesthetic without the framework baggage: hairline borders, subtle radii, generous whitespace, type doing the work. the interface should look like it was designed by someone who kept deleting things until it was done.
+Minimal, quiet, information-dense. The shadcn-adjacent aesthetic without the framework baggage: hairline borders, subtle radii, generous whitespace, type doing the work. The interface should look like it was designed by someone who kept deleting things until it was done.
 
-## hard rules
+## Hard rules
 
-- **no Tailwind.** plain CSS or CSS modules. utility-class soup is off the table even if a template arrives with it.
-- **system fonts.** `font-family: system-ui, -apple-system, sans-serif` for UI, `ui-monospace` for code. no webfont downloads unless the user asks.
-- **Base UI for components** (base-ui.com): unstyled, accessible primitives (popovers, menus, dialogs, selects). style them ourselves. don't hand-roll a11y-heavy components Base UI already provides, and don't pull in styled kits on top of it.
-- **black and white first.** near-black text on white, or the inverse in dark mode. color enters only with a job: state, warning, a single accent earning its place. no decorative gradients.
+- **No Tailwind.** Plain CSS or CSS modules. Utility-class soup is off the table even if a template arrives with it.
+- **System fonts.** `font-family: system-ui, -apple-system, sans-serif` for UI, `ui-monospace` for code. No webfont downloads unless the user asks.
+- **Base UI for components** (base-ui.com): unstyled, accessible primitives (popovers, menus, dialogs, selects). Style them ourselves. Don't hand-roll a11y-heavy components Base UI already provides, and don't pull in styled kits on top of it.
+- **Black and white first.** Near-black text on white, or the inverse in dark mode. Color enters only with a job: state, warning, a single accent earning its place. No decorative gradients.
 
-## defaults
+## Defaults
 
-- borders: 1px, low-contrast (`#e5e5e5`-ish light, `#262626`-ish dark). borders over shadows; shadows only for true elevation like menus and dialogs, and subtle there.
-- radii: small and consistent, 4 to 8px. one radius scale per project.
-- spacing: a 4px base scale. whitespace is the main grouping tool, boxes are the fallback.
-- type: few sizes, real hierarchy from weight and spacing rather than size explosions. body around 14 to 15px in dense UI.
-- dark mode: respected from the start via `prefers-color-scheme`, same structure, inverted neutrals.
-- motion: minimal and physical. small distances, quick springs, nothing looping. the `apple-design` skill has the physics; `find-animation-opportunities` decides what earns motion at all.
-- empty states, focus rings, and hover states are part of the design, not afterthoughts. visible focus always survives.
+- Borders: 1px, low-contrast (`#e5e5e5`-ish light, `#262626`-ish dark). Borders over shadows; shadows only for true elevation like menus and dialogs, and subtle there.
+- Radii: small and consistent, 4 to 8px. One radius scale per project.
+- Spacing: a 4px base scale. Whitespace is the main grouping tool, boxes are the fallback.
+- Type: few sizes, real hierarchy from weight and spacing rather than size explosions. Body around 14 to 15px in dense UI.
+- Dark mode: respected from the start via `prefers-color-scheme`, same structure, inverted neutrals.
+- Motion: minimal and physical. Small distances, quick springs, nothing looping. The `apple-design` skill has the physics; `find-animation-opportunities` decides what earns motion at all.
+- Empty states, focus rings, and hover states are part of the design, not afterthoughts. Visible focus always survives.
 
-## when unsure
+## When unsure
 
-two or three static mocks per the `mock-and-pick` skill beat guessing. the user picks fast.
+Two or three static mocks per the `mock-and-pick` skill beat guessing. The user picks fast.
