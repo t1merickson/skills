@@ -9,6 +9,7 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 | Skill | What it does |
 |---|---|
 | **[checkpoint](checkpoint/)** | Save session state to CHECKPOINT.md, or reload it when resuming a project. |
+| **[cut-memory](cut-memory/)** | Audit memory files and cut everything CLAUDE.md or the codebase already records. |
 | **[standup](standup/)** | Cross-project recap of where everything stands and what's next. |
 | **[heads-down](heads-down/)** | Maximum autonomy with the guardrails hot. Throughput over dialogue. |
 | **[slow-mode](slow-mode/)** | Teaching-pace collaboration: one decision per beat; understanding is the deliverable. |
