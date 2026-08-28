@@ -1,6 +1,6 @@
 ---
 name: offline-archive
-description: Scrape a page or web tool into a self-contained offline copy that still works.
+description: Scrape a page or web tool into a self-contained offline copy that still works, or crawl a whole site politely.
 ---
 
 # offline-archive
@@ -18,6 +18,25 @@ The strategy follows from what the site is, and several types have known recipes
 - **Cargo Collective**: the entire site inventory lives in `window.__PRELOADED_STATE__` — extract it, no crawling needed. Originals at `/t/original/`; freight 403s without a browser user-agent; flip `domain_active` to false or the boot code redirects off localhost.
 
 **Prefer building from source whenever the repo exists** — then check built asset hashes against the deployed ones, which proves byte-identity to production for free.
+
+## Whole-site crawls
+
+Different job from a single-artifact archive: hundreds or thousands of fetches against someone else's host. The goal is that the host stays unbothered. Parameters below come from a 2,484-fetch run over 2h 45m with zero 429s, zero 5xx, and zero backoffs.
+
+**Read robots.txt and take the answer.** Sites increasingly enumerate AI-affiliated agents by name under `Disallow: /` — `anthropic-ai`, `Claude-User`, `Claude-Web`, `ClaudeBot`, `Claude-SearchBot`, `GPTBot`, `Bytespider`, `Scrapy` — while leaving generic crawlers like Googlebot allowed. That is a legible position: automated traffic is fine, AI-affiliated scrapers are refused. Two consequences, neither negotiable:
+
+- **Never impersonate an allowed crawler.** Claiming to be Googlebot to get past a rule aimed at you is the line.
+- **Identify honestly** — a user agent naming what the archive is for, plus a contact address that actually receives mail. A bouncing contact address is worse than none, since the entire purpose is that a sysadmin can reach someone. If a later pass finds the site has gotten stricter, stop.
+
+**When the API is locked, try the sitemaps.** The common WordPress state is a locked-down REST API (`/wp-json/` returning `rest_login_required`) beside a wide-open `wp-sitemap.xml` — the API gets secured and the sitemaps get forgotten. Sitemap children give the full item list plus taxonomy and author indexes, which is enough to plan the whole crawl before fetching a single page. Expect it to be slightly wrong: dedupe and filter out non-item URLs (redirect endpoints, `/random/`) before counting anything.
+
+**Rate:** 1 request/second with **±40% jitter**. The jitter matters more than the rate — a metronome reads as a bot even at a polite interval. Exponential backoff on 429/5xx (2s, 4s, 8s, capped at 60s). **Bail on 403** — a 403 is an answer, not an obstacle. Keep the crawl resumable; dying at minute 140 of a 165-minute run is expensive.
+
+**Look for the direct asset path, then look for the exception.** Media often sits at a predictable path (`/wp-content/themes/<theme>/<collection>/<id>/<name>.<ext>`), and if directory listing returns 200 it can be enumerated instead of parsed out of pages. Assume at least one item breaks the pattern — in that run, one was synthesized in-browser and had no assets at all. Any asset-path assumption has an exception; find it before trusting the count.
+
+**A published total that disagrees with yours is usually a definition mismatch, not a crawl error.** Work out which noun each side counts — that run's "7,560 patterns" turned out to be sequences, where each upload held 1 to 16 of them. Reconcile definitions before assuming either number is wrong.
+
+**Toolchain trap:** Python 3.14+ raises `socket.TimeoutError` directly out of `urllib.request` instead of wrapping it in `URLError`. A scraper catching only `URLError`/`HTTPError` dies mid-run; catch `(TimeoutError, ConnectionError, OSError)` too.
 
 ## The archive
 
