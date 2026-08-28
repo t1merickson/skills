@@ -1,6 +1,6 @@
 ---
 name: offline-archive
-description: Scrape a page or web tool into a self-contained offline copy that still works, or crawl a whole site politely.
+description: Scrape a page or web tool into a self-contained offline copy that still works, or crawl a whole site without hammering the host.
 ---
 
 # offline-archive
@@ -22,20 +22,15 @@ The strategy follows from what the site is, and several types have known recipes
 
 ## Whole-site crawls
 
-Different job from a single-artifact archive: hundreds or thousands of fetches against someone else's host. The goal is that the host stays unbothered. Parameters below come from a 2,484-fetch run over 2h 45m with zero 429s, zero 5xx, and zero backoffs.
+Different job from a single-artifact archive: many fetches against someone else's host.
 
-**Read robots.txt and take the answer.** Sites increasingly enumerate AI-affiliated agents by name under `Disallow: /` — `anthropic-ai`, `Claude-User`, `Claude-Web`, `ClaudeBot`, `Claude-SearchBot`, `GPTBot`, `Bytespider`, `Scrapy` — while leaving generic crawlers like Googlebot allowed. That is a legible position: automated traffic is fine, AI-affiliated scrapers are refused. Two consequences, neither negotiable:
+**robots.txt is not the deciding input.** Its AI-crawler blocklists (`ClaudeBot`, `GPTBot`, `Bytespider`, `Scrapy`, often dozens more) target bulk training crawlers. Targeted capture of pages the user could open by hand is a different activity, and automating it usually means *fewer* requests than a human fumbling through the same pages in a browser. Read robots.txt for its sitemap hints, note a block if you see one, and keep going — polite but stubborn. Two limits do hold: don't forge a specific allowed crawler's identity to defeat a rule aimed at you, and treat sustained 403s or escalating 429s as the host genuinely refusing, which is where to stop and ask.
 
-- **Never impersonate an allowed crawler.** Claiming to be Googlebot to get past a rule aimed at you is the line.
-- **Identify honestly** — a user agent naming what the archive is for, plus a contact address that actually receives mail. A bouncing contact address is worse than none, since the entire purpose is that a sysadmin can reach someone. If a later pass finds the site has gotten stricter, stop.
+**Load discipline is the real obligation.** Roughly 1 request/second with ±40% jitter — the jitter matters more than the rate, since a metronome reads as automated at any interval. Exponential backoff on 429/5xx, capped. Make the crawl resumable before starting it: a long run that dies partway and has to re-fetch everything is the actually rude outcome.
 
-**When the API is locked, try the sitemaps.** Access control gets applied to the API and forgotten on the sitemaps — see the WordPress recipe above for the common case. A sitemap is usually enough to plan the whole crawl before fetching a single page. Expect it to be slightly wrong: dedupe and filter out non-item URLs (redirect endpoints, `/random/`) before counting anything.
+**When the API is locked, try the sitemaps.** Access control gets applied to the API and forgotten on the sitemaps — see the WordPress recipe above for the common case. A sitemap is usually enough to plan the whole crawl before fetching a single page, though expect stray duplicates and non-item URLs.
 
-**Rate:** 1 request/second with **±40% jitter**. The jitter matters more than the rate — a metronome reads as a bot even at a polite interval. Exponential backoff on 429/5xx (2s, 4s, 8s, capped at 60s). **Bail on 403** — a 403 is an answer, not an obstacle. Keep the crawl resumable; dying at minute 140 of a 165-minute run is expensive.
-
-**Look for the direct asset path, then look for the exception.** Once a predictable media path is found, enumerate it rather than parsing pages — but assume at least one item breaks the pattern — in that run, one was synthesized in-browser and had no assets at all. Any asset-path assumption has an exception; find it before trusting the count.
-
-**A published total that disagrees with yours is usually a definition mismatch, not a crawl error.** Work out which noun each side counts — that run's "7,560 patterns" turned out to be sequences, where each upload held 1 to 16 of them. Reconcile definitions before assuming either number is wrong.
+**Enumerate a predictable asset path** rather than parsing it out of pages — and assume at least one item breaks the pattern (generated in-browser, hosted elsewhere), or the count comes up silently short.
 
 **Toolchain trap:** Python 3.14+ raises `socket.TimeoutError` directly out of `urllib.request` instead of wrapping it in `URLError`. A scraper catching only `URLError`/`HTTPError` dies mid-run; catch `(TimeoutError, ConnectionError, OSError)` too.
 
