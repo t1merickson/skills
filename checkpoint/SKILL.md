@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Save session state to CHECKPOINT.md, or reload it when resuming a project.
+description: Save session state to a per-session file in .checkpoints/, or reload every live checkpoint when resuming a project.
 ---
 
 # Checkpoint: reload the state, not the summary
@@ -31,9 +31,23 @@ The bolded two are usually the highest-value lines in the file and the first to 
 
 The instinct to write only what's verified and defensible destroys the thing being preserved. Half-formed is allowed. "This feels wrong and I don't know why" is a valuable entry. So is "I think the user actually wants X even though they asked for Y" — flagged as a read, not a fact. The one hard requirement is **calibration**: mark how sure you are and how it could be checked. A hunch labeled as a hunch might be the most useful line in the file; a hunch laundered as a fact is a landmine.
 
-## The file
+## The files
 
-`CHECKPOINT.md` in the project root. Six sections:
+Checkpoints go in `.checkpoints/` at the project root — a directory, not a single file. Outside a repo: `~/.claude/checkpoints/<project-slug>/`.
+
+One file per session, named `<YYYY-MM-DD>-<session-slug>-<task-slug>.md`. Get the session slug from the first line of `ListAgents`, which names the session you're in (`timmy-7a`, `roots-brain-56`). Pick the filename once, on your first write, and keep writing to that same file for the rest of the session — that's what keeps Decided and Discards genuinely append-only instead of a pile of snapshots.
+
+Why a directory: several agents work the same project from different tasks and different altitudes, and they close out at different times. One shared file means whoever finishes last erases everyone else's thinking, silently. Per-session files make the writes stop competing. Note that a subagent reports its *parent's* session slug, so the slug identifies a session rather than a single writer; the task slug is what separates two subagents of one session.
+
+Every file opens with a header, above the sections:
+
+```
+Session: <session-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <what this agent was working on, and at what altitude>
+```
+
+The scope line is what lets a later reader tell overlap from independence. Two checkpoints that both touch the sync layer are a contradiction to resolve if they're the same task and two halves of a picture if one was refactoring and the other was writing tests. Without the line, that's unknowable.
+
+Then six sections:
 
 | Section | Lifetime | Holds |
 |---|---|---|
@@ -44,7 +58,9 @@ The instinct to write only what's verified and defensible destroys the thing bei
 | **Discards** | append | Killed branches with cause of death. A discard with a recorded reason can be un-killed later; one that vanished silently can't. |
 | **Live wires** | rewrite | Hunches, nags, half-baked notions, confidence on shaky claims. As items resolve, promote them to Decided or Discards. |
 
-Skip empty sections; never pad to fill the shape. Keep rewritten sections tight — they're re-read every session. Append sections can grow; archive to `CHECKPOINT-<phase>.md` past roughly a thousand lines. Commit it with the work: the diff history of a checkpoint shows how the thinking moved, which the code history doesn't. Outside a repo, write to `~/.claude/checkpoints/<slug>.md`.
+Skip empty sections; never pad to fill the shape. Keep rewritten sections tight — they're re-read every session. Append sections can grow. Commit checkpoints with the work: the diff history of a checkpoint shows how the thinking moved, which the code history doesn't.
+
+When a thread is genuinely finished — merged, shipped, abandoned on purpose — move its file to `.checkpoints/archive/`. Move, never delete: a closed thread's discard pile is still the reason nobody should retry that branch. Archiving is what keeps "read all of them" on resume from growing without limit, and it's a deliberate act by someone who knows the work is done, not a guess made by a reader who wasn't there.
 
 Same pass: sweep the session's temp and scratch dirs, and record in Terrain anything deliberately left in place and why.
 
@@ -52,10 +68,12 @@ Same pass: sweep the session's temp and scratch dirs, and record in Terrain anyt
 
 A checkpoint is a claim about a world that has since moved. Trust it for reasoning, verify it for action:
 
-1. Read the whole file first — Live wires and Discards change what you'd do, and they're at the bottom.
-2. Verify volatile claims against reality before acting: `git status`, `git log`, do the tests still pass. Claims about *state* may be stale; claims about *reasoning* keep.
-3. Say what you reloaded, in two lines — the user can't remember the session either.
-4. Flag contradictions between the file and the code rather than silently reconciling; the gap is information.
+1. **Read every unarchived file in `.checkpoints/`, newest first — not just the newest one.** Recency does not rank these. The most recent checkpoint isn't a better version of the others; it's a different scope, written by an agent that may have been working a different problem entirely. Picking one and ignoring the rest loses exactly the thinking the directory exists to protect.
+2. **Check who's still alive.** Call `ListAgents` and match the session slugs against the filenames. A writer still in the list is actively working — treat its checkpoint as someone else's live desk, don't act on its plates, and message it directly if you need to, since the slug is the address. A writer that's gone means the file is finished thinking and safe to fold into yours. The slug is not durable, though: next week that name may belong to a different session. It answers "is this being worked right now," never "who owns this."
+3. Read each file whole — Live wires and Discards change what you'd do, and they're at the bottom.
+4. Verify volatile claims against reality before acting: `git status`, `git log`, do the tests still pass. Claims about *state* may be stale; claims about *reasoning* keep.
+5. Say what you reloaded, in two lines — the user can't remember the session either. If you read more than one checkpoint, say whose, and say whether they agreed.
+6. Flag contradictions rather than silently reconciling — between a file and the code, and between two files. The gap is information either way. Two checkpoints disagreeing about the same task usually means one of them didn't know about the other, and which one was wrong is a question for the user, not something to resolve by timestamp.
 
 ## When not to
 
