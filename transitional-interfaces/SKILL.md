@@ -9,6 +9,8 @@ An architecture skill. It does ONE thing: decide what happens *between* two stat
 
 It runs upstream of all of them. By the time you're choosing a curve, this skill's decision is already made — usually by default, usually badly.
 
+One skill sits above it: `spatial-interfaces` models the whole space an interface occupies. This skill designs a single edge on that map. If you can't name where the two states live relative to each other, the model is missing and that's the thing to fix first.
+
 ## The claim
 
 A static comp specifies states. It says nothing about the connection between them, so the connection gets built by default, and the default is a cut: one state replaced by another in a single frame.
@@ -98,6 +100,7 @@ Once relationship and structure are settled, hand off:
 - Curve, duration, spring constants → `animate`, with values from `motion-values.md` (`/Users/Commons/Developer/Personal/design-brain/topics/motion-values.md`).
 - Native equivalents → `apple-native-motion`.
 - Whether the animation is well built → `review-animations`.
+- The overall model these states live in, and whether the product can afford another navigation axis → `spatial-interfaces`.
 
 Do not specify milliseconds here. A structural decision expressed in exact timings gets argued about on the timings.
 
