@@ -68,12 +68,31 @@ Same pass: sweep the session's temp and scratch dirs, and record in Terrain anyt
 
 A checkpoint is a claim about a world that has since moved. Trust it for reasoning, verify it for action:
 
+0. **Look for state that isn't in `.checkpoints/` yet** — a bare `CHECKPOINT.md`, a `RESUME.md`, whatever this project's previous agents hand-rolled. See *Adopting stray state files*. Do this before reading, so the pass below covers everything rather than a subset that happens to be correctly filed.
 1. **Read every unarchived file in `.checkpoints/`, newest first — not just the newest one.** Recency does not rank these. The most recent checkpoint isn't a better version of the others; it's a different scope, written by an agent that may have been working a different problem entirely. Picking one and ignoring the rest loses exactly the thinking the directory exists to protect.
 2. **Check who's still alive.** Call `ListAgents` and match the session slugs against the filenames. A writer still in the list is actively working — treat its checkpoint as someone else's live desk, don't act on its plates, and message it directly if you need to, since the slug is the address. A writer that's gone means the file is finished thinking and safe to fold into yours. The slug is not durable, though: next week that name may belong to a different session. It answers "is this being worked right now," never "who owns this."
 3. Read each file whole — Live wires and Discards change what you'd do, and they're at the bottom.
 4. Verify volatile claims against reality before acting: `git status`, `git log`, do the tests still pass. Claims about *state* may be stale; claims about *reasoning* keep.
 5. Say what you reloaded, in two lines — the user can't remember the session either. If you read more than one checkpoint, say whose, and say whether they agreed.
 6. Flag contradictions rather than silently reconciling — between a file and the code, and between two files. The gap is information either way. Two checkpoints disagreeing about the same task usually means one of them didn't know about the other, and which one was wrong is a question for the user, not something to resolve by timestamp.
+
+## Adopting stray state files
+
+Projects accumulate hand-rolled versions of this file: `CHECKPOINT.md` with no slug (the old format), `COMPACTED.md`, `RESUME.md`, `STATE.md`, `PARKED.md`, `HANDOFF.md`, `CONTEXT.md`, `WIP.md`, `SESSION-NOTES.md`. Names vary and the list never ends, so judge by content, not filename. Do this pass once, the first time this skill runs in a project: `ls` the root and any docs directory, and read anything that might be session state.
+
+**The test is the one the whole skill runs on:** would someone who has read the repo and the full diff still not know this? Session state fails that test — it only ever existed in a conversation. Standing knowledge passes it, and standing knowledge is not yours to move. Three signals settle most cases:
+
+- **Who it's addressed to.** An agent writing to its future self ("next concrete step," "I tried X and it failed," "waiting on the user") versus a document written for a reader who wasn't there. Architecture notes, ADRs, and READMEs are the second thing even when they're informal.
+- **Provenance.** `git log --format='%an · %s' -- <file>`. A file the user has been editing by hand across months is theirs.
+- **Inbound references.** `grep -rn '<filename>' .` — if the README, CLAUDE.md, or docs link to it, it's part of the project and it stays exactly where it is.
+
+Then one of three verdicts:
+
+- **Session state** → normalize it into its own file in `.checkpoints/`, named `<its-last-modified-date>-adopted-<original-name>.md`, with a scope header recording where it came from. Give it its own file rather than merging it into yours: it's a different session's thinking at a different altitude, and folding it into your checkpoint is the same overwrite this directory exists to prevent. Once the content is preserved, move the original to `.checkpoints/archive/`.
+- **Standing knowledge** → leave it untouched. Mention that you found it and moved on.
+- **Both, which is the common case** → copy the session-shaped parts into an adopted checkpoint, leave the file in place holding the standing parts, and note in Terrain what moved and where. Never strip a file down to what you think is left.
+
+**Never delete, and prefer asking.** Move originals to `.checkpoints/archive/`; a redundant file costs one re-read, a deleted one costs the thing this skill exists to protect. Anything untracked by git has no other undo, so move it and say so in the same breath. Ask before touching a file you judged mixed or couldn't classify, and ask before adopting more than a couple at once — read `file-batch-safety` first if it's a real pile. When ambiguity survives all three signals, keep the file where it is and put the question in Live wires. Report what you adopted, what you left, and the one command that undoes it.
 
 ## When not to
 
