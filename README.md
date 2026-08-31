@@ -43,7 +43,7 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | Skill | What it does |
 |---|---|
 | **[offline-archive](offline-archive/)** | Scrape a page or web tool into a self-contained offline copy that still works. |
-| **[brain-wiki](brain-wiki/)** | Sort loose documents into a typed, linked Tolaria or Obsidian vault, on the PORTENT shape. |
+| **[brain-wiki](brain-wiki/)** | Sort loose documents into a typed, linked Tolaria or Obsidian vault. Survey, compile a shape, then write. |
 | **[synthetic-fixtures](synthetic-fixtures/)** | Recipes for synthetic test media — images, audio, video, data — instead of personal files. |
 | **[file-batch-safety](file-batch-safety/)** | Guardrails for batch file operations. Real file loss lives here. |
 | **[window-capture](window-capture/)** | Screenshot one macOS app window by window id; never the full screen. |
