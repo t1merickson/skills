@@ -63,7 +63,7 @@ The **shape** is the contract for the vault: what types exist, how objects conne
 
 | Type | Use when | Pick the neighbor when |
 |---|---|---|
-| **Source** | an external work that pages cite: paper, article, book, talk, repo, video. Requires `url` or citation, `author`, `retrieved`, and a liveness state | it's your own writing *about* the source → Note |
+| **Source** | an external work that pages cite: paper, article, book, talk, repo, video. Requires `citation` (a URL or a bibliographic string), `author`, `retrieved`, and `liveness` | it's your own writing *about* the source → Note |
 
 *Activation:* turn it on when pages will carry that bibliographic metadata and receive inbound `cites` edges. A file path you distilled a page from is `source_files:` provenance, not a Source page — those are different things and both can be present.
 
@@ -120,15 +120,19 @@ Vault-format policy, not ontology. Keep it at the bottom of `SHAPE.md`:
 
 - One file per object, flat at the vault root; type lives in frontmatter, not the folder path. Attachments in `attachments/`.
 - Filename is the kebab-case slug of the title. The H1 repeats the title in prose. Wikilinks target the slug: `[[launch-the-new-website]]`.
+- **Slug collisions:** never overwrite, never merge two objects because their titles matched. Disambiguate with a suffix the object already owns — `-2026-03-04` for an Event, the organization slug for a Person, the city for a Place. If nothing distinguishes them, they are probably one object; if they genuinely aren't, add the suffix and note both in `OPEN-QUESTIONS.md`.
 - Entry points: `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`.
 
 ### A compiled SHAPE.md
 
+The file has two halves, and both are required: frontmatter carries the machine-checkable contract, and the body carries the type rows — `use when` and `pick the neighbor when`, copied from the vocabulary above for the types this vault actually uses — plus the filing rules. A writer subagent reads `SHAPE.md` alone and needs everything to classify and serialize a page without coming back here.
+
 ```yaml
 ---
 shape: brain-wiki-import-1
-extends: portent-0.1
+lineage: portent-0.1 + work pack + Source     # provenance only; nothing inherits
 lifecycle: none
+required_on_all: [type, source_files]
 types:
   - {name: Note,         requires: []}
   - {name: Topic,        requires: []}
@@ -136,16 +140,20 @@ types:
   - {name: Organization, requires: []}
   - {name: Place,        requires: []}
   - {name: Event,        requires: [date]}
-  - {name: Source,       requires: [author, retrieved, liveness]}
+  - {name: Source,       requires: [citation, author, retrieved, liveness]}
+enums:
+  liveness: [live, moved, dead, paywalled, unchecked]
 relationships:
   - {name: belongs_to, cardinality: one,  range: any}
   - {name: related_to, cardinality: many, range: any}
   - {name: cites,      cardinality: many, range: [Source]}
-provenance: source_files
+source_files:
+  shape: list of paths relative to the input root
+  input_root: ../exports          # recorded once, so paths resolve later
 ---
 ```
 
-Types and relationships listed there are the whole allowed set. A page using anything else fails verification.
+Types and relationships listed there are the whole allowed set. A page using anything else fails verification. `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`, and Tolaria type documents are vault furniture, not pages — they are exempt from page validation, which is why `Type` does not appear in the type list.
 
 ## 3 · Distill
 
@@ -156,8 +164,8 @@ Fan out subagents, one per content area, each writing pages for its own area.
 The rest:
 
 - Every page validates against `SHAPE.md`: a type from the list, that type's required fields, declared relationships only, wikilinks that resolve.
-- Every page records `source_files:` — repo-relative paths it was distilled from.
-- **On a page built from more than one source, mark inline which source backs which claim.** A three-item list in the frontmatter does not say which file supports which sentence, and the verify pass can't check what isn't marked.
+- Every page records `source_files:` — paths relative to the input root recorded in `SHAPE.md`.
+- **On a page built from more than one source, mark inline which source backs which claim**, using markdown footnote syntax where the number is the 1-based index into `source_files`: `Sergio owns the type scale.[^2]` A three-item list in the frontmatter does not say which file supports which sentence, and the verify pass can't check what isn't marked. Single-source pages need no markers — the whole page resolves to the one entry.
 - Dense and factual: what is true, who decided, when, where it's written down. No connective tissue invented to make a page feel finished.
 - Anything you couldn't confidently type or connect gets `review: needs-human` and stays on the list you report.
 
@@ -168,7 +176,9 @@ Subagents write pages; only you merge, and only you touch `INDEX.md`. One writer
 A second wave, each subagent checking an area it did not write. Two jobs:
 
 1. **Claims** — every claim resolves against its cited source. This is why sources are marked inline.
-2. **Shape** — type is in `SHAPE.md`, required fields present, relationships declared, cardinality respected, link targets exist and have the right type for the relationship's range.
+2. **Shape** — type is in `SHAPE.md`, required fields present, enum values legal, relationships declared, cardinality respected, link targets exist and have the right type for the relationship's range, every `[^n]` marker has an entry at index *n* in `source_files`, and every multi-source page carries at least one marker.
+
+Vault furniture is exempt: `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`, and type documents are checked for internal consistency, not against the page contract.
 
 **This pass is not optional.** The first real run of this skill produced fabrications and this is what caught them. Findings get fixed, not footnoted.
 
@@ -180,7 +190,7 @@ If the new corpus needs something the shape lacks, amend `SHAPE.md` against the 
 
 ## Vault furniture
 
-- **`INDEX.md`** — every page, grouped by type. A hook per line is allowed but must be **extracted, never composed**: the page's first substantive sentence, verbatim, or nothing. Skip the hook if that sentence is boilerplate or too long. Written summaries at bulk scale are one more surface that drifts from the page, and an extracted hook is checkable — it's a substring of the file. A page nobody can reach from the index doesn't exist.
+- **`INDEX.md`** — every page, grouped by type. A hook per line is allowed but must be **extracted, never composed**: the page's first sentence of body prose, copied verbatim, or nothing at all. Skip it if that sentence runs past 160 characters or repeats the title. Written summaries at bulk scale are one more surface that drifts from the page; an extracted hook is checkable, since the verifier can confirm it appears in the file character for character after normalizing whitespace. A page nobody can reach from the index doesn't exist.
 - **`OPEN-QUESTIONS.md`** — what the corpus doesn't answer, what contradicts, what looks stale. Empty is valid. Invented entries are not.
 - **`SHAPE.md`** — the contract from phase 2.
 - **Tolaria type documents**, when the target is Tolaria — one file per type *actually used*, `type: Type` in frontmatter, carrying display settings the app reads: `color`, `_icon`, `_sidebar_label`, `_order`, `_list_properties_display`. Generate from `SHAPE.md` so the two can't drift.
