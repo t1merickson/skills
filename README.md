@@ -1,6 +1,6 @@
 # skills
 
-My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrally so anyone can use them. They're plain markdown; any agent (or human) that reads the format can pick them up. Skills refer to "the user" — that's whoever runs them. A few encode opinionated defaults (design taste, workflow shape); treat those as starting points and tune to your own.
+My live [Agent Skills](https://agentskills.io), mostly authored while using Claude Code and written neutrally where the workflow is genuinely portable. They're plain markdown; Codex, ChatGPT, Claude, another compatible agent, or a human can read the format. Skills refer to "the user" — that's whoever runs them. A few encode opinionated defaults (design taste, workflow shape); treat those as starting points and tune to your own.
 
 ## What's here
 
@@ -8,7 +8,7 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 
 | Skill | What it does |
 |---|---|
-| **[checkpoint](checkpoint/)** | Save session state to CHECKPOINT.md, or reload it when resuming a project. |
+| **[checkpoint](checkpoint/)** | Save task state to a per-task file in `.checkpoints/`, or reload it when resuming a project. |
 | **[cut-memory](cut-memory/)** | Audit memory files and cut everything CLAUDE.md or the codebase already records. |
 | **[standup](standup/)** | Cross-project recap of where everything stands and what's next. |
 | **[heads-down](heads-down/)** | Maximum autonomy with the guardrails hot. Throughput over dialogue. |
@@ -43,7 +43,7 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 | Skill | What it does |
 |---|---|
 | **[offline-archive](offline-archive/)** | Scrape a page or web tool into a self-contained offline copy that still works. |
-| **[brain-wiki](brain-wiki/)** | Distill an exported corpus (Notion, Slack, GitHub) into a source-grounded wiki. |
+| **[brain-wiki](brain-wiki/)** | Sort loose documents into a typed, linked Tolaria or Obsidian vault, on the PORTENT shape. |
 | **[synthetic-fixtures](synthetic-fixtures/)** | Recipes for synthetic test media — images, audio, video, data — instead of personal files. |
 | **[file-batch-safety](file-batch-safety/)** | Guardrails for batch file operations. Real file loss lives here. |
 | **[window-capture](window-capture/)** | Screenshot one macOS app window by window id; never the full screen. |
@@ -58,7 +58,16 @@ My live [Agent Skills](https://agentskills.io) for Claude Code, written neutrall
 
 ## Install
 
-Copy any skill's folder into your agent's skills directory. For Claude Code that's `~/.claude/skills/`:
+For Codex and the ChatGPT desktop app, symlink the skills you want into the personal skill directory. Symlinks keep this checkout as the authored source:
+
+```bash
+mkdir -p ~/.agents/skills
+ln -s "$PWD/checkpoint" ~/.agents/skills/checkpoint
+```
+
+Codex detects skill changes automatically; restart it if a new skill does not appear. A few workflows remain intentionally Claude-specific: `claude-md-coach`, `codex`, `cut-memory`, and `session-audit`.
+
+For Claude Code, copy or symlink a folder into `~/.claude/skills/`:
 
 ```bash
 git clone https://github.com/t1merickson/skills.git
