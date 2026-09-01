@@ -19,9 +19,9 @@ Look at the cwd and classify it:
 
 Per project in scope:
 
-1. `CHECKPOINT.md` if present — the Now, Plates, and Live wires sections carry the state.
+1. Every unarchived file in `.checkpoints/` if present, plus a legacy `CHECKPOINT.md` — the Now, Plates, and Live wires sections carry the state.
 2. Git: last real commit (message and date), current branch, and `git status --porcelain` for uncommitted changes.
-3. The project's CLAUDE.md header or README first line when nothing else says what the thing is.
+3. The project's AGENTS.md, CLAUDE.md, or README first line when nothing else says what the thing is.
 
 Recency orders the report; it never filters it. A project untouched since spring still gets its line — "quiet" is state, not noise.
 

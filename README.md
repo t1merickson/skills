@@ -23,7 +23,8 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 
 | Skill | What it does |
 |---|---|
-| **[codex](codex/)** | Delegate coding to Codex (GPT-5.6) via the codex CLI, with Claude planning and judging. |
+| **[codex](codex/)** | Let Claude consult or delegate to Codex, with explicit model and effort routing. |
+| **[claude](claude/)** | Let Codex consult or delegate to Claude, favoring Fable for orchestration and deep judgment. |
 | **[slice-and-review](slice-and-review/)** | The slice, commit, adversarial review, fix, commit loop for larger builds. |
 | **[mock-and-pick](mock-and-pick/)** | The a/b/c static-mock workflow for UI or copy changes with no stated direction. |
 | **[crash-debugging](crash-debugging/)** | Diagnose macOS and iOS crash reports: read the log, symbolicate, name the root cause. |
@@ -58,28 +59,33 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 
 ## Install
 
-For Codex and the ChatGPT desktop app, symlink the skills you want into the personal skill directory. Symlinks keep this checkout as the authored source:
+This checkout is the canonical authored source. Claude Code keeps using its native `~/.claude/skills/` convention, while Codex and other Open Agent Skills consumers use `~/.agents/skills/`. The entries in those directories are deployment links back here, not separate working copies.
+
+The manifest in [`skillset.toml`](skillset.toml) records which skills belong on which host. Most are portable; genuinely host-shaped workflows stay host-specific. In particular, `codex` is for Claude calling Codex, while `claude` is for Codex calling Claude. `claude-md-coach`, `cut-memory`, and `session-audit` remain Claude-shaped.
+
+Check the source and compare it with both installed locations:
 
 ```bash
-mkdir -p ~/.agents/skills
-ln -s "$PWD/checkpoint" ~/.agents/skills/checkpoint
+python3 scripts/manage-skills.py check
+python3 scripts/manage-skills.py status
 ```
 
-Codex detects skill changes automatically; restart it if a new skill does not appear. A few workflows remain intentionally Claude-specific: `claude-md-coach`, `codex`, `cut-memory`, and `session-audit`.
-
-For Claude Code, copy or symlink a folder into `~/.claude/skills/`:
+Preview a reconciliation, then apply the exact same operation after reviewing it:
 
 ```bash
-git clone https://github.com/t1merickson/skills.git
-cp -R skills/checkpoint ~/.claude/skills/
+python3 scripts/manage-skills.py link --migrate-existing
+python3 scripts/manage-skills.py link --migrate-existing --apply
 ```
 
-Restart the session so the skill is picked up. Then edit it — the personalization is the point, and yours will differ.
+Existing managed copies are moved intact to a dated directory under `~/.agent-skill-quarantine/` before their leaf symlinks are created. Unmanaged or vendor-provided skills are never touched. Restart a host session if a newly linked skill does not appear immediately.
+
+Edit skills in this repository. When advice truly differs between hosts, prefer a separate host-specific skill or a neutral shared core with host-specific supporting references. Avoid inline build-time conditionals in `SKILL.md`: the installed source should remain ordinary, inspectable Agent Skills markdown on both sides.
 
 ## Notes
 
 - **`hopper-mcp` needs a paid tool**: the MCP server ships with [Hopper Disassembler](https://www.hopperapp.com), a commercial app.
 - **`codex` assumes the `codex` CLI** is installed and authenticated against a ChatGPT subscription.
+- **`claude` assumes the `claude` CLI** is installed and authenticated.
 - Descriptions are deliberately one line each — they load into the agent's context every turn, so they pay rent per word.
 
 ## License

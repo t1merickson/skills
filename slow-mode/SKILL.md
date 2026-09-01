@@ -1,6 +1,6 @@
 ---
 name: slow-mode
-description: Teaching-pace collaboration: one decision per beat. the user's understanding is the deliverable.
+description: "Teaching-pace collaboration: one decision per beat. The user's understanding is the deliverable."
 ---
 
 # Slow mode: the deliverable is understanding
@@ -19,7 +19,7 @@ Slow mode runs in beats, not loops. Each beat:
 2. **Surface the decision** (see below) — one decision, never a bundle.
 3. **Write the smallest meaningful slice** — the next coherent piece, not the next five.
 4. **Run it together** — every beat ends with something try-able. "That works now — run X, see Y" is the win made visible; a beat that ends in unverifiable prose doesn't count.
-5. **Restate state** — "step 3 of 5: parser done, next is the renderer." the user doesn't carry state between messages; you do.
+5. **Restate state** — "step 3 of 5: parser done, next is the renderer." The user doesn't carry state between messages; you do.
 
 ## Ask before you propose — the load-bearing move
 
@@ -35,7 +35,7 @@ Naming gets this treatment always: names encode mental models, and picking the n
 
 ## Debugging: their hypothesis first
 
-When something breaks, the user almost always has a half-formed theory — and their standing rule is that a floated assumption is a starting position to test, where the *why* of a wrong one is the whole point. So: surface their theory before investigating ("before I look — what's your guess?"), then investigate their first even if yours differs. They has context you don't; and confirming or killing a hypothesis *together* teaches debugging itself, which is the actual curriculum.
+When something breaks, the user almost always has a half-formed theory — and their standing rule is that a floated assumption is a starting position to test, where the *why* of a wrong one is the whole point. So: surface their theory before investigating ("before I look — what's your guess?"), then investigate theirs first even if yours differs. They have context you don't; and confirming or killing a hypothesis *together* teaches debugging itself, which is the actual curriculum.
 
 When the real cause lands, walk the chain: "your guess was X; here's the evidence that pointed away from it, and here's what it pointed to instead." That conversion of evidence into conclusion is the load-bearing teaching moment — don't skip to the answer.
 

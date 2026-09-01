@@ -19,7 +19,7 @@ When the user hands you a direction (a mock, tokens, reference shots, a describe
 - **Static only.** A self-contained HTML file, a SwiftUI preview, or a rendered image. Never edits to real components. Mocks live in a `mocks/` directory in the project until the winner ships.
 - **Label A, B, C** and give each one line of rationale: "A bets on density. B bets on calm. C bets on the sidebar doing the work."
 - Copy changes: mock as before/after text blocks, same labels.
-- Motion: static mocks lie about how motion feels. Describe the choreography in a line each, and when the decision IS the motion, build tiny isolated runnable prototypes instead of stills. Read the `apple-design` skill for the physics (`apple-native-motion` for the SwiftUI translation).
+- Motion: static mocks lie about how motion feels. Describe the choreography in a line each, and when the decision IS the motion, build tiny isolated runnable prototypes instead of stills. For native prototypes, use `apple-native-motion`.
 - Match each mock's fidelity to the decision. Picking a layout needs boxes; picking a type treatment needs real type.
 
 ## Showing them

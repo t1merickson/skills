@@ -23,9 +23,9 @@ Three facts about you make this work:
 
 - Parse the ask: topic, angle (the user often wants the design and HCI face of a technical topic, but let their framing tell you), depth ("briefly" vs "properly"), recency ("this moves fast").
 - Mid-session: park in-flight work first. Flush state to the project's plan doc as you would before compaction. Then switch fully. Half-attention immersion produces half-dense notes.
-- Index home: `~/.claude/obsessions/<yyyy-mm-dd>-<topic-slug>/` (use `date +%F`). Files: `00-index.md`, `01-braindump.md`, `02-notes.md`, and `sources/` only if you download anything.
+- Index home: `~/.agents/obsessions/<yyyy-mm-dd>-<topic-slug>/` (use `date +%F`). Files: `00-index.md`, `01-braindump.md`, `02-notes.md`, and `sources/` only if you download anything.
 - Where the bulk goes: the index is a light touchpoint, not a warehouse. If the session's cwd is a container for this thing — a project dir, even an empty one whose parent says what it's for — downloads, sources, and work product go THERE, and `00-index.md` just links out to them. Only when the cwd is generic (a home directory, nothing project-shaped) does everything live in the obsession dir. The test: "does this folder exist to hold this topic?" Yes → work there, index links. No → don't clutter it.
-- Check for a prior obsession: `ls ~/.claude/obsessions/`. If this topic or a near neighbor has a dir, read its `00-index.md` and treat today as a delta. Don't restart from zero; the growing library is the point.
+- Check for a prior obsession in `~/.agents/obsessions/` and, for continuity with older Claude runs, `~/.claude/obsessions/`. If this topic or a near neighbor has a directory, read its `00-index.md` and treat today as a delta. Keep new work in `~/.agents/obsessions/`; do not move the legacy library unless the user asks. Don't restart from zero; the growing library is the point.
 
 ### 1 · Braindump, before any tool call
 
@@ -72,5 +72,5 @@ Report to the user payload-first: immersion done, what you read, the two or thre
 ## Housekeeping
 
 - Post-compaction, read `00-index.md` before answering anything on the topic. The index survives compaction; your reasoning doesn't.
-- Obsession dirs are NOT scratch. Never sweep `~/.claude/obsessions/`. The library is the durable output.
+- Obsession directories are NOT scratch. Never sweep `~/.agents/obsessions/` or the legacy `~/.claude/obsessions/`. The library is the durable output.
 - Budget: "briefly" ≈ 10–20 minutes, a handful of fetches, one pass. "properly" scales up. Depth comes from reading well, not reading everything, and this house watches its usage limits.

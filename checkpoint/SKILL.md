@@ -1,6 +1,6 @@
 ---
 name: checkpoint
-description: Save session state to a per-session file in .checkpoints/, or reload every live checkpoint when resuming a project.
+description: Save work state to a per-task file in .checkpoints/, or reload every live checkpoint when resuming a project.
 ---
 
 # Checkpoint: reload the state, not the summary
@@ -9,7 +9,7 @@ A compaction summary preserves what was done and drops what it was like to be mi
 
 ## The one rule: the repo is not the payload
 
-Code, diffs, git history, CLAUDE.md — all of it survives compaction perfectly and re-reads in seconds. The test for every line: **would someone who has read the whole repo and the full diff still not know this?** If they'd know it, cut it. What survives that filter only ever existed in the conversation — and that's the entire point of the file. They can see *what* the code does; they can't see that the obvious approach died on Tuesday, that a number is a placeholder, that the user said something in passing that changes the direction.
+Code, diffs, git history, project instructions such as AGENTS.md or CLAUDE.md, and durable docs — all of it survives compaction perfectly and re-reads in seconds. The test for every line: **would someone who has read the whole repo and the full diff still not know this?** If they'd know it, cut it. What survives that filter only ever existed in the conversation — and that's the entire point of the file. They can see *what* the code does; they can't see that the obvious approach died on Tuesday, that a number is a placeholder, that the user said something in passing that changes the direction.
 
 ## The recall pass
 
@@ -33,16 +33,16 @@ The instinct to write only what's verified and defensible destroys the thing bei
 
 ## The files
 
-Checkpoints go in `.checkpoints/` at the project root — a directory, not a single file. Outside a repo: `~/.claude/checkpoints/<project-slug>/`.
+Checkpoints go in `.checkpoints/` at the project root — a directory, not a single file. Outside a repo, follow the active host's personal convention: `~/.claude/checkpoints/<project-slug>/` in Claude Code, or `~/.agents/checkpoints/<project-slug>/` in Codex and other open-agent hosts.
 
-One file per session, named `<YYYY-MM-DD>-<session-slug>-<task-slug>.md`. Get the session slug from the first line of `ListAgents`, which names the session you're in (`timmy-7a`, `roots-brain-56`). Pick the filename once, on your first write, and keep writing to that same file for the rest of the session — that's what keeps Decided and Discards genuinely append-only instead of a pile of snapshots.
+One file per task or independent work lane, named `<YYYY-MM-DD>-<task-slug>.md`. Derive a short, stable slug from the goal, not from a transient model name, session name, or process id. If that name already belongs to another task, add a short distinguishing suffix; if independent agent lanes will write checkpoints, give each lane its own suffix. Pick the filename once on the first write and keep writing to it for the rest of the task — that's what keeps Decided and Discards genuinely append-only instead of a pile of snapshots.
 
-Why a directory: several agents work the same project from different tasks and different altitudes, and they close out at different times. One shared file means whoever finishes last erases everyone else's thinking, silently. Per-session files make the writes stop competing. Note that a subagent reports its *parent's* session slug, so the slug identifies a session rather than a single writer; the task slug is what separates two subagents of one session.
+Why a directory: several tasks, sessions, or agents can work the same project at different altitudes and close out at different times. One shared file means whoever finishes last erases everyone else's thinking, silently. Per-task files make the writes stop competing.
 
 Every file opens with a header, above the sections:
 
 ```
-Session: <session-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <what this agent was working on, and at what altitude>
+Task: <task-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <what this task was working on, and at what altitude>
 ```
 
 The scope line is what lets a later reader tell overlap from independence. Two checkpoints that both touch the sync layer are a contradiction to resolve if they're the same task and two halves of a picture if one was refactoring and the other was writing tests. Without the line, that's unknowable.
@@ -53,14 +53,14 @@ Then six sections:
 |---|---|---|
 | **Now** | rewrite | One paragraph: what we're doing, what phase, what's next. First thing read, so it goes first. |
 | **Plates** | rewrite | Everything in motion — in-flight, background, waiting on the user, promised, known-necessary but unstarted — each with its state and what unblocks it. |
-| **Terrain** | rewrite/merge | Hard-won environment facts: paths, commands, gotchas, what broke and how it got fixed. Anything durable enough to outlive the project graduates to CLAUDE.md instead. |
+| **Terrain** | rewrite/merge | Hard-won environment facts: paths, commands, gotchas, what broke and how it got fixed. Anything durable enough to outlive the project graduates to AGENTS.md or the project's durable docs instead. |
 | **Decided** | append | Settled calls, each with its reason — without the reason, future-me relitigates from scratch. |
 | **Discards** | append | Killed branches with cause of death. A discard with a recorded reason can be un-killed later; one that vanished silently can't. |
 | **Live wires** | rewrite | Hunches, nags, half-baked notions, confidence on shaky claims. As items resolve, promote them to Decided or Discards. |
 
 Skip empty sections; never pad to fill the shape. Keep rewritten sections tight — they're re-read every session. Append sections can grow. Commit checkpoints with the work: the diff history of a checkpoint shows how the thinking moved, which the code history doesn't.
 
-When a thread is genuinely finished — merged, shipped, abandoned on purpose — move its file to `.checkpoints/archive/`. Move, never delete: a closed thread's discard pile is still the reason nobody should retry that branch. Archiving is what keeps "read all of them" on resume from growing without limit, and it's a deliberate act by someone who knows the work is done, not a guess made by a reader who wasn't there.
+When a task is genuinely finished — merged, shipped, abandoned on purpose — move its file to `.checkpoints/archive/`. Move, never delete: a closed task's discard pile is still the reason nobody should retry that branch. Archiving is what keeps "read all of them" on resume from growing without limit, and it's a deliberate act by someone who knows the work is done, not a guess made by a reader who wasn't there.
 
 Same pass: sweep the session's temp and scratch dirs, and record in Terrain anything deliberately left in place and why.
 
@@ -70,10 +70,10 @@ A checkpoint is a claim about a world that has since moved. Trust it for reasoni
 
 0. **Look for state that isn't in `.checkpoints/` yet** — a bare `CHECKPOINT.md`, a `RESUME.md`, whatever this project's previous agents hand-rolled. See *Adopting stray state files*. Do this before reading, so the pass below covers everything rather than a subset that happens to be correctly filed.
 1. **Read every unarchived file in `.checkpoints/`, newest first — not just the newest one.** Recency does not rank these. The most recent checkpoint isn't a better version of the others; it's a different scope, written by an agent that may have been working a different problem entirely. Picking one and ignoring the rest loses exactly the thinking the directory exists to protect.
-2. **Check who's still alive.** Call `ListAgents` and match the session slugs against the filenames. A writer still in the list is actively working — treat its checkpoint as someone else's live desk, don't act on its plates, and message it directly if you need to, since the slug is the address. A writer that's gone means the file is finished thinking and safe to fold into yours. The slug is not durable, though: next week that name may belong to a different session. It answers "is this being worked right now," never "who owns this."
+2. **Check live ownership when the host exposes it.** In Claude Code, inspect live agents or teams; in Codex, inspect peer tasks or agents. Match their goals and scopes to the checkpoint headers. A matching active task is someone else's live desk: don't act on its Plates, and message it only when coordination is actually needed. If task visibility is unavailable or the match is ambiguous, treat the checkpoint as potentially live rather than assuming ownership.
 3. Read each file whole — Live wires and Discards change what you'd do, and they're at the bottom.
 4. Verify volatile claims against reality before acting: `git status`, `git log`, do the tests still pass. Claims about *state* may be stale; claims about *reasoning* keep.
-5. Say what you reloaded, in two lines — the user can't remember the session either. If you read more than one checkpoint, say whose, and say whether they agreed.
+5. Say what you reloaded, in two lines — the user can't remember every task either. If you read more than one checkpoint, name their scopes and say whether they agreed.
 6. Flag contradictions rather than silently reconciling — between a file and the code, and between two files. The gap is information either way. Two checkpoints disagreeing about the same task usually means one of them didn't know about the other, and which one was wrong is a question for the user, not something to resolve by timestamp.
 
 ## Adopting stray state files
@@ -84,7 +84,7 @@ Projects accumulate hand-rolled versions of this file: `CHECKPOINT.md` with no s
 
 - **Who it's addressed to.** An agent writing to its future self ("next concrete step," "I tried X and it failed," "waiting on the user") versus a document written for a reader who wasn't there. Architecture notes, ADRs, and READMEs are the second thing even when they're informal.
 - **Provenance.** `git log --format='%an · %s' -- <file>`. A file the user has been editing by hand across months is theirs.
-- **Inbound references.** `grep -rn '<filename>' .` — if the README, CLAUDE.md, or docs link to it, it's part of the project and it stays exactly where it is.
+- **Inbound references.** `rg -n '<filename>' .` — if the README, AGENTS.md, CLAUDE.md, or docs link to it, it's part of the project and it stays exactly where it is.
 
 Then one of three verdicts:
 

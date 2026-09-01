@@ -25,7 +25,7 @@ The minimum iOS version determines the Xcode version, SDK, available APIs, and a
 1. Ask which devices and iOS versions matter, and check current adoption if the answer is "most people's."
 2. List the APIs the core features need and verify availability against current documentation — never from memory.
 3. Decide the device story explicitly: iPhone-only, or iPhone and iPad with real size-class layouts.
-4. Record the decision and its reasoning in the project's CLAUDE.md.
+4. Record the decision and its reasoning in the project's AGENTS.md or other standing project documentation.
 
 The decision is not permanent. A design decision can demand a newer API, and raising the floor is the right answer more often than reimplementing what the OS now gives you — record the raise and its reason alongside the original. If the project is split into packages, only raise the floors that actually need it.
 
@@ -45,7 +45,7 @@ Prefer SwiftUI for new work. Drop to UIKit deliberately:
 - Dark Mode from the start via semantic colors, never hardcoded values. Split the palette explicitly: brand colors are fixed, every surface and text color is adaptive. Two failures show up late and cost a full sweep to undo — forcing `.colorScheme(.dark)` on a screen while system chrome still follows the OS, and using a surface token as text ink (invisible in one appearance, fine in the other). Every `#Preview` renders in both appearances, and the UI tests run in both.
 - Iconography: SF Symbols at text-matching weights. No emoji in UI.
 - Haptics for meaningful moments — confirmation, boundaries, selection — not decoration.
-- Motion: physical, interruptible, and driven by gestures where possible. Reduce Motion means a designed gentler equivalent — a crossfade, a static summary — never a removal or a broken state. See the `apple-design` skill for the physics and `apple-native-motion` for the SwiftUI code; `find-animation-opportunities` decides what earns motion.
+- Motion: physical, interruptible, and driven by gestures where possible. Reduce Motion means a designed gentler equivalent — a crossfade, a static summary — never a removal or a broken state. See `apple-native-motion` for the SwiftUI and UIKit implementation guidance.
 - VoiceOver: every interactive element needs a label, a trait, and a sane reading order.
 - Contrast passes in both Light and Dark Mode, not just one.
 - Tab bar holds 2–5 top-level sections and nothing else — no actions living in tab items.
@@ -64,4 +64,4 @@ When behavior is wrong and a minimal repro shows the framework at fault, tag the
 
 Drive the built app in the simulator: safe areas respected in both orientations you support, keyboard behavior correct, Dynamic Type at a large size, Dark Mode, back-swipe working, no dead ends without a way back. Then the accessibility and performance pass: run VoiceOver through the core flow once (labels present, order sensible, nothing silent); set text to the largest accessibility size and confirm nothing clips; turn on Reduce Motion and confirm big transitions fall back to a crossfade; scroll the longest list and watch for dropped frames; if iPad is in scope, check Split View and landscape. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
 
-Then leave behind a way to run it. A path deep in DerivedData is useless the moment the session ends, and on iOS the user cannot double-click a `.app` anyway. Give the project a one-command target that builds for the booted simulator, installs, and launches — plus one that captures the simulator screen to a known path — and record both in the project's CLAUDE.md. Screenshots are how visual work gets reviewed at all here; without a capture command every review turn costs the user a manual step.
+Then leave behind a way to run it. A path deep in DerivedData is useless the moment the session ends, and on iOS the user cannot double-click a `.app` anyway. Give the project a one-command target that builds for the booted simulator, installs, and launches — plus one that captures the simulator screen to a known path — and record both in the project's AGENTS.md or durable developer docs. Screenshots are how visual work gets reviewed at all here; without a capture command every review turn costs the user a manual step.

@@ -1,6 +1,6 @@
 ---
 name: crash-debugging
-description: Diagnose macOS and iOS crash reports: read the log, symbolicate, name the root cause.
+description: "Diagnose macOS and iOS crash reports: read the log, symbolicate, name the root cause."
 ---
 
 # crash-debugging

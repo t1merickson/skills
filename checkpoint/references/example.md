@@ -4,11 +4,11 @@ A synthetic one, shown mid-project so the register is visible. The thing to copy
 
 ---
 
-`.checkpoints/2026-07-24-tessera-4f-sync-rewrite.md`
+`.checkpoints/2026-07-24-sync-rewrite.md`
 
 # Checkpoint — Tessera
 
-Session: tessera-4f · Written: 2026-07-24 16:20 · Scope: the CRDT sync rewrite, model layer through views. Not touching the export pipeline — `tessera-c1` was in there this morning.
+Task: sync-rewrite · Written: 2026-07-24 16:20 · Scope: the CRDT sync rewrite, model layer through views. Not touching the export pipeline — another active checkpoint owns it.
 
 Branch `sync-rewrite`, 6 commits in, not merged.
 

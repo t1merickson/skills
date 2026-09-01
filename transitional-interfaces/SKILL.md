@@ -1,11 +1,11 @@
 ---
 name: transitional-interfaces
-description: Design the connection between two interface states, not the states themselves — deciding what relationship a transition has to carry, whether continuity can replace navigation chrome, and what the transition does when the data isn't there yet. Use when a flow moves between views, when a list gains or loses items, when choosing between pushing a screen, expanding inline, and presenting a sheet, when a static comp specifies two screens but nothing about how one becomes the other, or when an interface "feels jarring" or "like a glitch" without an obvious cause. Structural decisions only — hand easing curves and durations to `animate`.
+description: Design the connection between two interface states, not the states themselves. Use when a flow moves between views, a set changes membership, a static comp omits the transition, or an interface feels jarring without an obvious cause. Makes structural decisions, not easing or duration choices.
 ---
 
 # Transitional Interfaces
 
-An architecture skill. It does ONE thing: decide what happens *between* two states, when that decision changes the structure of the interface rather than its polish. It does not pick easing curves or durations (that's `animate`), hunt a codebase for animation opportunities (that's `find-animation-opportunities`), review a motion diff (that's `review-animations`), or name an effect (that's `animation-vocabulary`).
+An architecture skill. It does ONE thing: decide what happens *between* two states, when that decision changes the structure of the interface rather than its polish. It does not pick easing curves or durations, hunt a codebase for animation opportunities, review a motion diff, or name an effect.
 
 It runs upstream of all of them. By the time you're choosing a curve, this skill's decision is already made — usually by default, usually badly.
 
@@ -34,7 +34,7 @@ Before anything else, name the relationship between the outgoing and incoming st
 | **Peer views with no spatial relation** | A change of context, with no false continuity implied | Fade through | A shared-element transition, which fabricates an identity that isn't there |
 | **Genuinely unrelated** | Nothing. A cut is correct | — | An elaborate transition inventing a relationship |
 
-The last two rows are the ones people skip. Motion that asserts a relationship the interface doesn't have is worse than a cut, because the user spends attention decoding a connection that doesn't exist. The restraint rule here is the same one `find-animation-opportunities` enforces; this skill just reaches it earlier.
+The last two rows are the ones people skip. Motion that asserts a relationship the interface doesn't have is worse than a cut, because the user spends attention decoding a connection that doesn't exist. Apply the restraint rule before implementation, while the structure is still cheap to change.
 
 ## Membership changes are two beats, not one
 
@@ -97,9 +97,9 @@ The historical reason interfaces shipped cuts was that continuity was hard to bu
 
 Once relationship and structure are settled, hand off:
 
-- Curve, duration, spring constants → `animate`, with values from `motion-values.md` (`/Users/Commons/Developer/Personal/design-brain/topics/motion-values.md`).
+- Curve, duration, spring constants → the project's motion system or platform guidance.
 - Native equivalents → `apple-native-motion`.
-- Whether the animation is well built → `review-animations`.
+- Whether the animation is well built → implementation review and a rendered interaction check.
 - The overall model these states live in, and whether the product can afford another navigation axis → `spatial-interfaces`.
 
 Do not specify milliseconds here. A structural decision expressed in exact timings gets argued about on the timings.

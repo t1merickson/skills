@@ -1,0 +1,199 @@
+schema = 1
+
+[hosts.claude]
+root = "~/.claude/skills"
+
+[hosts.codex]
+root = "~/.agents/skills"
+
+[[skills]]
+name = "apple-native-motion"
+source = "apple-native-motion"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "brain-wiki"
+source = "brain-wiki"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "checkpoint"
+source = "checkpoint"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "claude-md-coach"
+source = "claude-md-coach"
+hosts = ["claude"]
+portable = false
+
+[[skills]]
+name = "claude"
+source = "claude"
+hosts = ["codex"]
+portable = false
+
+[[skills]]
+name = "codex"
+source = "codex"
+hosts = ["claude"]
+portable = false
+
+[[skills]]
+name = "crash-debugging"
+source = "crash-debugging"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "cut-memory"
+source = "cut-memory"
+hosts = ["claude"]
+portable = false
+
+[[skills]]
+name = "explaining-problems"
+source = "explaining-problems"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "file-batch-safety"
+source = "file-batch-safety"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "heads-down"
+source = "heads-down"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "hopper-discovery"
+source = "hopper-discovery"
+hosts = ["claude"]
+portable = true
+
+[[skills]]
+name = "hopper-mcp"
+source = "hopper-mcp"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "ios-design"
+source = "ios-design"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "macos-design"
+source = "macos-design"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "mock-and-pick"
+source = "mock-and-pick"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "obsess-hero"
+source = "obsess-hero"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "obsess"
+source = "obsess"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "offline-archive"
+source = "offline-archive"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "os-workarounds"
+source = "os-workarounds"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "paper-mcp"
+source = "paper-mcp"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "second-loop"
+source = "second-loop"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "session-audit"
+source = "session-audit"
+hosts = ["claude"]
+portable = false
+
+[[skills]]
+name = "ship-macos"
+source = "ship-macos"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "slice-and-review"
+source = "slice-and-review"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "slow-mode"
+source = "slow-mode"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "spatial-interfaces"
+source = "spatial-interfaces"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "standup"
+source = "standup"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "synthetic-fixtures"
+source = "synthetic-fixtures"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "transitional-interfaces"
+source = "transitional-interfaces"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "web-design-defaults"
+source = "web-design-defaults"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "window-capture"
+source = "window-capture"
+hosts = ["claude", "codex"]
+portable = true

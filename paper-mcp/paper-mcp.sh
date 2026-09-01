@@ -12,7 +12,7 @@ HDR=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/even
 case "$1" in
   init)
     resp=$(curl -s -m 10 -X POST "$EP" "${HDR[@]}" -D /tmp/paper-mcp-headers.txt \
-      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"claude-code","version":"1.0"}}}')
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"authored-agent-skill","version":"1.0"}}}')
     sid=$(grep -i '^mcp-session-id:' /tmp/paper-mcp-headers.txt | tr -d '\r' | awk '{print $2}')
     curl -s -m 10 -X POST "$EP" "${HDR[@]}" -H "mcp-session-id: $sid" \
       -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' > /dev/null

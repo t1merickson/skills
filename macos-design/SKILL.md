@@ -33,7 +33,7 @@ The minimum macOS version determines the Xcode version, SDK, and which APIs and 
 
 1. Ask what Macs the app must run on, and check current adoption if the answer is "most people's."
 2. List the APIs the app's core features need, and verify their availability against current documentation — API availability moves too fast to answer from memory.
-3. Record the decision and its reasoning in the project's CLAUDE.md so later sessions don't relitigate it.
+3. Record the decision and its reasoning in the project's AGENTS.md or other standing project documentation so later tasks don't relitigate it.
 
 Decide the sandbox in the same breath. It is not a packaging detail — it decides the architecture.
 
@@ -60,7 +60,7 @@ Prefer SwiftUI for new work; it is the current default and where the platform is
 - With `NavigationSplitView`, columns lay out at the sum of their ideal widths and will not compress below it. Make the window's minimum wider than that sum, or the sidebar clips off the left edge and the inspector off the right. `.frame(minWidth:)` and `.contentMinSize` only stop the user's drag — a frame restored from an earlier build can still come back narrower, so set `NSWindow.minSize` and grow a restored frame that sits under it.
 - Size windows to their content. A window's default size should fit what it presents — sized by its ideal content dimensions, not an arbitrary 800×600. A settings window hugs its controls; a document window opens at a size that shows a useful amount of document. The wrong default size is one of the most common tells of a generated app.
 - Drag and drop wherever content moves.
-- Motion: small, physical, interruptible, and rarer than on iOS — windows and panels mostly appear. See the `apple-design` skill for the physics and `apple-native-motion` for the SwiftUI code; `find-animation-opportunities` decides what earns motion.
+- Motion: small, physical, interruptible, and rarer than on iOS — windows and panels mostly appear. See `apple-native-motion` for the SwiftUI and AppKit implementation guidance.
 - VoiceOver: every control needs a label and a sane reading order.
 - Contrast passes in both Light and Dark Mode, not just one.
 
@@ -83,4 +83,4 @@ Before debugging a strange layout or launch failure, grep `/Users/Commons/Develo
 
 Launch the built app and confirm: Dock and Cmd-Tab presence; menus populated and shortcuts firing; Cmd-Comma opens Settings; Cmd-Z undoes; Dark Mode holds up; the default window size fits the content, and the window resizes to its minimum without breaking. Then: navigate the whole app by keyboard alone; run VoiceOver through the core flow once; turn on Reduce Motion and confirm nothing relies on motion to communicate state; scroll the longest list or table and watch for dropped frames; if multi-window or multi-display is supported, confirm state restores. Capture the window for review per `window-capture`. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
 
-Then give the user a build they can keep. A path deep in DerivedData goes stale the moment the session ends. Copy the built .app to a stable, project-local location (such as `<project>/build/<App>.app` — record the convention in the project's CLAUDE.md) and report that path, so the app stays usable between sessions. Replace it on each new build rather than accumulating stale copies.
+Then give the user a build they can keep. A path deep in DerivedData goes stale the moment the session ends. Copy the built .app to a stable, project-local location (such as `<project>/build/<App>.app` — record the convention in the project's AGENTS.md or durable developer docs) and report that path, so the app stays usable between sessions. Replace it on each new build rather than accumulating stale copies.

@@ -1,13 +1,13 @@
 ---
 name: apple-native-motion
-description: Apple's fluid-motion physics as actual SwiftUI code — springs, gesture handoff, interruption, reduced motion — for iOS and macOS apps. Use when adding or reviewing motion in a SwiftUI (or UIKit) project. The web skills (apple-design, animate, improve-animations, review-animations) carry the same doctrine in CSS/JS; this is the native translation.
+description: Apple's fluid-motion physics as SwiftUI and UIKit code — springs, gesture handoff, interruption, and reduced motion. Use when adding or reviewing motion in a native iOS or macOS project.
 ---
 
 # Apple Native Motion
 
-The `apple-design` skill holds the doctrine (response, momentum, interruptibility, restraint) with web code. This skill is the same physics in Swift. Read `apple-design` for the *why*; take the code from here.
+Use four principles throughout: immediate response, momentum that follows the gesture, interruption at any point, and restraint proportional to frequency. This skill turns those principles into Swift.
 
-## What earns motion (unchanged from the doctrine)
+## What earns motion
 
 The frequency gate applies exactly as on the web, and stricter on macOS:
 
@@ -17,7 +17,7 @@ The frequency gate applies exactly as on the web, and stricter on macOS:
 - Rare or first-run: delight is allowed.
 - macOS baseline: rarer and smaller than iOS. Desktop users live in the app all day.
 
-When unsure whether a moment earns motion at all, run it through `find-animation-opportunities`' four-question gate (frequency, purpose, speed, function) — the gate is platform-agnostic even though that skill's recipes are CSS.
+When unsure whether a moment earns motion at all, ask four questions: how often it occurs, what meaning the motion carries, whether it delays response, and whether the interaction still works without it. If the motion has no functional answer, leave it out.
 
 ## Springs are the default
 

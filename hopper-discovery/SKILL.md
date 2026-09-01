@@ -1,6 +1,6 @@
 ---
 name: hopper-discovery
-description: Reference for the Hopper MCP tools: explore an open binary's symbols, procedures, strings, and annotations.
+description: "Reference for the Hopper MCP tools: explore an open binary's symbols, procedures, strings, and annotations."
 ---
 
 # Hopper MCP tools

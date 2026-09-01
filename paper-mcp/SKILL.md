@@ -1,6 +1,6 @@
 ---
 name: paper-mcp
-description: Drive the Paper (paper.design) app over its local MCP server: layers, masks, blends, exports.
+description: "Drive the Paper (paper.design) app over its local MCP server: layers, masks, blends, exports."
 ---
 
 # paper-mcp
@@ -15,9 +15,10 @@ The endpoint speaks MCP over HTTP with SSE responses. `windowid`-style
 plumbing is already wrapped in [paper-mcp.sh](paper-mcp.sh) next to this file:
 
 ```bash
-SID=$("$CLAUDE_SKILL_DIR/paper-mcp.sh" init)          # new session, prints id
-"$CLAUDE_SKILL_DIR/paper-mcp.sh" call "$SID" get_basic_info '{}'
-"$CLAUDE_SKILL_DIR/paper-mcp.sh" raw  "$SID" '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+SKILL_DIR="${CLAUDE_SKILL_DIR:-$HOME/.agents/skills/paper-mcp}"
+SID=$("$SKILL_DIR/paper-mcp.sh" init)          # new session, prints id
+"$SKILL_DIR/paper-mcp.sh" call "$SID" get_basic_info '{}'
+"$SKILL_DIR/paper-mcp.sh" raw  "$SID" '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
 ```
 
 Responses come back as `data:` SSE lines; the helper strips them to plain

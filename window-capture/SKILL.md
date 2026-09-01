@@ -15,7 +15,8 @@ whatever the user was doing. Capture exactly one window, leave the desktop alone
 windows for an owner:
 
 ```bash
-swift "$CLAUDE_SKILL_DIR/windowid.swift" Xcode
+SKILL_DIR="${CLAUDE_SKILL_DIR:-$HOME/.agents/skills/window-capture}"
+swift "$SKILL_DIR/windowid.swift" Xcode
 ```
 
 Filter by any substring of the owning app's name (case-insensitive). Output is
@@ -68,5 +69,5 @@ uses). Never from `osascript`.
 To merely confirm a change compiles or behaves, a clean build plus tests is
 better evidence than a screenshot, and cheaper. Reach for a capture when the
 question is genuinely visual — spacing, weight, color, motion end-state — or
-when the user asked to see it. They likes being offered visual reviews, so offer;
+when the user asked to see it. They like being offered visual reviews, so offer;
 just don't substitute a picture for a passing test.

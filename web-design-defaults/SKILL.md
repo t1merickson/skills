@@ -1,6 +1,6 @@
 ---
 name: web-design-defaults
-description: the user's base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism.
+description: "The user's base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism."
 ---
 
 # web-design-defaults
@@ -50,7 +50,7 @@ Two rules that go with it:
 - One icon family, one stroke weight, monochrome on the same ink ladder as text. Emoji are not an icon family and no filter brings them onto the ladder — remove them and let labels carry the meaning. Emoji inside content (a screenshot, a post, someone's display name) are content; leave them alone.
 - Borders over shadows; shadows only for true elevation like menus and dialogs, and subtle there.
 - Dark mode: respected from the start via `prefers-color-scheme`, same structure, inverted neutrals.
-- Motion: minimal and physical. Small distances, quick springs, nothing looping. The `apple-design` skill has the physics; `find-animation-opportunities` decides what earns motion at all.
+- Motion: minimal and physical. Small distances, quick springs, nothing looping. Motion must carry meaning or improve continuity; omit it when it only decorates a frequent action.
 - Prefer container queries to viewport breakpoints where a component can appear in more than one width. A component should respond to the space it is in, not to the window.
 - Empty states, focus rings, and hover states are part of the design, not afterthoughts. Visible focus always survives.
 

@@ -1,11 +1,11 @@
 ---
 name: spatial-interfaces
-description: Design the whole model an interface occupies — where things live, how contexts connect, and how much dimensional complexity a product can afford — rather than one screen or one transition. Use when navigation feels confusing without a single screen being at fault, when adding a drawer, carousel, modal, or tab bar to something that already has several, when users get lost or can't find their way back, when planning information architecture for an app, when auditing an existing product's structure, or when a layout must adapt across sizes. Produces maps and structural decisions — hand individual state changes to `transitional-interfaces` and timing to `animate`.
+description: Design the whole model an interface occupies — where things live, how contexts connect, and how much dimensional complexity a product can afford. Use for confusing navigation, information architecture, structural audits, or layouts that must adapt across sizes. Produces maps and structural decisions; use transitional-interfaces for one state-to-state connection.
 ---
 
 # Spatial Interfaces
 
-An architecture skill. It does ONE thing: model the space an interface occupies and decide where things live in it. It does not design the connection between two specific states (that's `transitional-interfaces`), pick curves or durations (that's `animate`), or review a motion diff (that's `review-animations`).
+An architecture skill. It does ONE thing: model the space an interface occupies and decide where things live in it. It does not design the connection between two specific states (that's `transitional-interfaces`), pick curves or durations, or review motion implementation.
 
 The relationship to `transitional-interfaces` is exact: **this skill draws the map, that one designs a single edge on it.** Doing the edge without the map is how products end up with individually reasonable screens and no navigable whole.
 
@@ -106,14 +106,14 @@ So the small-size layout is usually the one that's structurally expensive, and i
 
 Published motion specifications and standardized easing sets are useful defaults and a good way to keep a team consistent. They are not verdicts. A value that measures correctly and feels wrong is wrong, and the eye is the instrument of record.
 
-Use house values (`motion-values.md` at `/Users/Commons/Developer/Personal/design-brain/topics/motion-values.md`) as the starting position and the tie-breaker, and depart from them deliberately when a specific transition needs it — noting why, so the departure reads as a decision rather than drift.
+Use the project's existing motion tokens or platform conventions as the starting position and tie-breaker. Depart deliberately when a specific transition needs it, and note why so the departure reads as a decision rather than drift.
 
 ## What this skill does not decide
 
 - A single state-to-state connection → `transitional-interfaces`.
-- Curves, durations, spring constants → `animate`.
+- Curves, durations, spring constants → the project's motion system or platform guidance.
 - Native equivalents → `apple-native-motion`.
-- Whether motion code is well built → `review-animations`.
+- Whether motion code is well built → implementation review and a rendered interaction check.
 
 ## Output
 

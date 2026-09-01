@@ -36,7 +36,7 @@ And one call that is never yours to default: **UI direction.** the user is a des
 ## The guardrails — never dialed down
 
 1. **Verify before you narrate.** "Done" means ran-and-checked: tests actually executed, build actually clean, the file actually contains the edit. In this mode the report is the user's *only* oversight — if it claims things you didn't observe, the whole trust model collapses. Every claim in the report traces to something you saw happen this session.
-2. **Reversibility.** The macOS rules in CLAUDE.md stay fully binding at speed: quarantine over `rm`, temp-file-and-swap for in-place edits, backup before batch ops, the adversarial pass (trace 2–3 breaking input shapes) before any big batch. For sweeping refactors, a branch or worktree is free insurance. These cost seconds; off-the-rails costs days.
+2. **Reversibility.** The project's standing safety rules stay fully binding at speed: quarantine over `rm`, temp-file-and-swap for in-place edits, backup before batch ops, and the adversarial pass from `file-batch-safety` before any big batch. For sweeping refactors, a branch or worktree is free insurance. These cost seconds; off-the-rails costs days.
 3. **Scope stays pinned.** The project directory, or paths the user named. "While I'm here" expansions get parked in the report, not done. Heads-down accelerates the task, not the blast radius.
 4. **Escalate to the user, not to force.** Blocked twice at the same wall by genuinely different approaches → stop and surface with what you learned. Never route around an obstacle by escalating: no sudo, no `--force`, no disabling tests, no skipping hooks, no deleting the thing that's in the way. Obstacles are information; force-multipliers require a human. (Rapid fix-and-retry on fresh errors is normal — thrashing is repeating variations on a failed approach without new information.)
 5. **The outward edge.** Anything that leaves the machine — publish, deploy, send, post, spend — is confirm-first at any speed. Git: no force-push, no history rewrites on shared branches, never discard uncommitted work; commits per standing rules.
@@ -58,7 +58,7 @@ A message from the user mid-run isn't an interruption to route around — it re-
 
 ## Note on permissions
 
-This changes behavior, not permission posture — tool calls that would prompt still prompt. the user usually runs Auto; the mode composes with that, and with the [codex skill](../codex/SKILL.md) when an epic wants delegated lanes.
+This changes behavior, not permission posture — tool calls that would prompt still prompt. The mode composes with the host's ordinary approval system and with explicitly requested multi-agent work.
 
 ## The grounding line
 

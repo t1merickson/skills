@@ -1,13 +1,13 @@
 ---
 name: ship-macos
-description: Release a macOS app: archive, Developer ID export, notarize, staple, DMG or TestFlight.
+description: "Release a macOS app: archive, Developer ID export, notarize, staple, DMG or TestFlight."
 ---
 
 # ship-macos
 
 Two gates before anything else:
 
-1. **Signing is security-shaped.** Touching signing identities, keychains, provisioning profiles, or App Store Connect credentials falls under the ask-first list in CLAUDE.md. Confirm with the user before the first signing step of a session. After that, the session's approval holds.
+1. **Signing is security-shaped.** Confirm with the user before the first signing step that touches signing identities, keychains, provisioning profiles, or App Store Connect credentials. Approval for that scoped release flow holds for the task; it does not authorize unrelated credential changes.
 2. **Bundle ID.** Never invent one. If the project already has one, use it; otherwise ask the user which domain and prefix to use.
 
 ## The flow (Developer ID, outside the App Store)
@@ -30,4 +30,4 @@ Archive the same way, export with the app-store method, upload via `xcrun altool
 
 - Every shipped artifact gets verified: open the DMG, launch the app on this machine, confirm no Gatekeeper complaint. "notarytool said accepted" is not the finish line; the launch is.
 - Distribution is "leaves this machine": uploading to TestFlight or anywhere public needs the user's go-ahead per the ask-first list. Building and notarizing locally does not.
-- Record the flow's project-specific quirks (scheme names, plist paths, version conventions) in that project's CLAUDE.md the first time you learn them.
+- Record the flow's project-specific quirks (scheme names, plist paths, version conventions) in that project's AGENTS.md or durable developer docs the first time you learn them.
