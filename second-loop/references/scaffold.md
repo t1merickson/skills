@@ -7,6 +7,7 @@ Instantiate per-domain during the interview. Rename freely; keep the contracts. 
 ```
 <name>-second-loop/
   AGENTS.md               # the law — read by the improver before anything else
+  DATA-POLICY.md           # fields retained, redaction, access, expiry, deletion
   config/
     scoring.yaml          # targeting judgment, externalized
     plays.yaml            # message judgment, externalized
@@ -14,6 +15,7 @@ Instantiate per-domain during the interview. Rename freely; keep the contracts. 
     <play_name>.md        # one file per play: the actual template/instructions
   memory/
     outcomes.jsonl        # the ledger — append-only, validator-guarded
+    confounders.jsonl      # material context changes by date/cycle
   evals/
     fixtures.yaml         # frozen human judgment: cases + expected routing
     gate.py               # one command → one number; exit 0 only on pass
@@ -35,11 +37,12 @@ Hard rules (never editable by you):
 - Never send, submit, or publish anything.
 - Never fabricate: no invented experience, credentials, metrics, or personalization.
 - Never edit this file, evals/fixtures.yaml, or anything outside this repo.
+- Obey DATA-POLICY.md; never expand retained identity or message content silently.
 - The user's voice is not a tunable. Emphasis, structure, targeting — yes. Identity — no.
 - One concept per proposal. One weight, or one play edit, or one banned line. Never mixed.
 - Every proposal cites specific rows from memory/outcomes.jsonl.
-- Cite no rate from a base under 20 without stating the base.
-- Under ~30 outcomes for the thing you're changing: justify by reasons (the text), not rates.
+- Every rate states its denominator and collection window.
+- When the sample is too small or confounded, justify by reasons or propose no change.
 - Run evals/gate.py before and after. Flat or worse → revert and stop.
 - "No change this week" is a valid result. Thin data → say so, propose nothing.
 
@@ -74,7 +77,7 @@ thresholds:
   # below standard → skip (and see exploration lane)
 
 exploration:
-  rate: 0.2                # ~1 in 5 sends deliberately breaks these rules
+  budget_per_cycle: 1      # illustrative only; agree an ethical bounded budget
   log_as: "exploration"    # logged identically — the ledger must know
 ```
 
@@ -95,12 +98,12 @@ plays:
 One line per send, written when the outcome is known. `reason` is mandatory and is the whole point.
 
 ```json
-{"date":"YYYY-MM-DD","target":"<who/what>","signals":["<key>"],"play":"<play_name>","score":8,"lane":"standard|exploration","outcome":"<stage>","reason":"<why, while it's fresh>"}
+{"date":"YYYY-MM-DD","target_id":"<pseudonym>","signals":["<key>"],"play":"<play_name>","play_version":"<commit-or-version>","score":8,"lane":"standard|exploration","outcome":"<stage>","reason":"<why, while fresh>","context":"<material confounder or empty>"}
 ```
 
 Outcome vocab is domain-specific but closed (validator rejects unknowns). Job hunt: `screen | interview | offer | rejection | ghost`. Outreach: `reply | call_booked | client | no_reply | bad_fit | bounced`. Staged outcomes get one line per stage transition — "rejected post-screen: wanted agency experience" is a targeting datum, not a failure.
 
-`scripts/log_outcome.py`: accepts the fields as args, rejects missing fields / unknown outcomes / empty reason / future dates, appends, echoes the row. Make it one command with no ceremony — a ledger that needs Friday memory is a ledger of fiction.
+`scripts/log_outcome.py`: accepts the fields as args, rejects missing fields, unknown outcomes, empty reasons, future dates, unapproved identity fields, and records past retention limits. It appends and echoes the row. Make capture low-friction without retaining full recipient identity or message bodies when derived fields are sufficient.
 
 ## evals/ — the gate, two tiers
 
@@ -132,7 +135,7 @@ a play edit, or a banned line. Prefer the smallest edit that fixes a known miss
 over the biggest story. Reasons outrank rates at this N.
 
 Make the edit. Run evals/gate.py before and after.
-Improved → write outputs/proposal.md per the law's required output.
+Improved without a privacy, voice, or confounder regression → write outputs/proposal.md per the law's required output.
 Flat or worse → revert, and write outputs/proposal.md explaining what you
 tried, why the gate rejected it, and what data would settle it.
 ```
@@ -149,7 +152,7 @@ python3 evals/gate.py
 cat outputs/proposal.md                 # human reads THIS, then merges or rejects
 ```
 
-Cadence: weekly. Run the first two cycles by hand and read everything the improver attempts — schedule it only once the proposals are boring. If using git: improver commits to a branch, human merges; the merge IS the approval. No git? The human applies the diff from proposal.md by hand — slower, same control point.
+Cadence is chosen with the user; weekly is only a common starting point. Run initial cycles by hand and read everything the improver attempts. In git, preserve the proposal as a small commit, patch, or review diff using the repository's established history policy; do not impose branches. Without git, the human applies the proposal manually. The explicit human decision is the approval point.
 
 ## Failure modes to warn the user about at setup
 
@@ -158,3 +161,5 @@ Cadence: weekly. Run the first two cycles by hand and read everything the improv
 - **Junk-drawer config.** Twenty signals and exception rules → the improver overfits. Start at five; let outcomes argue for the sixth.
 - **The skipped review.** One un-reviewed merge "because it's boring now" is how drift starts. Boring proposals are the system working.
 - **Shadow blindness.** No exploration lane → the loop can only reweight choices it already makes, and never learns what the skipped targets would have said.
+- **Identity creep.** Convenience fields quietly accumulate recipient names and full messages. Enforce retention and field allowlists in the logger.
+- **Confounding.** A new season, channel, offer, or audience gets credited to a wording change. Log context and compare against the preserved baseline.

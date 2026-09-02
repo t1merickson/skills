@@ -1,202 +1,47 @@
 ---
 name: brain-wiki
-description: Sort a pile of documents into an ordered, typed vault for Tolaria or Obsidian. Survey first, compile a shape, then write.
+description: Turn an existing document corpus into a new typed Markdown vault by surveying objects, agreeing on a machine-checkable shape, preserving source provenance, and verifying every page.
 ---
 
-# brain-wiki
+# Brain wiki
 
-Take a pile of documents and give it an order: every object gets a type, links to what explains it, and a page that says where it came from. Output is plain markdown — one file per object, YAML frontmatter, wikilinks — which is what [Tolaria](https://tolaria.md) and Obsidian both read, so one build serves either.
+This is an additive bulk import, not a note-taking ritual. Originals remain read-only. The output is plain Markdown with YAML frontmatter and wikilinks for Tolaria or Obsidian.
 
-This is a bulk import of material that already exists, not a note-taking practice. That difference decides most of what follows.
+## 1. Survey before writing
 
-## 0 · Inputs
+Resolve input and output roots. Exclude code, generated build trees, VCS metadata, credentials, application state, and unrelated operating material. Apply `file-batch-safety` when the corpus is large or heterogeneous.
 
-**What goes in.** If the user names the material, use that. Otherwise it means every document in the cwd: `**/*.md` plus `.txt`, `.pdf`, `.docx`, `.rtf`, and exports. Skip `node_modules`, `.git`, `build`/`dist`, `.claude`, and anything that is code or config rather than content.
+Inventory files, formats, bytes, unreadable/placeheld items, duplicates, and conversion needs. Propose actual vault objects—not just source-file clusters. One source may yield zero, one, or several pages; an entity mentioned once does not automatically earn a page.
 
-**What comes out.** A new vault directory; `./vault` is a fine default. Never move, rewrite, or delete the originals — the vault is new files that point back at them. If duplicates turn up, report them; don't resolve them.
+Report the corpus map, proposed objects, type candidates, uncertainty, and page estimate.
 
-**Which app.** Both read flat markdown with typed frontmatter, so build for that. Only ask if the answer changes the layout — someone with an existing Obsidian vault built on folders-as-categories, say.
+## 2. Compile the shape
 
-## 1 · Survey
+Write `SHAPE.md` as the self-contained contract: allowed types, required fields, enums, relationships with range/cardinality, lifecycle policy, provenance root, slug/collision rules, attachment policy, and exempt vault furniture. Start from [references/shape-contract.md](references/shape-contract.md), include only the vocabulary this vault needs, and get one user approval before bulk writing.
 
-Walk the input. Separate CONTENT (documents, decisions, knowledge) from OPERATING MATERIAL (scripts, configs, templates, boilerplate).
+Add a root type only when it has a distinct invariant, template, view, or lifecycle. Prefer `kind`, then Topic, then a relationship, before inventing another type. Lifecycle defaults to none unless the target system or corpus carries meaningful state.
 
-Then do the part that matters: **propose the output objects**. Not clusters of files — the actual things the vault will contain, and what each one *is*. Files and objects don't map one to one:
+## 3. Distill
 
-- One source can produce zero pages, one page, or several.
-- Several sources can merge into one page.
-- An entity merely mentioned in a document does not earn a stub page. A person named once in a meeting note is a mention, not a Person page.
+Type the subject named by the page title. Every page:
 
-Report the map, the proposed objects, and a page estimate. This is where the shape comes from, so do it before writing the shape, not after.
+- validates against `SHAPE.md`;
+- records source paths relative to the declared input root;
+- links only to real objects or records an unresolved question;
+- distinguishes extracted facts, quotations, and synthesis;
+- marks claim-to-source correspondence when multiple sources support one page;
+- uses `review: needs-human` for unresolved classification, never invented connective prose.
 
-## 2 · Compile the shape
+Work may be divided by content area only when parallel writers are authorized and each file has one owner. Otherwise write sequentially. The primary task owns shape amendments and `INDEX.md`.
 
-The **shape** is the contract for the vault: what types exist, how objects connect, and what a verifier can check. Write it to `SHAPE.md` at the vault root, get one yes from the user, then write pages. Nothing gets written before this.
+## 4. Verify adversarially
 
-`SHAPE.md` is **flat and self-contained**. It lists the types this vault actually uses, with their fields and boundaries — the vocabulary below is how you assemble it, not something the file refers back to. The subagents that write and verify pages read only `SHAPE.md`, and should never need to reason about which optional piece was switched on.
+Use a deterministic validator where possible. Check frontmatter, type membership, required fields, enums, cardinality, relationship ranges, source paths, footnote/source indices, wikilink resolution, slug collisions, index completeness, and extracted hooks. Then sample claims against originals, with special attention to dates, quotations, decisions, and merged pages.
 
-### The vocabulary
+Independent review is useful when available, not mandatory. Findings are fixed or surfaced as open questions; they are not waved through with a note.
 
-**Core — always in the shape:**
+## 5. Augment without drift
 
-| Type | Use when | Pick the neighbor when |
-|---|---|---|
-| **Note** | a durable knowledge artifact: document, reference, research summary, decision record, checklist | it's a lens you'd file other things under → Topic |
-| **Topic** | an area of interest or conceptual lens that collects other objects, with no ownership | it's a real body with members → Organization; someone is accountable for outcomes in it → Responsibility |
-| **Person** | a real person, or an AI agent treated as an actor | it's a company, team, or institution → Organization |
-| **Organization** | a company, team, institution, publication, label, or band | it's a field of study rather than a body → Topic |
-| **Place** | a location with stable identity: venue, city, site, region, building | you mean what happened there → Event |
-| **Event** | something that happened, with a date: meeting, decision, incident, launch, release | you mean the durable knowledge that came out of it → Note |
+New corpora enter under the existing shape. Extend existing objects when evidence adds to them; create new pages only for new objects. Preserve contradictions explicitly. Amend `SHAPE.md` before using a new invariant, type, relationship, or enum.
 
-**Work pack — the four PORT types from [PORTENT](https://portent.md):**
-
-| Type | Use when | Pick the neighbor when |
-|---|---|---|
-| **Project** | a bounded effort producing an output, more than one sitting, with a definition of done | no end and no output, only an outcome to maintain → Responsibility; it repeats on a schedule → Operation |
-| **Operation** | recurring work that fits in one sitting: a review, a check, a publishing or maintenance routine | it happened once → Task; it runs to a finish and stops → Project |
-| **Responsibility** | long-running accountability, measured by standards or metrics rather than completion | it can be finished → Project |
-| **Task** | one-off work that fits in one sitting | — |
-
-*Activation:* turn the pack on when the survey proposes at least one page whose **subject** is an actionable object — an effort, a routine, an area of accountability. A document that merely discusses work is a Note. Once on, all four types are available whether or not each has members; a shipped project is still a Project. Do not count objects to decide this.
-
-**Source — a conditional single type, not a pack:**
-
-| Type | Use when | Pick the neighbor when |
-|---|---|---|
-| **Source** | an external work that pages cite: paper, article, book, talk, repo, video. Requires `citation` (a URL or a bibliographic string), `author`, `retrieved`, and `liveness` | it's your own writing *about* the source → Note |
-
-*Activation:* turn it on when pages will carry that bibliographic metadata and receive inbound `cites` edges. A file path you distilled a page from is `source_files:` provenance, not a Source page — those are different things and both can be present.
-
-### Adding anything else
-
-Add a root type only when it has an **invariant its nearest neighbor lacks**: a required field, a constrained relationship, a distinct template, a distinct view, or its own state machine. Counts are evidence, never the rule — forty sources justify a Source type only if sources behave differently, and they do; forty essays do not justify an Essay type, because an essay is a Note with `kind: essay`.
-
-Reach in this order: a `kind:` property, then a Topic, then a relationship, then a new type.
-
-### Relationships
-
-Two defaults carry most of it:
-
-| Name | Cardinality | Means |
-|---|---|---|
-| `belongs_to` | one | primary context, ownership, or composition |
-| `related_to` | many | secondary usefulness, association without ownership |
-
-Add a specific relationship only when the role drives a view, a query, a template, or a verifier rule — never because it's more precise English. `authored_by` earns its place; `associated_with` doesn't. Declare each with a range so the verifier can check it:
-
-```yaml
-- name: attended_by
-  cardinality: many
-  range: [Person, Organization]
-- name: located_at
-  cardinality: one
-  range: [Place]
-```
-
-Once Person, Organization, Place, and Event are all real objects, who/where/when are answerable by asking what type a link points at. Don't add parallel `who:`/`where:` fields — one fact stored twice drifts.
-
-### Lifecycle
-
-Default is **none**. PORTENT's captured→organized→archived describes attention over time in a vault someone operates; on a bulk import every object arrives at once and the field carries almost nothing. The pipeline's own progression (surveyed → distilled → verified) is processing state, not object state, and conflating them makes `organized` mean "the importer finished."
-
-Turn lifecycle on when one of these is true, and say which in `SHAPE.md`:
-
-- the target vault already uses a lifecycle field (open a real note and copy whatever it uses — Tolaria's own template writes `_organized: true`),
-- the app needs it to drive inbox or archive visibility,
-- the user wants this vault to become an actively maintained system,
-- the corpus itself carries reliable active/archive distinctions worth preserving.
-
-Never infer `archived` from a directory called `old`, `archive`, or `dead-project`. Archive state is about desired visibility, not the age of the file.
-
-For import uncertainty use a separate field, written only on pages that need it:
-
-```yaml
-review: needs-human
-```
-
-### Filing
-
-Vault-format policy, not ontology. Keep it at the bottom of `SHAPE.md`:
-
-- One file per object, flat at the vault root; type lives in frontmatter, not the folder path. Attachments in `attachments/`.
-- Filename is the kebab-case slug of the title. The H1 repeats the title in prose. Wikilinks target the slug: `[[launch-the-new-website]]`.
-- **Slug collisions:** never overwrite, never merge two objects because their titles matched. Disambiguate with a suffix the object already owns — `-2026-03-04` for an Event, the organization slug for a Person, the city for a Place. If nothing distinguishes them, they are probably one object; if they genuinely aren't, add the suffix and note both in `OPEN-QUESTIONS.md`.
-- Entry points: `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`.
-
-### A compiled SHAPE.md
-
-The file has two halves, and both are required: frontmatter carries the machine-checkable contract, and the body carries the type rows — `use when` and `pick the neighbor when`, copied from the vocabulary above for the types this vault actually uses — plus the filing rules. A writer subagent reads `SHAPE.md` alone and needs everything to classify and serialize a page without coming back here.
-
-```yaml
----
-shape: brain-wiki-import-1
-lineage: portent-0.1 + work pack + Source     # provenance only; nothing inherits
-lifecycle: none
-required_on_all: [type, source_files]
-types:
-  - {name: Note,         requires: []}
-  - {name: Topic,        requires: []}
-  - {name: Person,       requires: []}
-  - {name: Organization, requires: []}
-  - {name: Place,        requires: []}
-  - {name: Event,        requires: [date]}
-  - {name: Source,       requires: [citation, author, retrieved, liveness]}
-enums:
-  liveness: [live, moved, dead, paywalled, unchecked]
-relationships:
-  - {name: belongs_to, cardinality: one,  range: any}
-  - {name: related_to, cardinality: many, range: any}
-  - {name: cites,      cardinality: many, range: [Source]}
-source_files:
-  shape: list of paths relative to the input root
-  input_root: ../exports          # recorded once, so paths resolve later
----
-```
-
-Types and relationships listed there are the whole allowed set. A page using anything else fails verification. `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`, and Tolaria type documents are vault furniture, not pages — they are exempt from page validation, which is why `Type` does not appear in the type list.
-
-## 3 · Distill
-
-Fan out subagents, one per content area, each writing pages for its own area.
-
-**Type the subject the page title names** — not every role, format, or entity its source mentions. A page titled "Design meeting, 4 March" is an Event; the three attendees and the room are relationships, and the fact that it arrived as a markdown file makes it no less an Event. This one rule replaces most agonizing over which type fits.
-
-The rest:
-
-- Every page validates against `SHAPE.md`: a type from the list, that type's required fields, declared relationships only, wikilinks that resolve.
-- Every page records `source_files:` — paths relative to the input root recorded in `SHAPE.md`.
-- **On a page built from more than one source, mark inline which source backs which claim**, using markdown footnote syntax where the number is the 1-based index into `source_files`: `Sergio owns the type scale.[^2]` A three-item list in the frontmatter does not say which file supports which sentence, and the verify pass can't check what isn't marked. Single-source pages need no markers — the whole page resolves to the one entry.
-- Dense and factual: what is true, who decided, when, where it's written down. No connective tissue invented to make a page feel finished.
-- Anything you couldn't confidently type or connect gets `review: needs-human` and stays on the list you report.
-
-Subagents write pages; only you merge, and only you touch `INDEX.md`. One writer per file, always.
-
-## 4 · Verify, adversarially
-
-A second wave, each subagent checking an area it did not write. Two jobs:
-
-1. **Claims** — every claim resolves against its cited source. This is why sources are marked inline.
-2. **Shape** — type is in `SHAPE.md`, required fields present, enum values legal, relationships declared, cardinality respected, link targets exist and have the right type for the relationship's range, every `[^n]` marker has an entry at index *n* in `source_files`, and every multi-source page carries at least one marker.
-
-Vault furniture is exempt: `INDEX.md`, `OPEN-QUESTIONS.md`, `SHAPE.md`, and type documents are checked for internal consistency, not against the page contract.
-
-**This pass is not optional.** The first real run of this skill produced fabrications and this is what caught them. Findings get fixed, not footnoted.
-
-## 5 · Augment
-
-The next corpus folds into the same vault under the same shape — Slack after Notion, GitHub after Slack, codebase last. New pages for new objects, edits where a source extends an existing page. Where two sources contradict, surface it and log it in `OPEN-QUESTIONS.md`. Never resolve a contradiction silently.
-
-If the new corpus needs something the shape lacks, amend `SHAPE.md` against the invariant test first, and say so, then write.
-
-## Vault furniture
-
-- **`INDEX.md`** — every page, grouped by type. A hook per line is allowed but must be **extracted, never composed**: the page's first sentence of body prose, copied verbatim, or nothing at all. Skip it if that sentence runs past 160 characters or repeats the title. Written summaries at bulk scale are one more surface that drifts from the page; an extracted hook is checkable, since the verifier can confirm it appears in the file character for character after normalizing whitespace. A page nobody can reach from the index doesn't exist.
-- **`OPEN-QUESTIONS.md`** — what the corpus doesn't answer, what contradicts, what looks stale. Empty is valid. Invented entries are not.
-- **`SHAPE.md`** — the contract from phase 2.
-- **Tolaria type documents**, when the target is Tolaria — one file per type *actually used*, `type: Type` in frontmatter, carrying display settings the app reads: `color`, `_icon`, `_sidebar_label`, `_order`, `_list_properties_display`. Generate from `SHAPE.md` so the two can't drift.
-
-## Rules
-
-- Never quote private content into commit messages, or anywhere else that could leave the repo.
-- Originals are read-only. The vault is additive.
-- Report per phase, payload first: "Survey done: 340 files, 96 proposed objects, work pack off — nothing actionable in the pile. Next: SHAPE.md for your yes." One approval, after the survey and the proposed shape. Later corpora can run heads-down if the user says so.
+Vault furniture is `SHAPE.md`, `INDEX.md`, and `OPEN-QUESTIONS.md`, plus target-specific type documents. `INDEX.md` reaches every page and may use only verbatim extracted hooks. Report source counts, page counts by type, review queue, unresolved contradictions, verifier result, and untouched originals.

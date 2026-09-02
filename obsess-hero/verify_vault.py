@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Layout verifier for an obsess-hero vault. Asserts and exits non-zero.
 
-Usage: verify_vault.py /Users/Commons/Heroes/<person-slug>
+Usage: verify_vault.py <hero-vault>
 
 Checks: the two admission rules, SHAPE.md conformance (types, required fields, enums,
 declared relationships, link resolution), footnote/source consistency, and ledger agreement.
@@ -9,8 +9,8 @@ Read-only.
 """
 import os, re, sys, glob, json
 
-if len(sys.argv) < 2:
-    sys.exit("usage: verify_vault.py /Users/Commons/Heroes/<person-slug>")
+if len(sys.argv) != 2:
+    sys.exit("usage: verify_vault.py <hero-vault>")
 VAULT = sys.argv[1].rstrip("/")
 WIKI = os.path.join(VAULT, "sources"), os.path.join(VAULT, "wiki")
 SRC_DIR, WIKI_DIR = WIKI
@@ -21,6 +21,11 @@ FURNITURE = {"INDEX.md", "LEDGER.md", "FRONTIER.md", "OPEN-QUESTIONS.md", "SHAPE
 fail, warn = [], []
 def bad(m): fail.append(m)
 def note(m): warn.append(m)
+
+if not os.path.isdir(SRC_DIR):
+    bad("missing sources/ directory")
+if not os.path.isdir(WIKI_DIR):
+    bad("missing wiki/ directory")
 
 # ── shape contract (mirrors SHAPE.md frontmatter)
 TYPES = {
@@ -163,7 +168,8 @@ for fn in ["INDEX.md", "LEDGER.md", "FRONTIER.md", "OPEN-QUESTIONS.md", "SHAPE.m
             bad(f"{fn}: link [[{tgt}]] does not resolve")
 
 # ── index completeness + hooks verbatim
-idx = open(os.path.join(VAULT, "INDEX.md")).read()
+index_path = os.path.join(VAULT, "INDEX.md")
+idx = open(index_path).read() if os.path.exists(index_path) else ""
 listed = set(re.findall(r"^- \[\[([a-z0-9\-]+)\]\]", idx, re.M))
 for slug in pages:
     if slug not in listed:
@@ -177,7 +183,8 @@ for line in idx.split("\n"):
             bad(f"INDEX.md: hook for {slug} is not verbatim in the page")
 
 # ── ledger agreement
-led = open(os.path.join(VAULT, "LEDGER.md")).read()
+ledger_path = os.path.join(VAULT, "LEDGER.md")
+led = open(ledger_path).read() if os.path.exists(ledger_path) else ""
 led_slugs = set(re.findall(r"\| \[\[([a-z0-9\-]+)\]\] \|", led))
 works = {s for s, (fm, _, _) in pages.items() if fm.get("type") == "Work"}
 for s in works - led_slugs:
@@ -186,9 +193,14 @@ for s in led_slugs - works:
     bad(f"LEDGER.md: row for {s}, which is not a Work page")
 
 # ── report
+source_count = 0
+if os.path.isdir(SRC_DIR):
+    source_count = len([
+        entry for entry in os.listdir(SRC_DIR)
+        if os.path.isdir(os.path.join(SRC_DIR, entry))
+    ])
 print(f"vault: {VAULT}")
-print(f"pages: {len(pages)}   sources dirs: "
-      f"{len([d for d in os.listdir(SRC_DIR) if os.path.isdir(os.path.join(SRC_DIR, d))])}")
+print(f"pages: {len(pages)}   sources dirs: {source_count}")
 for w in warn:
     print(f"  warn  {w}")
 if fail:

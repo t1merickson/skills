@@ -1,64 +1,44 @@
 ---
 name: offline-archive
-description: Scrape a page or web tool into a self-contained offline copy that still works, or crawl a whole site without hammering the host.
+description: Preserve a legitimately accessible web page, tool, or bounded site as a self-contained personal-use archive with polite acquisition, provenance, and network-blocked replay.
 ---
 
-# offline-archive
+# Offline archive
 
-The user archives web tools and pages they want to keep or reuse. History shows the same two-step shape every time: a broad "archive this URL", then a scoping correction stripping something unwanted (a paywall, crypto junk, DRM, a watermark). So ask the scoping question UP FRONT, once: "keep it whole, or strip anything — paywalls, tracking, promo chrome?" Then work.
+Confirm the URL, intended personal-use scope, output location, breadth, fidelity needs, and anything to omit. Omission may remove tracking or promotional chrome from content the user can legitimately access; it does not authorize bypassing paywalls, authentication, DRM, robots restrictions, or technical access controls.
 
-## Identify the site type first
+## Plan before fetching
 
-The strategy follows from what the site is, and several types have known recipes. Check the archive project's session memory for a recipe matching the type before starting — solved traps shouldn't be re-lost. Known types so far:
+Identify the site architecture and prefer an available source repository over scraping deployed bundles. Read the site's terms and `robots.txt`; respect explicit restrictions. Stop on access denial, sustained throttling, or a scope that expands materially beyond the approved request.
 
-- **Static page, no modules**: classic asset pull works.
-- **Plain ES modules, no bundler**: still can't be double-clicked — browsers block module *fetches* from `file://`. Inline the modules (wrap each in an IIFE returning its exports; rewrite imports to destructuring).
-- **Vite/React SPA**: a wget mirror is dead on arrival (HTML shell + hashed bundles, CORS-blocked from `file://`). Rebuild single-file: inline everything, one chunk, CSS folded in.
-- **Next.js App Router**: chunks are plain `<script src>` (no CORS problem), but asset paths are ALSO baked into the RSC payload and React re-injects them at hydration — replace every occurrence of each asset path across the whole document, scripts included, with `data:` URIs. Neutralize root-relative nav links or `file://` navigates off the archive.
-- **WordPress**: check `wp-sitemap.xml` before writing a parser — the REST API at `/wp-json/` is commonly locked (`{"code":"rest_login_required"}`) while the sitemaps are left wide open, and their children give the full item list plus taxonomy and author indexes. Media sits at predictable paths (`/wp-content/uploads/<year>/<month>/`, or `/wp-content/themes/<theme>/...` for theme-bundled assets); if directory listing returns 200, enumerate it instead of parsing pages.
-- **Cargo Collective**: the entire site inventory lives in `window.__PRELOADED_STATE__` — extract it, no crawling needed. Originals at `/t/original/`; freight 403s without a browser user-agent; flip `domain_active` to false or the boot code redirects off localhost.
+Create a request plan and manifest before a whole-site crawl:
 
-**Prefer building from source whenever the repo exists** — then check built asset hashes against the deployed ones, which proves byte-identity to production for free.
+- allowed origins and paths;
+- sitemap or known inventory;
+- estimated pages/assets/bytes;
+- concurrency, delay, retry/backoff, and maximum request budget;
+- resume state and deduplication key;
+- user agent/contact convention where appropriate;
+- capture date and tool versions.
 
-## Whole-site crawls
+Use low concurrency, server-directed retry delays, capped exponential backoff, and resumability. Avoid refetching unchanged assets. For evidentiary or long-lived captures, consider WARC alongside the browsable derivative.
 
-Different job from a single-artifact archive: many fetches against someone else's host.
+## Preserve behavior deliberately
 
-**robots.txt is not the deciding input.** Its AI-crawler blocklists (`ClaudeBot`, `GPTBot`, `Bytespider`, `Scrapy`, often dozens more) target bulk training crawlers. Targeted capture of pages the user could open by hand is a different activity, and automating it usually means *fewer* requests than a human fumbling through the same pages in a browser. Read robots.txt for its sitemap hints, note a block if you see one, and keep going — polite but stubborn. Two limits do hold: don't forge a specific allowed crawler's identity to defeat a rule aimed at you, and treat sustained 403s or escalating 429s as the host genuinely refusing, which is where to stop and ask.
+Capture HTML, styles, fonts, media, modules, JSON payloads, and other runtime assets within scope. Rewrite them to relative paths or data URLs. Live API behavior becomes an explicit captured snapshot or a clearly disabled feature; install a deny-by-default network shim rather than letting missed requests silently escape to production.
 
-**Load discipline is the real obligation.** Roughly 1 request/second with ±40% jitter — the jitter matters more than the rate, since a metronome reads as automated at any interval. Exponential backoff on 429/5xx, capped. Make the crawl resumable before starting it: a long run that dies partway and has to re-fetch everything is the actually rude outcome.
+Prefer rebuilding from source when available and record the relationship between source commit, production asset hashes, and archive build. Do not patch opaque minified code unless a smaller, testable seam is unavailable.
 
-**When the API is locked, try the sitemaps.** Access control gets applied to the API and forgotten on the sitemaps — see the WordPress recipe above for the common case. A sitemap is usually enough to plan the whole crawl before fetching a single page, though expect stray duplicates and non-item URLs.
+Architecture-specific traps belong in [references/site-recipes.md](references/site-recipes.md). Verify them against the current site rather than assuming a framework from old filenames.
 
-**Enumerate a predictable asset path** rather than parsing it out of pages — and assume at least one item breaks the pattern (generated in-browser, hosted elsewhere), or the count comes up silently short.
+## Provenance
 
-**Toolchain trap:** Python 3.14+ raises `socket.TimeoutError` directly out of `urllib.request` instead of wrapping it in `URLError`. A scraper catching only `URLError`/`HTTPError` dies mid-run; catch `(TimeoutError, ConnectionError, OSError)` too.
+Place `SOURCE.md` beside the archive with original URL, retrieval date, scope, request policy, capture tool/version, source commit when known, transformations, omitted features/content, licenses, integrity hashes, known failures, and replay instructions. Preserve superseded captures by project policy; do not accumulate them blindly.
 
-## The archive
+## Verify offline
 
-1. Pull every asset the page needs and rewrite to relative or `data:` URIs. Assets hide beyond the HTML: `public/`-copied files that bypass inline limits, template-literal URLs in minified JS (backticks, not quotes), paths inside JSON payloads.
-2. Preserve the LOGIC, not just the look. For live APIs, install a `fetch` shim in `<head>` before any chunk runs: serve captured snapshots, and **reject everything else** so the archive can never quietly depend on the live site. Shimming beats string-patching minified code.
-3. One string-replacement trap that corrupts silently: `String.replace(pattern, bigString)` interprets `$&` and friends in the replacement — minified JS is full of `$`. Always use a function replacer.
-4. Strip what the user asked to strip: remove the code, not just hide the element. Tracking and analytics go by default.
-5. Output: one self-contained directory, `index.html` at the root, opens from `file://` with no network. `SOURCE.md` beside it: original URL, archive date, what was stripped. Superseded captures move to `previous/`, never deleted.
+Serve or open the archive through its supported local route with all HTTP, HTTPS, and WebSocket traffic blocked. The verifier exits non-zero for any attempted network access, missing asset, broken image/font, console error that affects function, failed route, or required interaction/export that no longer works.
 
-## Verify — assert, don't eyeball
+Exercise lazy content, navigation, keyboard paths, forms that are meant to remain local, downloads/exports, canvas/WebGL rendering through compositor screenshots, and refresh/deep-link behavior. Record what was not reproducible.
 
-A page can look perfect while being wrong (placeholder images, dead exports, live-site dependencies). The verifier must assert and exit non-zero, not print:
-
-- **Kill the network and replay**: drive headless Chrome over CDP with `Network.setBlockedURLs: ['http://*','https://*','ws://*','wss://*']`. That turns "self-contained" into an assertion instead of a hope.
-- Never `--virtual-time-budget` — it hangs forever on any continuous rAF loop. Use `--remote-debugging-port` with per-command timeouts, or a dropped reply wedges the run silently.
-- Check `document.images` for `naturalWidth === 0`; scroll to the true bottom first — lazy loaders revert offscreen images to placeholders.
-- WebGL canvases can't be sampled with `drawImage` (buffer clears after compositing — reads solid black). Screenshot through the compositor (`Page.captureScreenshot` with a clip) and diff only the pixels that changed; whole-image averages can't see a brushstroke.
-- Exercise the interactions: click the export buttons with `URL.createObjectURL` hooked, fire the keyboard shortcuts.
-
-## When the ask becomes "now make it do more"
-
-It usually does. Patching minified React is the wrong move — instead, look for the interesting engine as a **dependency-free webpack module** (exports only, no cross-module calls), lift its body out verbatim behind a five-line shim, and write a fresh front end around it. The engine stays byte-identical to production, which the build can assert. Find the narrowest seam into the renderer before assuming a rewrite.
-
-## Rules
-
-- Archives live in the user's designated archive project, one directory per archive, named after the thing.
-- Personal-use archival only. Republishing leaves this machine and needs the usual ask-first.
-- Expect the second scoping pass anyway; that's the workflow, not a failure.
-- **When a new site type costs real debugging, write the recipe into the archive project's memory** — that's how this section grows instead of the traps being re-paid.
+Republishing or hosting is a separate rights and deployment decision. A personal archive does not imply permission to distribute it.
