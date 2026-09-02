@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate and link this repository's skills into supported agent hosts.
 
-Installed host directories are deployment targets, never authored source. Existing
-directories are preserved in quarantine before replacement; unmanaged entries are left alone.
+Installed host directories are deployment targets, never authored source. Diverged
+untracked entries are preserved before replacement; canonical Git-backed links are not.
 """
 
 from __future__ import annotations
@@ -313,13 +313,27 @@ def move_then_link(target: Path, source: Path, backup: Path) -> None:
         raise
 
 
+def symlink_points_within(path: Path, root: Path) -> bool:
+    if not path.is_symlink():
+        return False
+    raw_target = Path(os.readlink(path))
+    resolved = (
+        raw_target.resolve(strict=False)
+        if raw_target.is_absolute()
+        else (path.parent / raw_target).resolve(strict=False)
+    )
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError:
+        return False
+    return True
+
+
 def sync_claude_explicit_policy(
     hosts: dict[str, Path],
     skills: list[dict[str, object]],
     metadata: dict[str, object],
-    quarantine_root: Path,
     apply: bool,
-    migrate_existing: bool,
 ) -> tuple[int, int]:
     explicit = set(metadata["explicit"])
     claude_skills = {
@@ -347,9 +361,9 @@ def sync_claude_explicit_policy(
         for name in required
         if name in overrides and overrides[name] != "user-invocable-only"
     }
-    if conflicts and not migrate_existing:
+    if conflicts:
         detail = ", ".join(f"{name}={value!r}" for name, value in conflicts.items())
-        print(f"BLOCK   claude explicit policy conflicts ({detail}); rerun with --migrate-existing")
+        print(f"BLOCK   claude explicit policy conflicts ({detail}); resolve these user settings explicitly")
         return 0, 1
 
     missing = [name for name in required if overrides.get(name) != "user-invocable-only"]
@@ -359,12 +373,6 @@ def sync_claude_explicit_policy(
     print(f"POLICY  claude user-invocable-only: {', '.join(missing)}")
     if not apply:
         return 0, 0
-
-    if settings_path.exists():
-        backup = unique_quarantine_path(quarantine_root, "claude", "settings.json")
-        backup.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(settings_path, backup)
-        print(f"BACKUP  claude settings -> {backup}")
 
     updated = dict(overrides)
     updated.update({name: "user-invocable-only" for name in missing})
@@ -441,6 +449,12 @@ def command_link(
             if not lexical_exists(target):
                 print(f"ABSENT  {host:<6} {name} (retired)")
                 continue
+            if symlink_points_within(target, REPO_ROOT):
+                print(f"UNLINK  {host:<6} {name} (retired canonical link; Git is recovery)")
+                if apply:
+                    target.unlink()
+                    changed += 1
+                continue
             backup = unique_quarantine_path(quarantine_root, host, name)
             if not migrate_existing:
                 print(f"BLOCK   {host:<6} {name}: retired; rerun with --migrate-existing to preserve and remove it")
@@ -457,9 +471,7 @@ def command_link(
             hosts,
             skills,
             metadata,
-            quarantine_root,
             apply,
-            migrate_existing,
         )
         changed += policy_changed
         blocked += policy_blocked

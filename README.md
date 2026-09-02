@@ -76,7 +76,7 @@ python3 scripts/manage-skills.py link --migrate-existing
 python3 scripts/manage-skills.py link --migrate-existing --apply
 ```
 
-Existing managed copies are moved intact to a dated directory under `~/.agent-skill-quarantine/` before their leaf symlinks are created. Unmanaged or vendor-provided skills are never touched. For skills marked explicit, reconciliation also writes Codex's `agents/openai.yaml` policy from the repo and merges Claude's native `skillOverrides.<name> = "user-invocable-only"` setting. The Claude settings file is copied to the same quarantine root before mutation. Restart a host session if a newly linked skill or policy does not appear immediately.
+Canonical links and clean Git-tracked sources use Git as their recovery system and are not duplicated into quarantine. A diverged installed copy is moved intact to a dated directory under `~/.agent-skill-quarantine/` only when it contains state Git does not protect. Unmanaged or vendor-provided skills are never touched. For skills marked explicit, reconciliation also writes Codex's `agents/openai.yaml` policy from the repo and atomically merges missing Claude `skillOverrides.<name> = "user-invocable-only"` entries; conflicting user settings block rather than being overwritten. Restart a host session if a newly linked skill or policy does not appear immediately.
 
 Edit skills in this repository. When advice truly differs between hosts, prefer a separate host-specific skill or a neutral shared core with host-specific supporting references. Host invocation controls live in native metadata/settings rather than bracketed prose conditionals, so the installed `SKILL.md` remains ordinary, inspectable Agent Skills markdown on both sides.
 
