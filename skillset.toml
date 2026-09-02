@@ -10,6 +10,7 @@ root = "~/.agents/skills"
 explicit = [
   "cut-memory",
   "heads-down",
+  "hopper-mcp",
   "obsess",
   "obsess-hero",
   "session-audit",

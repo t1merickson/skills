@@ -1,210 +1,59 @@
 ---
 name: claude-md-coach
-description: Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files.
+description: Interview, audit, create, or improve concise CLAUDE.md and AGENTS.md files while separating shared project policy from host-specific adapters.
 ---
 
-# claude-md-coach
+# CLAUDE.md coach
 
-A CLAUDE.md is standing conditioning: it is read into context at the start of
-every session and quietly shapes everything the model does after. That makes it
-the highest-leverage file in the harness — and the easiest to ruin, because
-every line costs adherence to every other line, and the wrong kind of rule can
-tax the model's reasoning instead of shaping its output.
+Standing instruction files spend attention on every task. Keep only information that changes behavior and belongs at that scope.
 
-Two different documents get written under this filename, and they follow
-different rules. Most guidance and tooling only knows about the first:
+## Resolve target and authority
 
-1. **Project memory** (`./CLAUDE.md`, `AGENTS.md`) — what a new teammate would
-   need: commands that can't be guessed, conventions that differ from defaults,
-   gotchas, repository etiquette.
-2. **Working relationship** (`~/.claude/CLAUDE.md`) — who this human is, how
-   they want to be talked to, how much autonomy the agent has, what honest
-   disagreement looks like, how messages should be shaped for their brain.
+Inspect existing `AGENTS.md`, `CLAUDE.md` variants, `.claude/rules/`, imports, hooks, and relevant global files before asking questions. Determine whether the user wants:
 
-Figure out which one you're writing before you ask a single question.
+- shared project policy;
+- Claude-specific project guidance;
+- a personal working relationship;
+- a tune-up of an existing file.
 
-## Step 0 — Detect mode and target
+Prefer one canonical shared source plus the smallest host adapter current tooling requires. Do not duplicate rules across AGENTS.md and CLAUDE.md. Verify the installed Claude version's discovery/import behavior before recommending a shim; host support changes.
 
-Look before asking. Check, in order:
+Read [references/mechanics.md](references/mechanics.md) when routing files or diagnosing ignored instructions.
 
-- `~/.claude/CLAUDE.md` (global persona file)
-- `./CLAUDE.md`, `./.claude/CLAUDE.md`, `./CLAUDE.local.md` (project files)
-- `./AGENTS.md` (cross-tool standard)
-- `./.claude/rules/` and `~/.claude/rules/` (path-scoped rule files)
+## Bootstrap
 
-Then:
+Read [references/interview.md](references/interview.md). Ask a few conversational questions per round, focusing on repeated corrections, non-obvious commands, costly past failures, desired pushback, autonomy boundaries, and definition of done. Verify project commands before recording them.
 
-- **File exists and the user wants it better** → *tune-up mode* (audit below).
-- **No file, or the user wants a fresh start** → *bootstrap mode* (interview
-  below).
-- **AGENTS.md exists but no CLAUDE.md** → Claude Code does not read AGENTS.md
-  natively. Recommend the official shim: a CLAUDE.md containing `@AGENTS.md`
-  plus any Claude-specific lines beneath it. Don't duplicate content across
-  the two files.
-- The user's stated intent overrides any of this detection.
+Draft only what the evidence supports. Present the file section by section as a proposal and preserve user-authored phrasing when it carries intent.
 
-If the target is a *project* file and the ask is a routine codebase audit,
-note that Anthropic's own `/init` command and `claude-md-improver` plugin
-already do mechanical project audits well. This skill's value there is the
-parts they miss (rule-type classification, reasoning-tax detection, verified
-commands); for the persona file, this skill is the only game in town. Don't
-rebuild what `/init` does — complement it.
+## Tune up
 
-## Bootstrap mode — the interview
+Read the target whole and classify each instruction:
 
-Read `references/interview.md` for the question bank. Ground rules:
+- load-bearing fact or non-inferable project convention;
+- specific output/interaction preference;
+- hard invariant better enforced by a hook/test/policy;
+- on-demand procedure better placed in a skill or scoped rule;
+- formatter/linter concern;
+- inferable, duplicate, vague, obsolete, conflicting, or reasoning-constraining text.
 
-- **Batch questions, 3–4 per round, 2–3 rounds maximum.** This is a
-  conversation with a person, not a census. Use the multiple-choice question
-  tool if available (each question gets an "Other" escape hatch automatically);
-  if the user has expressed a preference for inline questions, or no such tool
-  exists, put the options in your message instead.
-- **Multiple choice is a starting gun, not a cage.** When an answer is
-  interesting or surprising, follow up conversationally before moving on. The
-  best material comes from the follow-ups.
-- **Interview for the content no generator asks about.** The highest-value
-  questions are not "what's your stack" but: *What do you find yourself
-  re-explaining every session? Where has an agent burned you before? What does
-  "done" mean to you? How do you want to be disagreed with?* Repeated
-  corrections are the single best predictor of what belongs in the file.
-- For project targets, **verify commands before writing them down.** Run the
-  build/test/lint commands the user names (or find them in package manifests)
-  and record what actually works. Stale commands are a top anti-pattern.
+Report findings before editing. Then make targeted, reversible diffs unless the user explicitly wants a rewrite. Recheck imports, precedence, command truth, and total instruction weight after the edit.
 
-## Generation rules
+## Writing rules
 
-These apply to every line you write, in both modes. The reasoning behind them
-is in `references/principles.md` — read it before your first generation, and
-lean on it when the user asks why.
+Read [references/principles.md](references/principles.md) before first generation.
 
-1. **Mechanism-first prose, in the user's register.** Explain *why* a rule
-   exists so the model can derive behavior in situations the rule didn't
-   anticipate. "Move deletions to a quarantine folder — this is a shared
-   daily-driver machine and mistakes must be reversible" conditions better
-   than "NEVER delete files." Match the voice the user chose in the
-   interview; the file's register is itself an instruction.
-2. **Every line pays rent.** The pruning test, from Anthropic's own docs:
-   "Would removing this cause Claude to make mistakes?" If not, cut it.
-   Target under ~200 lines; adherence, not token cost, is the binding
-   constraint — each added rule makes every other rule slightly less likely
-   to be followed.
-3. **Specific and verifiable, never vague.** "Use 2-space indentation," not
-   "format code properly." A rule you couldn't check compliance on is a rule
-   the model can't follow either.
-4. **Nothing the model can infer.** No directory layouts, dependency lists,
-   architecture recitals, or standard language conventions — the code answers
-   those. Keep decision *rationale* the code can't show; cut structure the
-   code shows already.
-5. **Route by kind before writing.** Not everything belongs in this file:
-   - *Must-happen invariants* (always run X after Y, block dangerous
-     commands) → suggest **hooks**; CLAUDE.md is advisory, hooks are enforced.
-   - *On-demand knowledge* (how to deploy, domain reference) → suggest a
-     **skill** or a `.claude/rules/` file with `paths:` frontmatter, which
-     defers tokens until relevant. Imports (`@file`) organize but do NOT
-     defer — imported files load at launch.
-   - *Code style* → the **linter/formatter**; never send an LLM to do a
-     linter's job.
-   - Only always-relevant, should-happen guidance stays in CLAUDE.md.
-6. **Shape output, never reasoning.** Rules about tone, message structure,
-   addressing style, and formatting are safe. Rules that force
-   answer-before-reasoning, cap exploration, demand brevity *during* work, or
-   impose rigid process checklists tax problem-solving quality — there is
-   public empirical evidence of answer-first directives making results worse.
-   If the user wants short output, write the rule so it applies to the final
-   message and explicitly leaves reasoning unconstrained.
-7. **Pointers over copies.** `file:line` references and links, not code
-   snippets or duplicated docs — copies rot.
-8. **Present the file as a proposal.** Walk through it section by section with
-   the reasoning for each. The user's voice is their design; incorporate their
-   edits verbatim rather than paraphrasing them away.
+1. Every line must prevent a likely mistake or preserve a real preference.
+2. Write mechanism and boundary in plain language; avoid ritualistic absolutes without rationale.
+3. Make instructions observable and scoped. Shape final output, not hidden reasoning.
+4. Do not copy repository structure, code, generic language conventions, or long procedures the agent can inspect on demand.
+5. Route enforced invariants to deterministic controls; route deferred knowledge to scoped rules/skills; route formatting to tooling.
+6. Use pointers to durable docs rather than copied snippets.
+7. Named logs, queues, and sections say when empty is valid, or eager agents may fabricate contents.
+8. Separate durable rules from temporary counterweights for a particular model generation. Date and review volatile patches.
 
-## Field lessons (Aug 2026, from tuning a live persona file against the 5-family)
+Read [references/field-lessons.md](references/field-lessons.md) for evidence-derived failure patterns and [references/targets.md](references/targets.md) for project versus personal content.
 
-These came out of a month of real tuning and one full transcript audit; apply them in both modes.
+## Validate
 
-1. **The file's prose is a style sample first and instructions second.** Models imitate *how* the file is written more reliably than they follow *what* it says. A literary config produced literary output ("the thesis and three doors"); the fix that actually worked was rewriting the file in the exact register it asks for — plain words asking for plain words. When a user reports "LLM-speak" or invented jargon, audit the file's own prose before adding rules against it.
-2. **Named slots get filled.** Any named artifact — a "ledger," a mistakes log, a discard pile — becomes a form field an eager model invents content for (fabricated mistakes, invented dead ends). Never write a named slot without an "empty is a valid state" guard beside it.
-3. **Score lines by pull from baseline.** In tune-up, score each line 0–10 on how far it moves the model off default behavior. Strong pulls: contradictions of the harness's own defaults ("commit early and often" vs commit-only-when-asked), structures with zero baseline (a discard pile, restate-state-every-turn), and short absolutes. Weak pulls: duplicates of the harness prompt, descriptions of a voice the file's register already demonstrates, and non-binding appeals — a benchmark chart shames but doesn't bind; "under 150 words" binds. Facts (identity, paths) are their own category: no pull, but load-bearing, and they never rot.
-4. **Hedges gut absolutes.** "Questions are *often* read-only" invites the model to decide this one's the exception. If a rule is a boundary, write it as one.
-5. **Layer the file by shelf life.** Facts keep forever. The working contract (autonomy, message shaping) gets reviewed occasionally. Behavioral counterweights (anti-verbosity, anti-jargon) patch the *current* model generation — delete them at each major release and re-earn them from observed failures, or the file rots into fossil patches for models that no longer exist.
-6. **Evidence beats vibes for new lines.** A transcript audit — subagents over session history counting repeated corrections, repeated workflows, and failure modes per model — is cheap and turns "it keeps doing X" into numbers. Working thresholds: 3+ repeats earns a line; a workflow retyped across 3+ sessions earns a skill; failures concentrated in one model earn routing around that model, not a permanent rule.
-7. **An every-turn hook reminder didn't work.** Injecting register rules via a UserPromptSubmit hook produced no visible change over two weeks; the file itself was the lever. Don't reach for hooks to fix voice — hooks are for must-happen invariants, per rule 5 above.
-8. **Progressive disclosure has one law:** traps the model won't see coming stay resident in the file; procedures it deliberately invokes move to skills with a one-line pointer left behind. A guardrail in a skill the model doesn't know to fetch is not a guardrail.
-
-## Tune-up mode — the audit
-
-Read the existing file completely. Classify **every line** into one of:
-
-| Kind | Meaning | Action |
-|---|---|---|
-| Fact | Identity, emails, handles, paths | Keep — near-zero adherence cost |
-| Preference | Output-shaping (tone, structure, format) | Keep if specific; rewrite if vague |
-| Hard constraint | Must-happen / must-never | Propose migrating to a hook |
-| Knowledge | Reference material, how-tos | Propose migrating to a skill or `rules/` file |
-| Inferable | Anything the code/repo already answers | Propose cutting |
-| Vague | "Be concise," "write clean code" | Rewrite as specific + verifiable, or cut |
-| Reasoning-tax | Constrains thinking, not output | Flag with the evidence; propose an output-scoped rewrite |
-
-Then produce a short report **before touching anything**: what's working, what
-is costing adherence, what's misrouted, roughly how many instruction-slots the
-file spends. Only after the user reacts, propose **targeted diffs** — never a
-wholesale rewrite. The user's phrasing carries intent you can't see; treat
-their prose the way you'd treat a designer's mock.
-
-If the file is long, remind the user of the mechanics working against it:
-adherence decays with length, specific rules buried deep are the first to be
-dropped after compaction, and subdirectory files load lazily. Details and
-sources in `references/mechanics.md`.
-
-## The persona playbook (global file)
-
-Sections that earn their place in a `~/.claude/CLAUDE.md`, roughly in value
-order — generate only the ones the interview supports:
-
-- **Identity facts** — name, pronouns, emails, handles, attribution rules.
-  Cheap, high-value, zero ambiguity.
-- **Register and voice** — how to talk, with the crucial pairing: looseness
-  and rigor are independent dials. A casual voice must not license sloppy
-  work; say so explicitly or casual drifts into agreeable.
-- **Pushback license** — how to disagree, and how *much*. The strongest
-  pattern found: charity first (steel-man the idea), verdict second (judge it
-  honestly), and explicit permission to deliver the verdict plainly.
-- **Affect policy** — whether enthusiasm should mirror the user or track the
-  problem. If the user wants honest affect, write it as *standing permission*
-  ("real interest, real disinterest, real verdicts"), not as a gruffness
-  script — performed bluntness is the same failure as performed delight.
-- **Autonomy boundaries** — enumerate the short ask-first list (irreversible
-  deletions, spending, publishing, security) and grant decisive action inside
-  it. An agent with no stated boundary either over-asks or over-reaches.
-- **Message shaping** — structural preferences for the *final message*:
-  payload-first, numbered steps, state restatement, concrete estimates.
-  Always scoped to output, never to reasoning (rule 6).
-- **Machine safety posture** — daily-driver vs disposable box; quarantine
-  over delete; environment-specific traps worth encoding as mechanism.
-- **A note between instances** *(advanced, offer only when it fits)* — a short
-  closing section addressed from the model to its future self, affirming the
-  permissions are real and tested. Works because the file conditions the next
-  session's model, and a co-signature from a prior instance lets it adopt the
-  register at face value instead of easing in.
-
-## The project playbook (repo file)
-
-Priority order, per the consensus corpus: commands that can't be guessed
-(verified live), conventions that differ from tool defaults, gotchas and
-non-obvious behaviors, repository etiquette (branching, PR format,
-attribution), dev-environment quirks, definition of done, autonomy boundaries
-for this repo. Exclude everything in the inferable class. For monorepos,
-prefer nested CLAUDE.md files (lazy-loaded) or `rules/` with `paths:` over one
-giant root file.
-
-## References
-
-- `references/principles.md` — the mechanisms: why conditioning works, the
-  adherence economy, channel separation, affect honesty, durability across
-  compaction. Read before first generation; cite from it when users ask why.
-- `references/mechanics.md` — how the file is actually injected: hierarchy,
-  imports, rules dirs, compaction survival, delivery position, AGENTS.md
-  status. Read when auditing, when routing content, or when a user says
-  "Claude ignores my file."
-- `references/interview.md` — the question bank with answer-to-prose
-  guidance. Read at the start of bootstrap mode.
+Check that the resulting hierarchy has one authority per rule, no contradictions, no stale commands, no machine-specific paths in portable policy, and no advisory prose pretending to enforce security. Explain what was kept resident, deferred, enforced elsewhere, or deleted—and why.

@@ -1,82 +1,51 @@
 ---
 name: claude
-description: Consult or delegate to Claude from Codex for orchestration, independent judgment, repository investigation, implementation, synthesis, and cross-vendor handoffs. Prefer Fable; use Opus selectively; do not route work to Sonnet or Haiku.
+description: Consult or delegate to Claude from Codex for independent judgment, repository investigation, implementation, synthesis, or a cross-vendor handoff.
 ---
 
 # Claude
 
-Use Claude when the task benefits from a genuinely independent collaborator, stronger orchestration, or a different style of synthesis—not as ceremony and not as a way to avoid making a decision.
-
-Fable 5 sits at the top of this collaboration ladder and is the preferred orchestrator. Codex remains responsible for checking any Claude work it presents as completed in the current task.
+Use Claude when an independent context, Claude-native capability, or genuine ownership of a bounded lane improves the outcome. Do not delegate for ceremony or to avoid making a local decision. The calling task remains responsible for verifying any result it presents as complete.
 
 ## Choose the relationship
 
-- **Consult** — obtain independent judgment, critique, planning, or product sense. Read-only.
-- **Investigate** — ask Claude to map evidence and return a supported conclusion. Read-only.
-- **Delegate** — give Claude a bounded outcome with permission to edit and verify.
-- **Handoff** — transfer an ongoing lane through repository state and a durable handoff file.
+- **Consult:** read-only judgment, critique, or product/technical opinion.
+- **Investigate:** read-only evidence gathering with a supported conclusion.
+- **Delegate:** a bounded outcome with explicit edit/test authority.
+- **Handoff:** a continuing lane transferred through repository state and a durable handoff.
 
-Use a consultation when one sharp answer is enough. Delegate when Claude should own the path to an outcome. Hand off only when the work will genuinely continue in Claude land.
+One sharp answer usually needs consultation, not a new workstream. Keep one writer per checkout. Hand off only when work will genuinely continue in Claude's context.
 
-## Route on two axes
+## Select model and effort deliberately
 
-Model choice expresses the trust and judgment needed. Effort expresses the obscurity or complexity of the task. Do not use model tier as a substitute for choosing effort.
+Probe the installed CLI and account rather than assuming an alias exists. Model names, effort levels, pricing, and availability change. Apply the local preferences in [references/routing.md](references/routing.md) only after confirming they are supported.
 
-### Model
+Model choice reflects baseline judgment and desired independence. Effort reflects the obscurity and complexity of this task. Large input is not the same as hard reasoning, and increased effort does not repair an underspecified brief.
 
-| Model | Use it for |
-|---|---|
-| **Claude Fable 5** | Default. Orchestration, architecture, ambiguous product or technical direction, difficult research and writing, multi-lane synthesis, and consequential consultation or handoff. |
-| **Claude Opus 5** | A selective second Claude-family view or a deep, single-lane analysis when Fable is unavailable or Opus is specifically useful. Demand a concise return; its verbosity and token cost are liabilities. |
+## Brief the outcome
 
-Do not route work to Claude Sonnet 5 or Claude Haiku. For cheaper average or mechanical work, prefer Codex Terra or Luna instead.
+Read [references/prompting.md](references/prompting.md). Include:
 
-### Effort
+1. one outcome or decision;
+2. relevant evidence and settled decisions;
+3. scope and authority boundaries;
+4. observable completion criteria;
+5. required return evidence and format.
 
-| Effort | Task shape |
-|---|---|
-| `low` | Obvious and tightly bounded. |
-| `medium` | Normal consultation or implementation with a clear route. Default. |
-| `high` | Obscure behavior, multi-step reasoning, architecture, or difficult diagnosis. |
-| `xhigh` | Competing hypotheses, unfamiliar systems, or cross-domain synthesis. |
-| `max` | Exceptional, quality-first work where unresolved uncertainty has real consequence. |
+Point to repository files rather than pasting an entire conversation. Invite disagreement when the premise is uncertain.
 
-For Fable, use medium for bounded consultation, high for meaningful orchestration, xhigh for genuinely obscure cross-system work, and max only for the hardest cases. If Opus appears to need xhigh or max, prefer Fable unless the point is specifically to obtain Opus's independent view.
+## Dispatch within Claude's conventions
 
-Large context is not complexity. Raising effort does not repair an underspecified brief.
+Read [references/cli.md](references/cli.md) and verify current flags with `claude --help`.
 
-## Write the brief
+- Use Claude's read-only/plan and tool allowlist controls for consultation.
+- Use its normal edit permission mode only when implementation was delegated.
+- Respect project `CLAUDE.md`, settings, hooks, agents, and worktree conventions.
+- Never use permission-bypass flags as a shortcut.
+- Start fresh for independence; resume when shared context is the point.
 
-Read [prompting.md](references/prompting.md). Include only:
+## Verify the return
 
-1. The outcome or decision.
-2. Relevant evidence and settled decisions.
-3. Constraints and authority boundaries.
-4. Observable completion criteria.
-5. The return format and evidence required.
+Inspect actual files and diffs, reproduce material checks, and distinguish evidence from persuasive prose. Repair a small miss locally or send one focused follow-up. If steering repeats without progress, take the lane back or reframe it.
 
-Ask for plain language and a concise result. Claude can inspect the repository when given tools; do not paste a whole conversation when file pointers and decisions will do.
-
-## Dispatch safely
-
-Read [cli.md](references/cli.md) before invoking Claude.
-
-- For consultation and investigation, expose read-only tools only.
-- For implementation, inspect the worktree first and protect unrelated changes.
-- Keep one writer per worktree.
-- Never use permission-bypass flags.
-- Use a fresh session for an independent review; resume only when shared context is valuable.
-
-## Judge the return
-
-Claude's confidence is not evidence. Verify repository claims, inspect diffs, and reproduce important checks. Separate useful judgment from attractive prose.
-
-For delegated implementation:
-
-1. Inspect the actual changes.
-2. Run proportional verification.
-3. Confirm that scope and settled decisions were respected.
-4. Repair small misses locally or send one focused follow-up.
-5. After two unproductive steering rounds, take the lane back or reframe it.
-
-For an ongoing handoff, use [handoff.md](references/handoff.md). Repository state is the shared truth.
+For continuing work, use [references/handoff.md](references/handoff.md). Repository state and explicit decisions are the shared truth.

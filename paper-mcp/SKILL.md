@@ -1,117 +1,49 @@
 ---
 name: paper-mcp
-description: "Drive the Paper (paper.design) app over its local MCP server: layers, masks, blends, exports."
+description: Operate an open Paper.design canvas through Paper Desktop's local MCP server for layer editing, masks, blends, screenshots, and exports.
 ---
 
-# paper-mcp
+# Paper MCP
 
-Paper Desktop serves an MCP endpoint at `http://127.0.0.1:29979/mcp` whenever
-the app is running with a file open. Everything below was verified hands-on
-against Paper Desktop 0.5.3 (2026-08-10) from this machine.
+Use when the user asks to work in Paper and Paper Desktop is running with the intended file open. Canvas edits and exports change user state; stay within the named file/artboard and preserve existing work.
 
-## Talking to it
+## Initialize and inspect
 
-The endpoint speaks MCP over HTTP with SSE responses. `windowid`-style
-plumbing is already wrapped in [paper-mcp.sh](paper-mcp.sh) next to this file:
+Resolve this installed skill directory from the host; do not assume a Claude-specific environment variable.
 
 ```bash
-SKILL_DIR="${CLAUDE_SKILL_DIR:-$HOME/.agents/skills/paper-mcp}"
-SID=$("$SKILL_DIR/paper-mcp.sh" init)          # new session, prints id
-"$SKILL_DIR/paper-mcp.sh" call "$SID" get_basic_info '{}'
-"$SKILL_DIR/paper-mcp.sh" raw  "$SID" '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+sid="$(<skill-directory>/paper-mcp.sh init)"
+<skill-directory>/paper-mcp.sh raw "$sid" '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+<skill-directory>/paper-mcp.sh call "$sid" get_basic_info '{}'
 ```
 
-Responses come back as `data:` SSE lines; the helper strips them to plain
-JSON. Tool results wrap their payload as a JSON *string* in
-`.result.content[0].text` — pipe through `jq -r ... | jq` to unwrap.
-Screenshots/exports put images in `.result.content[] | select(.type=="image")`.
+The helper accepts `PAPER_MCP_ENDPOINT` and `PAPER_MCP_PROTOCOL_VERSION` overrides for a changed local server. It unwraps SSE framing but leaves MCP result content intact.
 
-Session rules the server enforces:
+Before editing:
 
-- Call `get_guide {"topic":"paper-mcp-instructions"}` once per session before
-  other tools — the server tells you to, and the guide carries real workflow
-  rules (write HTML in small pieces, screenshot after changes, call
-  `finish_working_on_nodes` when done).
-- Call `get_font_family_info {"familyNames":[...]}` before first text styling.
-- The first file touched becomes sticky for the session; pass `fileId`
-  explicitly only when juggling several files.
+1. inspect `tools/list` and use its current schemas rather than memorized arguments;
+2. call the server's Paper instructions/guide tool when advertised;
+3. inspect basic file/page/artboard/node state;
+4. confirm the intended target when more than one file or artboard is open;
+5. inspect font availability before applying a family.
 
-## What works (verified)
+The first file may become session-sticky on some builds. Pass file IDs explicitly when supported and re-read state after switching.
 
-- **Raster images via data URI.** `write_html` with
-  `<img src="data:image/jpeg;base64,...">` creates a Rectangle with an image
-  fill. Payloads ≥190 KB base64 went through fine.
-- **PNG alpha masks.** `mask-image: url(data:image/png;base64,...)` +
-  `mask-size` (include `-webkit-` twins) clips correctly — torn-paper edges
-  render exactly as the alpha says.
-- **Blend modes.** `mix-blend-mode: multiply` composites for real (verified
-  against underlying photo). Standard CSS blend modes are the vocabulary.
-- **Per-node PNG export with alpha.** `export` with
-  `{"nodes":{"<id>":[{"format":"png","scale":"1x"}]}}` writes the file and
-  keeps transparency (masked-out corners have alpha 0). Formats: png, jpg,
-  webp, avif, svg, pdf, mp4. Scale grammar: `2x`, `512w`, `720p`, `512h`.
-- **SVG inline in write_html** — paths, ellipses, transforms, opacity all
-  render; each SVG element becomes its own node.
-- **Text** — real text nodes; crop giant type with a parent div +
-  `overflow:hidden`.
-- `duplicate_nodes`, `move_nodes`, `update_styles`, `delete_nodes`,
-  `create_page`, `create_artboard` all behave as documented in `tools/list`.
+## Edit in reviewable groups
 
-## Traps (each cost a debugging round)
+- Make one coherent visual group per write rather than replacing a whole composition.
+- Preserve z-order, grouping, masks, and existing node identity where practical.
+- Prefer targeted replace/style/move operations over delete-and-rebuild.
+- Use raster assets as data URIs only when size and current schema permit; keep local source assets and transformations reproducible.
+- Treat Paper as a compositor. Perform heavy image processing in a suitable local tool, then bring the resulting layer in.
+- Never expose internal node IDs as user-facing labels or prose.
 
-1. **`height: auto` collapses to 0.** Images get created with height 0 and
-   silently vanish. Always give explicit `width` AND `height` px.
-2. **Screenshots can be stale.** `get_screenshot` right after a burst of
-   `write_html` calls returned a frame missing the last two writes. Nodes
-   were fine (`get_node_info` proved it). `sleep 2` before screenshotting
-   after writes; trust node info over a suspicious screenshot.
-3. **Schema drift vs docs.** `create_artboard` wants
-   `{"name","styles":{"width":"800px","height":"600px",...}}` (styles object,
-   not top-level w/h). `update_styles` wants
-   `{"updates":[{"nodeIds":["..."],"styles":{...}}]}` (array `nodeIds`, not
-   `nodeId`). `get_font_family_info` wants `familyNames` (array). When a call
-   fails with "Invalid arguments", run `tools/list` and read the real schema
-   instead of guessing twice.
-4. **Exports land in `~/Downloads/<NodeName>.<ext>`** — the tool result gives
-   the path. There is no way to choose the destination; copy the file out.
-   (`~/Downloads` is the user's personal folder: touch only the file you just
-   exported.)
-5. **`overflow:hidden` on a plain div did not clip a child image** in one
-   test. Don't rely on it for cropping; bake crops into the asset, use
-   `object-fit:cover` with exact dimensions, or use a real mask.
-6. **z-order = document order.** `write_html` with `insert-children` appends
-   on top. Use `move_nodes` to restack. (`mode:"replace"` keeps the replaced
-   node's slot in the z-order — safe for swapping assets.)
-7. **Don't judge alignment from a downscaled screenshot.** A 1x screenshot
-   viewed scaled-down produces moiré that makes perfectly grid-snapped edges
-   look off by half a cell. Verify alignment by measuring pixels in the
-   screenshot PNG (find line positions / element bounding boxes with PIL),
-   not by eye.
+After a burst of edits, verify node state first, then request a screenshot once rendering has settled. A screenshot can lag document state. Measure alignment from node bounds or full-resolution pixels, not a downscaled preview.
 
-## Working style that fits Paper's guide
+## Export and finish
 
-- One visual group per `write_html` call — the user watches the canvas build
-  live.
-- `mode:"replace"` with a `targetNodeId` swaps a bad node for corrected HTML
-  in place — the cheap fix loop.
-- Screenshot (`get_screenshot {"nodeId":...}`) → judge → targeted fix. Don't
-  delete-and-restart a composition; Paper's guide explicitly calls that out
-  as hostile to the user.
-- Never put node IDs in user-facing text.
+Probe the current export schema and supported formats/scales. Export only named nodes/artboards. The server may choose a user Downloads location; touch only the returned artifact, then copy it to the approved project/output location if needed.
 
-## Composition pattern that worked (collage)
+Inspect transparency, dimensions, color, and the actual exported file—not just the canvas preview. Call the server's finish/cleanup tool when its guide requires one.
 
-Bake raster scraps locally (grayscale/duotone/dither/grid via Python or the
-PaperStack pipeline), push each as a data-URI layer bottom-to-top onto one
-artboard, use SVG for line work (pencil arcs, blueprint strokes), HTML text
-for type fragments, plain divs for accent blocks. Local baking beats trying
-to do image processing in CSS — Paper is the compositor, not the darkroom.
-
-## Limits
-
-- MCP works only while Paper Desktop is running with the file open — no
-  headless mode.
-- Free tier: 100 MCP tool calls/week (Pro raises it to 1M). A single collage
-  build + fix loop here took ~35 calls.
-- No custom shaders/plugins via MCP; the built-in shader library is
-  editor-side only.
+Read [references/verified-snapshot.md](references/verified-snapshot.md) only for debugging clues. It is a dated observation, not the live schema or service policy.

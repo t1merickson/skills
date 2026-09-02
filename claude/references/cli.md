@@ -9,11 +9,12 @@ test -n "$CLAUDE_BIN"
 
 Run it from the target repository. Use the exact model alias or identifier accepted by the installed CLI; check `claude --help` when aliases change.
 
-## Read-only Fable consultation
+## Read-only consultation
 
 ```bash
+claude_model="<confirmed-model-alias-or-id>"
 "$CLAUDE_BIN" -p \
-  --model fable \
+  --model "$claude_model" \
   --effort high \
   --permission-mode plan \
   --tools 'Read,Glob,Grep' \
@@ -26,8 +27,9 @@ Restricting the tool set is the important read-only boundary. `plan` mode is use
 ## Bounded implementation
 
 ```bash
+claude_model="<confirmed-model-alias-or-id>"
 "$CLAUDE_BIN" -p \
-  --model fable \
+  --model "$claude_model" \
   --effort medium \
   --permission-mode acceptEdits \
   --output-format json \
@@ -36,11 +38,12 @@ Restricting the tool set is the important read-only boundary. `plan` mode is use
 
 Run a writing session only in a prepared checkout or worktree whose scope is clear. Use `--worktree` when isolation is appropriate. Do not use `--dangerously-skip-permissions` or equivalent bypasses.
 
-## Opus consultation
+## Alternate-model consultation
 
 ```bash
+claude_model="<confirmed-alternate-model>"
 "$CLAUDE_BIN" -p \
-  --model opus \
+  --model "$claude_model" \
   --effort medium \
   --permission-mode plan \
   --tools 'Read,Glob,Grep' \

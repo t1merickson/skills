@@ -12,8 +12,9 @@ Run from the repository or pass `-C <directory>`.
 ## Read-only consultation
 
 ```bash
+codex_model="<confirmed-model-id>"
 "$CODEX_BIN" exec \
-  --model gpt-5.6-sol \
+  --model "$codex_model" \
   -c 'model_reasoning_effort="high"' \
   --sandbox read-only \
   -C /absolute/repository/path \
@@ -24,8 +25,9 @@ Run from the repository or pass `-C <directory>`.
 ## Bounded implementation
 
 ```bash
+codex_model="<confirmed-model-id>"
 "$CODEX_BIN" exec \
-  --model gpt-5.6-terra \
+  --model "$codex_model" \
   -c 'model_reasoning_effort="medium"' \
   --sandbox workspace-write \
   -C /absolute/repository/path \

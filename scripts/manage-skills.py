@@ -10,11 +10,13 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
 import shutil
 import sys
+import tempfile
 import tomllib
 
 
@@ -311,6 +313,77 @@ def move_then_link(target: Path, source: Path, backup: Path) -> None:
         raise
 
 
+def sync_claude_explicit_policy(
+    hosts: dict[str, Path],
+    skills: list[dict[str, object]],
+    metadata: dict[str, object],
+    quarantine_root: Path,
+    apply: bool,
+    migrate_existing: bool,
+) -> tuple[int, int]:
+    explicit = set(metadata["explicit"])
+    claude_skills = {
+        str(entry["name"])
+        for entry in skills
+        if "claude" in set(entry["hosts"])
+    }
+    required = sorted(explicit & claude_skills)
+    settings_path = hosts["claude"].parent / "settings.json"
+    try:
+        settings = json.loads(settings_path.read_text()) if settings_path.exists() else {}
+    except (OSError, json.JSONDecodeError) as error:
+        print(f"BLOCK   claude explicit policy: cannot read {settings_path}: {error}")
+        return 0, 1
+    if not isinstance(settings, dict):
+        print(f"BLOCK   claude explicit policy: {settings_path} is not a JSON object")
+        return 0, 1
+
+    overrides = settings.get("skillOverrides", {})
+    if not isinstance(overrides, dict):
+        print("BLOCK   claude explicit policy: skillOverrides is not a JSON object")
+        return 0, 1
+    conflicts = {
+        name: overrides[name]
+        for name in required
+        if name in overrides and overrides[name] != "user-invocable-only"
+    }
+    if conflicts and not migrate_existing:
+        detail = ", ".join(f"{name}={value!r}" for name, value in conflicts.items())
+        print(f"BLOCK   claude explicit policy conflicts ({detail}); rerun with --migrate-existing")
+        return 0, 1
+
+    missing = [name for name in required if overrides.get(name) != "user-invocable-only"]
+    if not missing:
+        print("KEEP    claude explicit invocation policy")
+        return 0, 0
+    print(f"POLICY  claude user-invocable-only: {', '.join(missing)}")
+    if not apply:
+        return 0, 0
+
+    if settings_path.exists():
+        backup = unique_quarantine_path(quarantine_root, "claude", "settings.json")
+        backup.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(settings_path, backup)
+        print(f"BACKUP  claude settings -> {backup}")
+
+    updated = dict(overrides)
+    updated.update({name: "user-invocable-only" for name in missing})
+    settings["skillOverrides"] = updated
+    settings_path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=settings_path.parent, delete=False
+    ) as handle:
+        json.dump(settings, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+        temporary_path = Path(handle.name)
+    if settings_path.exists():
+        temporary_path.chmod(settings_path.stat().st_mode & 0o777)
+    else:
+        temporary_path.chmod(0o600)
+    os.replace(temporary_path, settings_path)
+    return 1, 0
+
+
 def command_link(
     hosts: dict[str, Path],
     skills: list[dict[str, object]],
@@ -378,6 +451,18 @@ def command_link(
                 backup.parent.mkdir(parents=True, exist_ok=True)
                 shutil.move(str(target), str(backup))
                 changed += 1
+
+    if "claude" in chosen:
+        policy_changed, policy_blocked = sync_claude_explicit_policy(
+            hosts,
+            skills,
+            metadata,
+            quarantine_root,
+            apply,
+            migrate_existing,
+        )
+        changed += policy_changed
+        blocked += policy_blocked
 
     mode = "applied" if apply else "preview"
     print(f"\n{mode}: {changed if apply else 0} changed, {blocked} blocked")
