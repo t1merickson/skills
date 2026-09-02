@@ -16,7 +16,7 @@ When the user hands you a direction (a mock, tokens, reference shots, a describe
 ## Making the mocks
 
 - **2 to 4 mocks, distinct directions, not variations.** Each mock is a different bet, not the same bet in three fonts. If you can't articulate what each one bets on, you have variations, and you should collapse them.
-- **Static only.** A self-contained HTML file, a SwiftUI preview, or a rendered image. Never edits to real components. Mocks live in a `mocks/` directory in the project until the winner ships.
+- **Isolated only.** Use a self-contained HTML file, SwiftUI preview, rendered image, or tiny motion prototype. Never edit real components before a direction is chosen. Keep mocks in `mocks/` while the decision is active.
 - **Label A, B, C** and give each one line of rationale: "A bets on density. B bets on calm. C bets on the sidebar doing the work."
 - Copy changes: mock as before/after text blocks, same labels.
 - Motion: static mocks lie about how motion feels. Describe the choreography in a line each, and when the decision IS the motion, build tiny isolated runnable prototypes instead of stills. For native prototypes, use `apple-native-motion`.
@@ -31,5 +31,5 @@ When the user hands you a direction (a mock, tokens, reference shots, a describe
 ## After the pick
 
 - Picks compose. "C plus A's header" is a normal answer; build the composite.
-- Implement exactly what was picked. The losing mocks go in the discard pile with the reason each lost, because the user sometimes rescues one later.
+- Implement exactly what was picked. Preserve the chosen direction and the constraints learned from rejected options. Losing mock artifacts can be deleted or archived after the winner ships; do not make speculative comps permanent project inventory by default.
 - If they pick nothing and redirects, that redirect is the new direction. Follow it, don't defend the mocks.

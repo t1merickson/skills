@@ -1,6 +1,7 @@
 // Lists CoreGraphics window ids for on-screen app windows.
 //
 // Usage:  swift windowid.swift [owner-substring] [--titles]
+//         swift windowid.swift --id <CGWindowID>
 //
 // Prints id / size / owner, one per line. Window titles are OFF by default —
 // on a shared daily-driver machine a title is often a document or folder name,
@@ -16,7 +17,19 @@ import Foundation
 
 let args = Array(CommandLine.arguments.dropFirst())
 let showTitles = args.contains("--titles")
-let filter = args.first(where: { !$0.hasPrefix("--") })?.lowercased()
+let idIndex = args.firstIndex(of: "--id")
+let requestedID: Int? = idIndex.flatMap { index in
+    let valueIndex = args.index(after: index)
+    guard valueIndex < args.endIndex else { return nil }
+    return Int(args[valueIndex])
+}
+if idIndex != nil && requestedID == nil {
+    FileHandle.standardError.write(Data("--id requires a numeric CoreGraphics window id\n".utf8))
+    exit(64)
+}
+let filter = idIndex == nil
+    ? args.first(where: { !$0.hasPrefix("--") })?.lowercased()
+    : nil
 
 guard let list = CGWindowListCopyWindowInfo(
     [.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID
@@ -31,6 +44,7 @@ for w in list {
     guard let owner = w[kCGWindowOwnerName as String] as? String,
           let id = w[kCGWindowNumber as String] as? Int else { continue }
 
+    if let requestedID, id != requestedID { continue }
     if let filter, !owner.lowercased().contains(filter) { continue }
 
     // Layer 0 is a normal application window; menus, shadows, and status
@@ -53,7 +67,10 @@ for w in list {
 }
 
 guard !rows.isEmpty else {
-    print("no matching on-screen windows" + (filter.map { " for \"\($0)\"" } ?? ""))
+    let detail = requestedID.map { " for id \($0)" }
+        ?? filter.map { " for \"\($0)\"" }
+        ?? ""
+    print("no matching on-screen windows" + detail)
     exit(2)
 }
 

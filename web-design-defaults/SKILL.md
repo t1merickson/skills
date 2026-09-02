@@ -15,9 +15,9 @@ Quiet is not empty. Remove what is unnecessary so the primary task is obvious, t
 
 ## Hard rules
 
-- **No Tailwind.** Plain CSS or CSS modules. Utility-class soup is off the table even if a template arrives with it.
+- **No Tailwind for new systems.** Prefer plain CSS or CSS modules. If an existing product already uses Tailwind or another component system, work within it unless the user approves a migration; do not turn a scoped design change into a framework rewrite.
 - **System fonts.** `font-family: system-ui, -apple-system, sans-serif` for UI, `ui-monospace` for code. No webfont downloads unless the user asks.
-- **Base UI for components** (base-ui.com): unstyled, accessible primitives (popovers, menus, dialogs, selects). Style them ourselves. Don't hand-roll a11y-heavy components Base UI already provides, and don't pull in styled kits on top of it.
+- **Base UI for new components** (base-ui.com): unstyled, accessible primitives (popovers, menus, dialogs, selects). Style them ourselves. Preserve a project's established accessible component library rather than introducing a second one for preference alone.
 - **Black and white first.** Near-black text on white, or the inverse in dark mode. Color enters only with a job: state, warning, a single accent earning its place. No decorative gradients.
 
 ## Neutrals are alpha black, not gray

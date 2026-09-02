@@ -1,34 +1,40 @@
 ---
 name: os-workarounds
-description: Tag and track code that works around OS or framework bugs, so fault and removal conditions stay knowable. Use when a bug turns out to be Apple's, or when writing code that routes around an OS defect.
+description: Tag and track code that works around OS or framework bugs, so fault, evidence, ownership, and removal conditions stay knowable.
 ---
 
-# os-workarounds
+# OS workarounds
 
-When code exists only because someone else's bug exists, say so at the site. Modeled on Apple's own modulemap pattern: every workaround carries the bug id and its removal condition, so the codebase keeps a greppable inventory of "not our fault."
+When code exists only because an upstream bug exists, say so at the site. A workaround tag is a claim about fault, not a synonym for awkward API usage.
 
-## Before tagging: prove whose fault it is
+## Prove the boundary
 
-A workaround tag is a claim. Earn it: reproduce the bug in a minimal case outside the project's own code (a bare Xcode project, a 20-line playground). If the minimal repro shows the framework misbehaving, it's theirs. If it doesn't reproduce, the bug is ours and gets fixed, not tagged. Keep the repro — it's the FB attachment and the retest harness.
+Reproduce the defect outside project-specific code with the smallest practical fixture. Record the affected OS/SDK, hardware or simulator context when relevant, expected contract, observed result, and a command or test that reproduces it. If the minimal case does not fail, fix the project instead of tagging upstream.
 
-## The tag
+Keep the fixture as the retest harness. File or link an upstream report when practical, but do not make a vendor-specific ticket system mandatory.
+
+## Tag the site
 
 ```swift
 // WORKAROUND(FB1234567, macOS 15.2): NSTableView drops first responder
-// on section reload. remove when fixed — retest each OS update.
+// during section reload. Repro: Tests/Repros/TableReload. Remove when the
+// repro passes on every supported runtime; owner: Editor team.
 ```
 
-Four parts, all required:
+Every tag includes:
 
-1. **`WORKAROUND(` marker** — one spelling, always greppable: `grep -rn "WORKAROUND(" .`
-2. **The Feedback Assistant id.** No FB filed yet? That's the prompt: draft the feedback with the minimal repro attached and give it to the user to file (filing goes through their account — it leaves the machine, so it's theirs to send). Tag with `FB-pending` until the number exists, then backfill.
-3. **The OS version where the bug was observed.**
-4. **The removal condition** — usually "when fixed, retest each OS update," sometimes a specific announced fix version.
+1. the exact `WORKAROUND(` marker;
+2. an upstream issue ID or URL, or `pending` while a report awaits user submission;
+3. the runtime or SDK where it was observed;
+4. a reproducible test or fixture path;
+5. an owner and a concrete removal condition.
 
-Same format in any language: `// WORKAROUND(...)` reads identically in Swift, TypeScript, or CSS comments.
+Use the same marker in every language so `rg -n 'WORKAROUND\('` inventories the codebase.
 
-## The lifecycle
+## Lifecycle
 
-- **On every OS or SDK update:** grep the inventory, retest each tag against its minimal repro. Fixed → delete the workaround and the tag in one commit ("remove WORKAROUND(FB1234567): fixed in macOS 15.4"). Still broken → bump the observed-version in the tag.
-- **During bug triage:** grep first. A bug inside a tagged region is probably the workaround aging, not new fault. See `crash-debugging` for the diagnosis side.
-- **Never tag preferences.** A workaround is for defects — wrong behavior against documented contract — not for "the API is awkward." Awkward gets a normal comment or nothing.
+- Retest when a relevant OS, SDK, deployment target, or implementation dependency changes—not on unrelated system updates.
+- When fixed, remove the workaround, tag, and obsolete fixture in one reviewable change; record the version that cleared it.
+- When still broken, update evidence only if the supported matrix changed.
+- During triage, inspect tagged regions early: the compatibility branch may have aged.
+- Never use a workaround tag for preference, undocumented convenience, or code whose upstream attribution is still only a hunch.

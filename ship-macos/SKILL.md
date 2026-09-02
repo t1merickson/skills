@@ -1,33 +1,40 @@
 ---
 name: ship-macos
-description: "Release a macOS app: archive, Developer ID export, notarize, staple, DMG or TestFlight."
+description: Release a macOS app through Developer ID or TestFlight with explicit credential gates, artifact verification, release provenance, and rollback information.
 ---
 
-# ship-macos
+# Ship macOS
 
-Two gates before anything else:
+## Gates
 
-1. **Signing is security-shaped.** Confirm with the user before the first signing step that touches signing identities, keychains, provisioning profiles, or App Store Connect credentials. Approval for that scoped release flow holds for the task; it does not authorize unrelated credential changes.
-2. **Bundle ID.** Never invent one. If the project already has one, use it; otherwise ask the user which domain and prefix to use.
+Confirm the intended channel, version, supported architectures, and destination. Never invent a bundle ID. Before touching signing identities, keychains, provisioning profiles, notarization credentials, App Store Connect, or an upload, confirm that the requested release authorizes that exact step.
 
-## The flow (Developer ID, outside the App Store)
+Read [references/distribution.md](references/distribution.md) for channel mechanics, then verify command syntax against the installed Xcode tools and current Apple documentation. Those details are volatile.
 
-The stable skeleton. Flags drift between Xcode versions, so on first use in a session, verify the exact syntax against `man` pages or Apple's current docs rather than trusting this file or memory:
+## Release record
 
-1. Archive: `xcodebuild archive` with the release scheme.
-2. Export with the Developer ID method: `xcodebuild -exportArchive` and an export options plist.
-3. Notarize: `xcrun notarytool submit <artifact> --wait` (needs an App Store Connect API key or keychain profile — credentials, so gate 1 applies).
-4. Staple: `xcrun stapler staple <app>`.
-5. Verify: `spctl -a -vv <app>` should say accepted, source Notarized Developer ID.
+Before distribution, write or update a project-local release record containing:
 
-Package: `hdiutil` for a plain DMG, or `create-dmg` if it's installed for a nicer one. Name it `<App>-<version>.dmg`.
+- source commit and dirty-state result;
+- marketing version, build number, bundle ID, and architectures;
+- Xcode/SDK version and release scheme;
+- entitlements and signing identity/team;
+- artifact names plus SHA-256 hashes;
+- notarization submission ID or TestFlight build link/status;
+- smoke-test results, known limitations, and the prior releasable artifact or rollback route.
 
-## TestFlight instead
+Do not place secrets, profile contents, or private keys in the record.
 
-Archive the same way, export with the app-store method, upload via `xcrun altool` or Xcode's organizer, then processing happens on App Store Connect. TestFlight builds need the version and build number bumped; check the current values before bumping, and bump build number only unless the user says otherwise.
+## Verify the artifact people receive
 
-## Rules
+Verification happens on the packaged output, not only the archive:
 
-- Every shipped artifact gets verified: open the DMG, launch the app on this machine, confirm no Gatekeeper complaint. "notarytool said accepted" is not the finish line; the launch is.
-- Distribution is "leaves this machine": uploading to TestFlight or anywhere public needs the user's go-ahead per the ask-first list. Building and notarizing locally does not.
-- Record the flow's project-specific quirks (scheme names, plist paths, version conventions) in that project's AGENTS.md or durable developer docs the first time you learn them.
+1. confirm signature, entitlements, architectures, version, and bundle ID;
+2. verify notarization/Gatekeeper status for Developer ID distribution;
+3. mount or install through the real delivery container;
+4. launch and exercise the shortest critical flow on a clean-enough account or machine;
+5. preserve the exact artifact and hash referenced by the release record.
+
+If notarization fails, fetch and inspect the notary log before changing signing settings. Do not weaken hardened runtime or entitlements merely to make a submission pass.
+
+Uploading or publishing leaves the machine and requires explicit scope. A locally verified artifact is not a shipped release; report the last completed gate precisely.

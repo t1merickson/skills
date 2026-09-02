@@ -19,9 +19,9 @@ The frequency gate applies exactly as on the web, and stricter on macOS:
 
 When unsure whether a moment earns motion at all, ask four questions: how often it occurs, what meaning the motion carries, whether it delays response, and whether the interaction still works without it. If the motion has no functional answer, leave it out.
 
-## Springs are the default
+## Springs are the default for direct manipulation
 
-Never `.linear` or `.easeInOut` for interactive UI. SwiftUI springs are interruptible and velocity-preserving by default — the two properties the whole doctrine is built on. You get retargeting for free; don't defeat it.
+For controls that can be interrupted or retargeted, prefer a spring over a fixed easing curve. Linear and ease-in-out animation remain appropriate for indeterminate progress, opacity changes, and other non-physical effects. SwiftUI springs preserve continuity when their target changes; do not defeat that with a completion gate.
 
 ```swift
 // Preferred modern form (iOS 17+/macOS 14+): duration + bounce
@@ -56,9 +56,9 @@ Respond on touch-down, never on release. The doctrine's press values (scale ~0.9
 
 Use a `ButtonStyle` with `configuration.isPressed` so it's down-state, not tap-completion. Add haptics (`.sensoryFeedback` on iOS) for state changes that deserve weight; never on macOS unless it's a Force Touch trackpad idiom.
 
-## Gestures: 1:1 tracking, then velocity handoff
+## Gestures: 1:1 tracking, then momentum-aware settling
 
-During a drag, the view tracks the finger exactly — no animation while the gesture is live. On release, project momentum and hand the gesture's velocity to the spring:
+During a drag, the view tracks the finger exactly — no animation while the gesture is live. On release, let the projected endpoint influence the destination:
 
 ```swift
 .gesture(
@@ -67,16 +67,16 @@ During a drag, the view tracks the finger exactly — no animation while the ges
             offset = value.translation          // 1:1, no animation
         }
         .onEnded { value in
-            let projected = value.predictedEndTranslation  // momentum projection
+            let projected = value.predictedEndTranslation  // destination estimate
             let target = nearestDetent(to: projected)
             withAnimation(.spring(duration: 0.4, bounce: 0.1)) {
-                offset = target                  // spring inherits velocity automatically
+                offset = target
             }
         }
 )
 ```
 
-Decide the destination from `predictedEndTranslation` (where the throw was headed), not the raw position. Small flick, big intent.
+Use `predictedEndTranslation` to choose the destination when momentum should affect intent. It is a projected endpoint, not a reusable velocity value. If the animation API accepts initial velocity, derive and normalize velocity for that API explicitly; otherwise test the release and interruption rather than claiming automatic gesture-velocity transfer.
 
 Rubber-band resistance at boundaries: divide the overshoot, don't clamp it.
 
@@ -87,7 +87,7 @@ offset = limit + overshoot / 3
 
 ## Interruption
 
-Never gate a gesture on an animation finishing. SwiftUI retargets springs mid-flight when the animated value changes — the standard failure is *defeating* that with `isAnimating` flags, `DispatchQueue.asyncAfter` chains, or `Task.sleep` sequencing. If you find completion-blocking, that's the bug. For multi-stage motion use `PhaseAnimator` or `KeyframeAnimator`, which remain interruptible.
+Never gate a gesture on an animation finishing. SwiftUI retargets springs mid-flight when the animated value changes — the standard failure is *defeating* that with `isAnimating` flags, `DispatchQueue.asyncAfter` chains, or `Task.sleep` sequencing. For multi-stage motion, verify interruption explicitly; a phase or keyframe sequence is not automatically appropriate for direct manipulation.
 
 ## Reduced motion
 
@@ -95,20 +95,23 @@ Honor it always. Replace movement/scale with opacity; keep the state change.
 
 ```swift
 @Environment(\.accessibilityReduceMotion) private var reduceMotion
+@Environment(\.accessibilityPrefersCrossFadeTransitions) private var prefersCrossFade
 
-.animation(reduceMotion ? .easeOut(duration: 0.1) : .spring(duration: 0.35), value: state)
+.animation(reduceMotion || prefersCrossFade ? .easeOut(duration: 0.1) : .spring(duration: 0.35), value: state)
 // For entrances: swap slide/scale transitions for .opacity when reduceMotion is true.
 ```
 
-## UIKit/AppKit carve-out
+## UIKit and AppKit
 
-When a view lives in UIKit (per `ios-design`'s carve-outs), use `UIViewPropertyAnimator` — it is the interruptible, scrubbable primitive — with `UISpringTimingParameters(dampingRatio:initialVelocity:)`. Convert gesture velocity to the unit-relative `initialVelocity` the API expects. Never `UIView.animate(withDuration:)` for anything a finger can interrupt.
+In UIKit, use `UIViewPropertyAnimator` with `UISpringTimingParameters(dampingRatio:initialVelocity:)` for interruptible motion. Convert gesture velocity to the unit-relative value the API expects. Fixed `UIView.animate` calls are fine for non-interactive opacity and housekeeping effects, not for motion a finger can retarget.
+
+In AppKit, use `NSAnimationContext` for brief non-interactive property changes. During direct manipulation, update the property without animation, then animate to the chosen resting state using a model that supports cancellation and retargeting. AppKit has no drop-in equivalent of `UIViewPropertyAnimator`; test interruption in the actual control rather than assuming it.
 
 ## Before calling motion done
 
 - Every spring interruptible: mid-animation input retargets, nothing queues or blocks.
-- Gestures track 1:1 while live; release uses predicted end, not raw position.
+- Gestures track 1:1 while live; release uses predicted end when momentum is part of the interaction.
 - Press feedback on down, not up.
 - Reduce Motion produces a working, calmer app — verify in Settings/System Settings, not just by reading the code.
-- Nothing keyboard-initiated animates.
+- Frequent keyboard actions do not acquire decorative motion or input delay.
 - macOS: motion is rarer and smaller than the iOS equivalent would be.

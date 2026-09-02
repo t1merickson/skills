@@ -11,12 +11,12 @@ whatever the user was doing. Capture exactly one window, leave the desktop alone
 
 ## The procedure
 
-**1. Get the CGWindowID.** The helper next to this file lists on-screen app
-windows for an owner:
+**1. Get the CGWindowID.** Resolve the installed skill directory from the
+current skill location or host registry; do not assume a Claude-only
+environment variable. The helper next to this file lists on-screen app windows:
 
 ```bash
-SKILL_DIR="${CLAUDE_SKILL_DIR:-$HOME/.agents/skills/window-capture}"
-swift "$SKILL_DIR/windowid.swift" Xcode
+swift <skill-directory>/windowid.swift Xcode
 ```
 
 Filter by any substring of the owning app's name (case-insensitive). Output is
@@ -25,16 +25,17 @@ them apart by size, re-run with `--titles` — that's opt-in because a window
 title is often a document or folder name, and the user's standing rule is no
 inspection beyond what the current task needs.
 
-**2. Capture it.**
+**2. Capture through the guard.** The wrapper refuses existing output paths,
+revalidates the ID immediately before capture, and removes the result if its
+pixel dimensions do not match the requested window at 1x or 2x scale.
 
 ```bash
-screencapture -o -l <CGWindowID> /tmp/shot.png
+<skill-directory>/capture-window.sh <CGWindowID> /tmp/shot.png
 ```
 
-`-l` targets the window id; `-o` omits the drop shadow. This reads the window's
-backing store, so it works even when the window is backgrounded or fully
-occluded — which is the entire reason to do it this way rather than bringing
-the app forward.
+Do not bypass the wrapper with a raw `screencapture` call. CoreGraphics and
+Accessibility window IDs are different, and `screencapture` may silently fall
+back instead of rejecting the wrong namespace.
 
 **3. Read the PNG back** to confirm you captured what you meant to, before
 showing it to the user. A silent fallback (see below) looks like a successful
@@ -50,7 +51,8 @@ silent, successful-looking, and it dumps the user's entire desktop into the
 transcript.
 
 Only ever source the id from `CGWindowListCopyWindowInfo` (what `windowid.swift`
-uses). Never from `osascript`.
+uses). Never from `osascript`. Dimension verification is the second safety
+boundary in case an ID goes stale between listing and capture.
 
 ## Constraints
 

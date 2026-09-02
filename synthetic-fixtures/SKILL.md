@@ -1,36 +1,30 @@
 ---
 name: synthetic-fixtures
-description: Recipes for synthetic test media — images, audio, video, data — instead of the user's personal files.
+description: Create deterministic synthetic media and data fixtures instead of using private user files, with property verification and provenance.
 ---
 
-# synthetic-fixtures
+# Synthetic fixtures
 
-The user's files are never test material. Synthetic is the first choice, and it's usually the better one: you control every property, it reproduces exactly, and nothing private can leak into a commit or screenshot.
+Synthetic is the first choice: it controls the property under test, reproduces exactly, and keeps private material out of commits and screenshots.
 
-## Rules
+## Contract
 
-- **Seed everything.** A fixture that renders differently on the next run is a bug. Pass explicit seeds to noise, random layouts, and generated data.
-- Fixtures live in a `fixtures/` directory in the project, named by what they test: `gradient-16bit.png`, `speech-like-3s.wav`, not `test1.png`.
-- Generate the properties the code under test actually exercises. Testing color handling needs strong casts and wide gamuts, not pretty photos. Testing edge cases needs the edges: 1px images, zero-length audio, empty arrays, huge files.
-- When synthetic genuinely can't do it (you need real-world messiness, real photography, real speech), escalate: ask the user for reference material, or pull open-access (Unsplash, Wikimedia Commons, freesound.org) into the project with the source noted in the repo.
+- Name the property and failure the fixture is meant to exercise before generating it.
+- Seed every stochastic generator and pin material tool versions when output bytes matter.
+- Store the generator beside the fixture or generate during tests. Record the command, seed, dimensions/duration/schema, SHA-256, and expected assertions.
+- Verify properties programmatically: image mode/profile/EXIF/orientation, audio codec/rate/channels/loudness, video codec/rate/timestamps, or data encoding/schema. A file that merely opens is not a valid fixture.
+- Include edge fixtures deliberately: empty, one-unit, maximum practical size, malformed, unusual Unicode, mismatched metadata, and boundary values relevant to the code.
+- Strip accidental metadata and inspect generated files before committing them.
 
-## Image recipes
+Use a project `fixtures/` directory and descriptive names such as `gradient-p3-16bit.png` or `silence-mono-48k-3s.wav`.
 
-- Test cards: PIL or ImageMagick. Grids, color bars, resolution wedges. `magick -size 512x512 gradient:red-blue out.png` for casts.
-- Seeded noise and procedural texture: numpy + PIL, always with `np.random.default_rng(seed)`.
-- Shapes and layouts: SVG written by hand then rasterized. Exact, tiny, versionable.
-- Text rendering: system fonts via PIL's ImageFont. For macOS UI work, SF Symbols rendered from SwiftUI previews are legitimate fixtures.
-- Alpha and masks: generate the PNG with explicit alpha ramps; don't hand-edit.
+## Recipes
 
-## Audio recipes (Owavo work lands here)
+- Images: Pillow, ImageMagick, or SVG for exact test cards, alpha ramps, color casts, masks, resolution wedges, and seeded noise.
+- Audio: SoX or FFmpeg for tones, sweeps, silence, clipped samples, seeded noise, channel layouts, and sample-rate mismatches.
+- Video: FFmpeg test sources with burned-in frame numbers for sync, rate, color, and timestamp tests.
+- Structured data: small seeded generators covering empty values, normalization forms, emoji, long names, case collisions, and invalid records.
 
-- Tones, sweeps, and noise: `sox -n out.wav synth 3 sine 440`, `synth 3 sine 20-20000` for sweeps, `synth 3 whitenoise` / `pinknoise`.
-- ffmpeg equivalents when sox is missing: `ffmpeg -f lavfi -i "sine=frequency=440:duration=3"`.
-- Speech-like without speech: amplitude-modulated noise bursts approximate the envelope; real speech comes from open-access (freesound, LibriVox) with source noted.
-- Edge cases: silence, clipped full-scale, 1-sample files, mismatched sample rates, mono vs stereo pairs.
+When synthetic media cannot represent the required real-world messiness, ask for approved material or use clearly licensed public material. Store source URL, author, license, retrieval date, and any transformations. Do not assume that visible-on-the-web means reusable.
 
-## Video and data
-
-- Video: `ffmpeg -f lavfi -i testsrc=duration=5:size=1280x720:rate=30` and the `smptebars` source. Burn frame numbers in with `drawtext` when testing sync.
-- Structured data: small generators in the test file itself, seeded. Realistic shapes (names, dates, unicode including NFD filenames, emoji, empty strings) matter more than realistic content.
-- Filenames as fixtures: when testing file handling, include the macOS traps on purpose — decomposed unicode names, case-collision pairs, spaces, very long names. See `file-batch-safety` for why.
+Pair every durable fixture with a verifier that fails when the property drifts. See `file-batch-safety` before generating or renaming a large fixture corpus.
