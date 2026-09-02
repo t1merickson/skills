@@ -5,13 +5,13 @@ description: Build a bounded, source-accounted vault about one public person's w
 
 # Obsess hero
 
-One person per run. This composes `obsess` for recall/research, `offline-archive` for permitted capture, and `brain-wiki` for typed pages. Read those skills when their phase begins.
+One person per run. This composes `obsess` for recall/research, `offline-archive` for permitted capture, and `brain-wiki` for typed pages. Read those skills when their phase begins. Follow `obsess`'s mile-marker protocol throughout the run, including its default pause between bounded research pulls.
 
 ## Resolve scope and root
 
 Disambiguate the person before creating files. Agree on angle, breadth, time/request/storage budget, stopping condition, and vault root. Use an existing configured hero root when the user has one; otherwise prefer a project-local `heroes/<person-slug>/` or ask. Do not hard-code a machine-specific library.
 
-“Brief” means one prioritized research round and an explicit frontier. “Deep” means additional bounded rounds until the agreed coverage target, budget, diminishing-return condition, or access boundary is reached. It never promises completeness.
+“Brief” means one prioritized research pull and an explicit frontier. “Deep” means offering additional bounded paths toward the agreed coverage target; it does not authorize them or waive the pause between pulls. It never promises completeness.
 
 For living people, include published work, on-record statements, and reputable biographical context relevant to the work. Exclude private addresses, family details without public relevance, current movements, private records, rumor, and sensitive aggregation. Public availability alone does not make invasive synthesis appropriate.
 
@@ -38,9 +38,11 @@ Every captured source directory has provenance and exactly one owning wiki page 
 
 Write a dated braindump before searching, marking dates, titles, influence claims, and quotations for verification. Existing vaults are augmented, not restarted: reread their index, frontier, ledger, and relevant holdings before fetching more.
 
+Make the initial route chart person-specific: distinguish paths such as works census, primary works, interviews and documented thinking, biography/context, reception/influence, and recent delta only when they are relevant. Alongside `obsess`'s fields, estimate capture/storage work and vault-writing cost. Prefer a few high-yield alternatives over an exhaustive tree.
+
 Build a works hypothesis, then verify each entry. Prioritize the person's own work and words, followed by long-form interviews, serious criticism/biography, and reference sources. A title, quote, attribution, life date, price, current status, or influence claim never graduates on confidence alone.
 
-Record each unfollowed lead in `FRONTIER.md` with origin, importance, status, and reason stopped. Record contradictions and missing evidence in `OPEN-QUESTIONS.md`. Notes say what evidence changed, not merely what a source contains.
+Record each unfollowed lead in `FRONTIER.md` with origin, importance, estimated next-pull cost, status, and reason stopped. Record contradictions and missing evidence in `OPEN-QUESTIONS.md`. Notes say what evidence changed, not merely what a source contains.
 
 Acquire only legitimate, useful copies within scope. Never bypass paywalls/DRM, pirate, purchase without approval, or treat a photograph of a work as the work itself. Capture public pages through `offline-archive`; store source URL, author/creator, retrieval date, license/rights note, transformations, and integrity hash. Apply `file-batch-safety` to large acquisitions.
 
@@ -58,6 +60,6 @@ Also verify quotations/dates against sources and replay web captures with the ne
 
 ## Return and maintain
 
-Report the person, scope, rounds, coverage by source/work type, held versus merely identified works, major corrections, frontier, open questions, verifier result, stopping reason, and storage consumed. Then teach from sourced pages, distinguishing evidence from synthesis.
+At every mile marker, report the person, selected path, coverage gained, actual observable spend, held versus merely identified works, major corrections, changed frontier, and the next route choices; then pause unless the user authorized an uninterrupted bounded run. At the final return, also report the full scope, pulls completed, coverage by source/work type, open questions, verifier result, stopping reason, and storage consumed. Then teach from sourced pages, distinguishing evidence from synthesis.
 
 The vault is durable, not scratch. Never sweep or merge hero roots casually. Republishing, sharing, or hosting is a separate rights decision.
