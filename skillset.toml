@@ -6,6 +6,47 @@ root = "~/.claude/skills"
 [hosts.codex]
 root = "~/.agents/skills"
 
+[policy]
+explicit = [
+  "cut-memory",
+  "heads-down",
+  "obsess",
+  "obsess-hero",
+  "session-audit",
+  "slice-and-review",
+  "slow-mode",
+  "standup",
+]
+volatile = [
+  "apple-native-motion",
+  "claude",
+  "claude-md-coach",
+  "codex",
+  "cut-memory",
+  "hopper-mcp",
+  "ios-design",
+  "macos-design",
+  "offline-archive",
+  "paper-mcp",
+  "session-audit",
+  "ship-macos",
+  "transitional-interfaces",
+]
+
+[dependencies]
+brain-wiki = ["file-batch-safety"]
+checkpoint = ["file-batch-safety"]
+crash-debugging = ["explaining-problems", "os-workarounds"]
+heads-down = ["file-batch-safety"]
+ios-design = ["apple-native-motion", "mock-and-pick", "os-workarounds"]
+macos-design = ["apple-native-motion", "mock-and-pick", "os-workarounds", "window-capture"]
+obsess-hero = ["brain-wiki", "obsess", "offline-archive"]
+synthetic-fixtures = ["file-batch-safety"]
+web-design-defaults = ["mock-and-pick"]
+
+[retired]
+hopper-discovery = ["claude"]
+
 [[skills]]
 name = "apple-native-motion"
 source = "apple-native-motion"
@@ -70,12 +111,6 @@ portable = true
 name = "heads-down"
 source = "heads-down"
 hosts = ["claude", "codex"]
-portable = true
-
-[[skills]]
-name = "hopper-discovery"
-source = "hopper-discovery"
-hosts = ["claude"]
 portable = true
 
 [[skills]]

@@ -55,13 +55,12 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | Skill | What it does |
 |---|---|
 | **[hopper-mcp](hopper-mcp/)** | Reverse-engineering macOS binaries with the Hopper Disassembler MCP server. |
-| **[hopper-discovery](hopper-discovery/)** | Reference for the Hopper MCP tools: symbols, procedures, strings, annotations. |
 
 ## Install
 
 This checkout is the canonical authored source. Claude Code keeps using its native `~/.claude/skills/` convention, while Codex and other Open Agent Skills consumers use `~/.agents/skills/`. The entries in those directories are deployment links back here, not separate working copies.
 
-The manifest in [`skillset.toml`](skillset.toml) records which skills belong on which host. Most are portable; genuinely host-shaped workflows stay host-specific. In particular, `codex` is for Claude calling Codex, while `claude` is for Codex calling Claude. `claude-md-coach`, `cut-memory`, and `session-audit` remain Claude-shaped.
+The manifest in [`skillset.toml`](skillset.toml) records which skills belong on which host, which modes require explicit invocation, which skills depend on one another, and which entries carry volatile host or platform facts. Most are portable; genuinely host-shaped workflows stay host-specific. In particular, `codex` is for Claude calling Codex, while `claude` is for Codex calling Claude. `claude-md-coach`, `cut-memory`, and `session-audit` remain Claude-shaped.
 
 Check the source and compare it with both installed locations:
 

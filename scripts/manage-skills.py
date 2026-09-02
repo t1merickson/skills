@@ -24,7 +24,7 @@ SPEC_FIELDS = {"name", "description", "license", "compatibility", "metadata", "a
 IGNORED_TREE_NAMES = {".DS_Store"}
 
 
-def load_manifest() -> tuple[dict[str, Path], list[dict[str, object]]]:
+def load_manifest() -> tuple[dict[str, Path], list[dict[str, object]], dict[str, object]]:
     data = tomllib.loads(MANIFEST_PATH.read_text())
     if data.get("schema") != 1:
         raise ValueError(f"unsupported manifest schema: {data.get('schema')!r}")
@@ -38,7 +38,16 @@ def load_manifest() -> tuple[dict[str, Path], list[dict[str, object]]]:
     skills = data.get("skills", [])
     if not isinstance(skills, list):
         raise ValueError("manifest 'skills' must be an array of tables")
-    return hosts, skills
+    policy = data.get("policy", {})
+    dependencies = data.get("dependencies", {})
+    retired = data.get("retired", {})
+    metadata: dict[str, object] = {
+        "explicit": set(policy.get("explicit", [])),
+        "volatile": set(policy.get("volatile", [])),
+        "dependencies": {name: set(required) for name, required in dependencies.items()},
+        "retired": {name: set(targets) for name, targets in retired.items()},
+    }
+    return hosts, skills, metadata
 
 
 def lexical_exists(path: Path) -> bool:
@@ -121,7 +130,11 @@ def markdown_reference_errors(skill_root: Path) -> list[str]:
     return errors
 
 
-def validate_manifest(hosts: dict[str, Path], skills: list[dict[str, object]]) -> tuple[list[str], list[str]]:
+def validate_manifest(
+    hosts: dict[str, Path],
+    skills: list[dict[str, object]],
+    metadata: dict[str, object],
+) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
     names: set[str] = set()
@@ -176,6 +189,46 @@ def validate_manifest(hosts: dict[str, Path], skills: list[dict[str, object]]) -
         errors.append(f"unmanaged repo skill: {source}")
     for source in sorted(sources - discovered):
         errors.append(f"manifest source is not a root skill: {source}")
+
+    explicit = set(metadata["explicit"])
+    volatile = set(metadata["volatile"])
+    dependencies = dict(metadata["dependencies"])
+    retired = dict(metadata["retired"])
+    for policy_name, policy_skills in (("explicit", explicit), ("volatile", volatile)):
+        for name in sorted(policy_skills - names):
+            errors.append(f"policy.{policy_name} names unmanaged skill: {name}")
+    for name in sorted(set(dependencies) - names):
+        errors.append(f"dependencies names unmanaged skill: {name}")
+    for name, target_hosts in sorted(retired.items()):
+        if name in names:
+            errors.append(f"retired skill is still managed: {name}")
+        unknown_hosts = sorted(set(target_hosts) - set(hosts))
+        if unknown_hosts:
+            errors.append(f"retired {name}: unknown hosts {unknown_hosts}")
+
+    by_name = {str(entry["name"]): entry for entry in skills}
+    for name, required in sorted(dependencies.items()):
+        for dependency in sorted(required):
+            if dependency not in names:
+                errors.append(f"{name}: unknown dependency {dependency}")
+                continue
+            missing_hosts = sorted(set(by_name[name]["hosts"]) - set(by_name[dependency]["hosts"]))
+            if missing_hosts:
+                errors.append(f"{name}: dependency {dependency} is absent from hosts {missing_hosts}")
+
+    for name, entry in by_name.items():
+        source = REPO_ROOT / str(entry["source"])
+        policy_file = source / "agents" / "openai.yaml"
+        is_explicit = name in explicit
+        declares_explicit = policy_file.is_file() and bool(
+            re.search(r"^\s*allow_implicit_invocation:\s*false\s*$", policy_file.read_text(), re.MULTILINE)
+        )
+        if is_explicit and not declares_explicit:
+            errors.append(f"{name}: explicit policy lacks agents/openai.yaml opt-out")
+        if declares_explicit and not is_explicit:
+            errors.append(f"{name}: agents/openai.yaml is explicit but manifest policy is not")
+        if bool(entry.get("portable", False)) and "/Users/" in (source / "SKILL.md").read_text():
+            warnings.append(f"{name}: portable SKILL.md contains a machine-specific /Users path")
     return errors, warnings
 
 
@@ -183,8 +236,10 @@ def selected_hosts(all_hosts: dict[str, Path], requested: str) -> list[str]:
     return sorted(all_hosts) if requested == "all" else [requested]
 
 
-def command_check(hosts: dict[str, Path], skills: list[dict[str, object]]) -> int:
-    errors, warnings = validate_manifest(hosts, skills)
+def command_check(
+    hosts: dict[str, Path], skills: list[dict[str, object]], metadata: dict[str, object]
+) -> int:
+    errors, warnings = validate_manifest(hosts, skills, metadata)
     for warning in warnings:
         print(f"WARN  {warning}")
     for error in errors:
@@ -196,7 +251,12 @@ def command_check(hosts: dict[str, Path], skills: list[dict[str, object]]) -> in
     return 0
 
 
-def command_status(hosts: dict[str, Path], skills: list[dict[str, object]], requested: str) -> int:
+def command_status(
+    hosts: dict[str, Path],
+    skills: list[dict[str, object]],
+    metadata: dict[str, object],
+    requested: str,
+) -> int:
     chosen = selected_hosts(hosts, requested)
     width = max(len(str(entry["name"])) for entry in skills)
     print(f"{'skill':<{width}}  " + "  ".join(f"{host:<15}" for host in chosen))
@@ -211,7 +271,7 @@ def command_status(hosts: dict[str, Path], skills: list[dict[str, object]], requ
             states.append(f"{state:<15}")
         print(f"{name:<{width}}  " + "  ".join(states))
 
-    managed_names = {str(entry["name"]) for entry in skills}
+    managed_names = {str(entry["name"]) for entry in skills} | set(metadata["retired"])
     for host in chosen:
         root = hosts[host]
         if not root.is_dir():
@@ -219,6 +279,12 @@ def command_status(hosts: dict[str, Path], skills: list[dict[str, object]], requ
             continue
         unmanaged = sorted(path.name for path in root.iterdir() if path.name not in managed_names)
         print(f"\n{host}: {len(unmanaged)} unmanaged entries left untouched in {root}")
+    for name, target_hosts in sorted(dict(metadata["retired"]).items()):
+        states = [host for host in chosen if host in target_hosts and lexical_exists(hosts[host] / name)]
+        if states:
+            print(f"retired entry still installed: {name} ({', '.join(states)})")
+    print(f"\nexplicit invocation: {', '.join(sorted(metadata['explicit']))}")
+    print(f"volatile guidance: {', '.join(sorted(metadata['volatile']))}")
     return 0
 
 
@@ -248,12 +314,13 @@ def move_then_link(target: Path, source: Path, backup: Path) -> None:
 def command_link(
     hosts: dict[str, Path],
     skills: list[dict[str, object]],
+    metadata: dict[str, object],
     requested: str,
     apply: bool,
     migrate_existing: bool,
     quarantine_arg: str | None,
 ) -> int:
-    errors, warnings = validate_manifest(hosts, skills)
+    errors, warnings = validate_manifest(hosts, skills, metadata)
     if errors:
         for error in errors:
             print(f"ERROR {error}")
@@ -295,6 +362,23 @@ def command_link(
                 move_then_link(target, source, backup)
                 changed += 1
 
+    for name, target_hosts in sorted(dict(metadata["retired"]).items()):
+        for host in sorted(set(target_hosts) & chosen):
+            target = hosts[host] / name
+            if not lexical_exists(target):
+                print(f"ABSENT  {host:<6} {name} (retired)")
+                continue
+            backup = unique_quarantine_path(quarantine_root, host, name)
+            if not migrate_existing:
+                print(f"BLOCK   {host:<6} {name}: retired; rerun with --migrate-existing to preserve and remove it")
+                blocked += 1
+                continue
+            print(f"RETIRE  {host:<6} {name} -> {backup}")
+            if apply:
+                backup.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(target), str(backup))
+                changed += 1
+
     mode = "applied" if apply else "preview"
     print(f"\n{mode}: {changed if apply else 0} changed, {blocked} blocked")
     if not apply:
@@ -327,18 +411,19 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> int:
     args = build_parser().parse_args()
     try:
-        hosts, skills = load_manifest()
+        hosts, skills, metadata = load_manifest()
     except (OSError, KeyError, TypeError, ValueError, tomllib.TOMLDecodeError) as error:
         print(f"manifest error: {error}", file=sys.stderr)
         return 2
 
     if args.command == "check":
-        return command_check(hosts, skills)
+        return command_check(hosts, skills, metadata)
     if args.command == "status":
-        return command_status(hosts, skills, args.host)
+        return command_status(hosts, skills, metadata, args.host)
     return command_link(
         hosts,
         skills,
+        metadata,
         args.host,
         args.apply,
         args.migrate_existing,
