@@ -1,40 +1,32 @@
 ---
 name: standup
-description: Recap of where projects stand and what's next, scoped to the folder the session started in.
+description: Reconstruct project status and next actions from checkpoints, Git, and durable project instructions within an explicitly chosen scope.
 ---
 
-# standup
+# Standup
 
-The user can't hold the state of their projects in their head. This skill rebuilds it in one message. **Scope comes from the working directory** — where the session was started decides what gets reported.
+Use this skill only when invoked. The working directory supplies the first scope candidate; do not turn a status request into an unbounded scan of the machine.
 
-## Pick the scope
+## Choose scope
 
-Look at the cwd and classify it:
+- **Project root:** report that project in depth.
+- **Container with several projects:** inventory one level down, report the count, and cover each discovered project unless the user narrows it.
+- **Generic directory:** ask which project root or configured project registry to use. Do not guess personal development roots.
 
-- **A single project** (it has a `.git`, an Xcode project, a package manifest, or a CHECKPOINT.md at its root): report that one project, in depth.
-- **An org or container folder** (it contains multiple project directories — e.g. an org folder full of apps): report EVERY project inside it, one level down. All of them. No recency cutoff, no count cap.
-- **Neither** (home directory, or somewhere that isn't code): fall back to all of the user's code directories (on this machine: `/Users/Commons/Developer` and `~/Developer` — adjust per setup) and report at the org level.
+If discovery produces an unexpectedly large set, show the count and roots before a deep read. Recency orders the report; it does not silently exclude quiet projects.
 
-## Gather (read-only)
+## Gather read-only evidence
 
-Per project in scope:
+For each project:
 
-1. Every unarchived file in `.checkpoints/` if present, plus a legacy `CHECKPOINT.md` — the Now, Plates, and Live wires sections carry the state.
-2. Git: last real commit (message and date), current branch, and `git status --porcelain` for uncommitted changes.
-3. The project's AGENTS.md, CLAUDE.md, or README first line when nothing else says what the thing is.
+1. Relevant unarchived `.checkpoints/` files and a legacy `CHECKPOINT.md`, if present.
+2. Current branch, last meaningful commit and date, ahead/behind state, and `git status --porcelain`.
+3. AGENTS.md, CLAUDE.md, or the opening of README when nothing else explains the project.
 
-Recency orders the report; it never filters it. A project untouched since spring still gets its line — "quiet" is state, not noise.
+Do not fix, clean, commit, or invent a next step during gathering.
 
 ## Report
 
-**Org scope:** One entry per project, every project, ordered newest-activity first. Each entry: name, last touched when, plain-words state, the recorded next step if a checkpoint names one, ⚠ if uncommitted changes exist. Quiet projects get the same line with their real dates. This report is allowed to be long — completeness is the point of running it at org level; the under-150-words default does not apply here.
+For a container, give one entry per project: name, last activity, plain-language state, recorded next step, and a visible dirty-worktree marker. For one project, include current phase, recent changes, live plates, contradictions between checkpoint and repository, and the best-supported next action.
 
-**Single-project scope:** A fuller picture of the one project — what it is, current phase from the checkpoint, the last few commits in plain words, plates in motion, uncommitted changes, and the recorded next step.
-
-Either way, finish with exactly one question: which thread are we picking up? If one is obviously hot, lead with it as the recommendation.
-
-## Rules
-
-- Payload first. This is orientation, not a report card.
-- Never invent a next step for a project whose checkpoint doesn't name one. "No recorded next step" is a valid state.
-- Uncommitted changes get flagged, not fixed. Fixing starts after the user picks.
+Payload first. “No recorded next step” is valid. Recommend the hottest supported thread when one is obvious, then let the user choose what to resume.

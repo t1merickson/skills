@@ -1,32 +1,39 @@
 ---
 name: session-audit
-description: Audit transcripts with subagents for repeated corrections, workflows, and per-model failures.
+description: Audit Claude transcript history for repeated corrections, recurring workflows, and model-specific failures using a deterministic local extraction before judgment.
 ---
 
-# session-audit
+# Session audit
 
-Config lines should come from data, not vibes. This skill turns transcript history into a ranked list of what to change.
+Use this skill only when invoked. Transcript history is private evidence, not content to publish or quote at length.
 
-## The sweep
+## Extract deterministically
 
-Transcripts live in `~/.claude/projects/*/` as .jsonl files, one JSON object per line. User messages are lines where `.message.role == "user"` with typed-text content; assistant lines usually carry a model field. Schemas drift, so each agent inspects one file before parsing at scale.
+Inspect one recent transcript to confirm the current schema, then use [scripts/extract_transcripts.py](scripts/extract_transcripts.py) to produce a bounded local corpus:
 
-Launch three sonnet subagents, read-only, each over the ~25 most recently modified transcripts:
+```bash
+python3 scripts/extract_transcripts.py --limit 25 > /tmp/session-audit.jsonl
+```
 
-1. **Corrections**: complaints and redirections the user repeats ("too long", "no, i meant", "stop", "undo", instructions retyped across sessions). Cluster, count, quote.
-2. **Workflows**: multi-step flows they re-explain each session — candidate skills. Name, session count, projects, one-line shape.
-3. **Failure modes**: incidents where their next message signals the model got it wrong, classified (overbuild, verbosity, wrong interpretation, broke something, stopped early, didn't verify, invented content), broken down by model where the transcript says.
+The extractor reads only, hashes source paths, and keeps messages in chronological order. Store its output in a temporary or user-approved local location. Never commit it.
 
-Subagents are read-only. No writes, no deletes, and they never quote anything private back beyond short correction snippets.
+## Review three lenses
 
-## Turning findings into changes
+1. **Corrections:** repeated complaints, redirects, reversals, and instructions the user had to restate.
+2. **Workflows:** multi-step work repeatedly explained from scratch; candidates for a skill or project instruction.
+3. **Failure patterns:** the user's next message signals overbuilding, verbosity, wrong interpretation, breakage, premature stopping, missing verification, or invention. Preserve model/version and date when present.
 
-- A correction repeated 3+ times across sessions earns a CLAUDE.md line, written in the file's register.
-- A workflow appearing in 3+ sessions earns a skill, or a line in that project's CLAUDE.md if it's project-shaped.
-- A failure mode concentrated in ONE model earns nothing permanent: note it in memory and route around that model, because model-specific patches rot when the model updates.
-- Below those thresholds: report it and let the user decide. Never pad the file with one-off fixes.
-- Also run the reverse pass: any existing CLAUDE.md line the transcripts show never firing, or always being followed anyway, is a deletion candidate.
+Use independent review lanes only when delegation is available and authorized; otherwise review the lenses sequentially. Short snippets may support a finding, but do not reproduce private conversations in the report.
 
-## Cadence
+## Turn evidence into proposals
 
-Quarterly, or after each major model release, or when the user's corrections feel like they're repeating. Report findings ranked by frequency × pain, with counts and short quotes as evidence. Changes to CLAUDE.md or skills happen only after the user approves them.
+Rank findings by frequency, pain, and recency. Counts inform judgment rather than imposing an automatic threshold. Route each proposed change:
+
+- always-relevant working contract → CLAUDE.md;
+- project-specific convention → project instructions;
+- on-demand repeated workflow → skill;
+- failure isolated to one model generation → temporary routing or model note, not a permanent universal rule.
+
+Run the reverse pass too: standing instructions that never affect behavior, duplicate stronger rules, or patch an obsolete model are deletion candidates.
+
+Do not edit configuration during the audit. Present the evidence, proposed destination, and expected behavioral change; apply only after approval.

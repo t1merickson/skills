@@ -21,3 +21,9 @@ These rules were learned through actual lost files. Read them before the first b
 - **NFD filenames.** APFS/HFS+ returns decomposed Unicode (`ç` = `c` + combining cedilla); Python string literals are NFC. They print identically but compare unequal, so a naive `.replace()` or `==` silently misses. Normalize with `unicodedata.normalize("NFD", name)` (and strip combining marks if matching loosely) before comparing.
 - **Case-insensitive paths.** Default APFS/HFS+ is case-insensitive: `Foo/` and `foo/` can be the *same* file. Before renaming onto an existing name or deduping, confirm they're actually different files with `os.path.samefile` — an md5 match between two spellings of one file proves nothing.
 - **Don't walk a tree you're moving into.** `os.walk` over a destination re-finds just-moved files and flags them as duplicates of themselves — a file gets deleted as its own copy. Collect all sources first, then move. Guard `realpath(src) == realpath(dst)`. Never auto-delete on an md5 match between what might be the same inode.
+
+## Preflight and reconciliation
+
+Before a real batch, record a manifest: source roots, target roots, item count, total bytes, free space, symlinks, and whether the move crosses filesystems. A cross-filesystem move is copy-then-delete rather than an atomic rename; verify the copy before removing the source. Cloud placeholders and offline files are not fully present merely because a directory entry exists.
+
+Afterward, reconcile against that manifest: every source accounted for, expected target count and bytes, quarantine present, and no unexpected paths. Report counts and the undo location. A command exiting zero is not the reconciliation.

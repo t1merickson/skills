@@ -1,11 +1,11 @@
 ---
 name: explaining-problems
-description: The structure for problem reports and any technical explanation longer than a few lines.
+description: Explain a technical failure, design decision, or deployment surprise when the reader needs the mechanism and fix, not just a short answer.
 ---
 
 # explaining-problems
 
-Write for a smart reader who knows nothing about this system. That's the user at the start of every session. Start at the beginning. Define each term before you use it. Don't assume they know the commands, files, services, or workflows involved. Short sentences. Active voice.
+Write for a smart reader who knows nothing about this system. Give the verdict in one plain sentence first. Then start at the beginning, define each term before using it, and explain only the commands, files, services, or workflows needed to understand the verdict. Short sentences. Active voice.
 
 Problem reports walk this order. The normal world first:
 
