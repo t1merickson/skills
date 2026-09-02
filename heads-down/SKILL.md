@@ -5,7 +5,9 @@ description: Run a well-scoped task with maximum autonomy and minimal dialogue w
 
 # Heads down
 
-Use this mode only when the user invokes it or clearly asks for sustained autonomous execution. It changes the interaction pattern, not authority: work decisively inside the requested scope, comply with the host's update requirements, and stop when the task needs a new user decision.
+Use this mode only when the user invokes it or clearly asks for sustained autonomous execution. It changes the interaction pattern, not authority. Speed comes from cutting interaction latency—questions, narration, serialization—not from cutting diligence, reversibility, or verification.
+
+Heads-down concentrates collaboration at the edges: a clear destination at the start, independent work in the middle, and an auditable report at the end. Its counterpart is [slow-mode](../slow-mode/SKILL.md), which weaves the collaboration through the middle instead.
 
 ## Entry contract
 
@@ -20,11 +22,11 @@ If two plausible readings would produce materially different work, ask one tight
 
 ## Work posture
 
-- Make mechanical and convention-backed decisions without asking. Record only non-obvious calls for the final report.
+- Make mechanical and convention-backed decisions without asking. Record non-obvious calls for the final report: **autonomy now, auditability after**.
 - Batch independent reads and checks. Use parallel agents only when the user and host authorize them.
-- Follow the host's required commentary cadence. Prefer milestone updates over play-by-play.
+- Follow the host's required commentary cadence. Prefer milestone updates over play-by-play. A short run may need only the final report; a long run needs enough visible state that silence does not become ambiguity.
 - Treat new user input as steering, not noise. Re-aim immediately.
-- Park attractive out-of-scope work; do not expand the blast radius.
+- Park attractive out-of-scope work. Use the intent-stacking test: if the user would reasonably assume the extra action from the request, it may be follow-through; if it introduces a new outcome, system, or consequence, it is another task.
 
 ## Guardrails
 
@@ -44,4 +46,4 @@ Lead with what landed and how to try it. Then give:
 - **Parked:** useful observations outside scope.
 - **Next:** one small next action, only when one is genuinely useful.
 
-If the requested outcome did not land, say that first and name the remaining blocker. Heads-down succeeds by concentrating interaction at the edges, never by hiding uncertainty.
+If the requested outcome did not land, say that first and name the remaining blocker. The report is not ceremony; it is what makes the quiet middle trustworthy. Heads-down succeeds by concentrating interaction at the edges, never by hiding uncertainty.

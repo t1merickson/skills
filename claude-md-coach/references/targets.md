@@ -24,5 +24,3 @@ Include only supported sections:
 - autonomy boundaries and the short ask-first list;
 - machine safety posture and environment-specific traps;
 - a concise note to future instances only if the user wants it and it changes behavior.
-
-Personal files may contain sensitive data. Minimize it, keep it at the user's chosen scope, and never copy it into a repository or transcript audit output.

@@ -5,7 +5,9 @@ description: Save non-reconstructable task state to .checkpoints/, or reload liv
 
 # Checkpoint
 
-A checkpoint preserves what the repository cannot: unsettled reasoning, failed approaches and why, partial confidence, user remarks not yet reflected in artifacts, and work that is running or promised. It is not a summary of files, diffs, or documentation that a later agent can reread.
+A checkpoint restores what it felt like to be mid-problem after compaction has preserved only the clean summary. It keeps the unproven hunch, the branch killed and why, the aside the user dropped that never became a task, and the work still spinning in the background.
+
+The repository is not the payload. Code, diffs, history, and durable docs can be reread. Test every proposed line with: **would someone who read the whole repo and diff still not know this?** If they would know it, cut it. If it existed only in the conversation or working mind, it may belong here.
 
 ## What earns a line
 
@@ -18,8 +20,12 @@ Before writing, ask:
 - Which claims are uncertain, and what would settle them?
 - What did the user say that has not reached the repository yet?
 - What would the next action be if work resumed now?
+- What did I almost say and cut for length?
+- What is nagging me that I cannot justify yet?
 
-Half-formed material is welcome when calibrated. Label a hunch as a hunch and record how to check it. Do not launder uncertainty into fact.
+The last two prompts often recover the highest-value material. Salience now is a poor predictor of what will be expensive to reconstruct later.
+
+Half-formed material is welcome when calibrated. “This feels wrong and I do not know why” can be useful. Label a hunch as a hunch and record how to check it. Do not launder uncertainty into fact.
 
 ## Storage and ownership
 
@@ -48,7 +54,7 @@ Then use only the sections that have content:
 | **Discards** | append | Rejected branches and cause of death. |
 | **Live wires** | rewrite | Hunches, contradictions, and calibrated uncertainty. |
 
-Keep each file small enough to read whole on resume. Move finished tasks to `.checkpoints/archive/`; do not delete their reasoning.
+Keep each file small enough to read whole on resume. Append-only `Decided` and `Discards` preserve why the work moved; rewritten sections keep the live desk current. Move finished tasks to `.checkpoints/archive/`; do not delete their reasoning. A dead branch with its cause recorded can be reconsidered later. One that vanished silently gets rediscovered and retried.
 
 For a concrete shape, read [references/example.md](references/example.md).
 

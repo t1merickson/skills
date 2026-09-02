@@ -17,7 +17,7 @@ sid="$(<skill-directory>/paper-mcp.sh init)"
 <skill-directory>/paper-mcp.sh call "$sid" get_basic_info '{}'
 ```
 
-The helper accepts `PAPER_MCP_ENDPOINT` and `PAPER_MCP_PROTOCOL_VERSION` overrides for a changed local server. It unwraps SSE framing but leaves MCP result content intact.
+The helper accepts `PAPER_MCP_ENDPOINT` and `PAPER_MCP_PROTOCOL_VERSION` overrides for a changed local server. The endpoint replies as SSE `data:` lines. The helper removes that framing but leaves MCP content intact; many tool payloads are themselves JSON strings inside `.result.content[].text`, while screenshots and exports arrive as image content blocks. Unwrap only the layer you need rather than guessing that the first JSON object is the payload.
 
 Before editing:
 
@@ -35,10 +35,12 @@ The first file may become session-sticky on some builds. Pass file IDs explicitl
 - Preserve z-order, grouping, masks, and existing node identity where practical.
 - Prefer targeted replace/style/move operations over delete-and-rebuild.
 - Use raster assets as data URIs only when size and current schema permit; keep local source assets and transformations reproducible.
-- Treat Paper as a compositor. Perform heavy image processing in a suitable local tool, then bring the resulting layer in.
+- Treat Paper as a compositor, not a darkroom. Bake heavy image processing locally, bring raster scraps in as data-URI layers, use inline SVG for line work, and keep live text as text. This division produced more predictable collage work than asking CSS inside Paper to become an image pipeline.
 - Never expose internal node IDs as user-facing labels or prose.
 
-After a burst of edits, verify node state first, then request a screenshot once rendering has settled. A screenshot can lag document state. Measure alignment from node bounds or full-resolution pixels, not a downscaled preview.
+After a burst of edits, verify node state first, then request a screenshot once rendering has settled. A screenshot can lag document state; this has already cost a debugging round. Measure alignment from node bounds or full-resolution pixels, not a downscaled preview, whose resampling can manufacture half-pixel-looking errors.
+
+Treat calls as a budget even when the installed plan is generous. Inspect once, make coherent groups, and screenshot at review boundaries rather than after every property. Re-probe limits instead of preserving a dated quota as doctrine.
 
 ## Export and finish
 

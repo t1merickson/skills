@@ -33,3 +33,11 @@ xcrun swift-demangle '<symbol>'
 ```
 
 Confirm the selected architecture in universal binaries. Entitlements and linked libraries bound capability; they do not prove execution. Hash target artifacts and record the slice/build identity when findings must be reproducible.
+
+Package installers may carry useful provenance in BOM receipts. Inspect a legitimate receipt with:
+
+```bash
+/usr/bin/lsbom -sf /path/to/Archive.bom
+```
+
+Receipt membership is installation evidence, not proof that a file still exists or executes on the current machine.

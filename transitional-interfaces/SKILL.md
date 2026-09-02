@@ -5,7 +5,7 @@ description: Design the structural connection between two related interface stat
 
 # Transitional interfaces
 
-This skill decides one edge on the map from `spatial-interfaces`. It does not choose curves, durations, or library syntax.
+This skill decides one edge on the map from `spatial-interfaces`. A transition is not decoration applied after a state change; it is the channel that tells the user how the two states are related. Sometimes deciding the transition changes what the screens themselves must be. This skill does not choose curves, durations, or library syntax.
 
 ## Name the relationship
 
@@ -20,7 +20,7 @@ Start with the truth the connection must carry:
 | different contexts with no spatial relation | fade through or cut without inventing continuity |
 | genuinely unrelated states | a cut may be correct |
 
-If the states have no defensible relationship, motion that fabricates one is worse than a cut. If they are related and identity vanishes in one frame, the connection is underspecified.
+If the states have no defensible relationship, motion that fabricates one is worse than a cut: the user spends attention decoding a connection that does not exist. If they are related and identity vanishes in one frame, the connection is underspecified.
 
 ## Choose the structural form
 
@@ -28,7 +28,7 @@ If the states have no defensible relationship, motion that fabricates one is wor
 - **Expand in place** when the detail belongs to the selected item and return to the set is the likely next move.
 - **Sheet/popover** when the task concerns the item but its origin should remain visible and cheaply recoverable.
 
-For insertion, let the set make room and the member occupy it. For removal, let the member leave and then close the gap. These may overlap, but the eye must be able to distinguish a membership change from a re-sort.
+For insertion, let the set make room and the member occupy it. For removal, let the member leave and then close the gap. These are two events—the set changing shape and the member arriving or leaving. They may overlap, but collapsing them into one simultaneous blur discards the half that explains the other and makes a membership change look like a re-sort.
 
 ## Preserve truth under real conditions
 
@@ -36,7 +36,7 @@ For insertion, let the set make room and the member occupy it. For removal, let 
 - Place optimistic content only where it can remain, or avoid promising placement before the server decides order.
 - Match skeleton geometry to the content that replaces it.
 - Reduced Motion keeps identity and containment in the resting states, using a calmer transition such as a crossfade.
-- Deep links, restoration, missed motion, and time away mean the destination still needs orientation and an exit in a screenshot.
+- Deep links, restoration, missed motion, and time away mean the destination still needs orientation and an exit in a screenshot. Continuity may replace redundant chrome, never necessary chrome.
 - Focus, accessibility announcements, and input ownership move with the visual state; continuity that strands keyboard or screen-reader users is not continuity.
 
 ## Implement after the decision
@@ -44,6 +44,8 @@ For insertion, let the set make room and the member occupy it. For removal, let 
 Use the project's existing primitives first: platform transitions, layout animation, shared-element APIs, or a measured FLIP implementation. Check current support when choosing a web or native API; browser versions and framework capability belong in implementation research, not this stable skill.
 
 Do not specify milliseconds here. Hand curve, spring, and reduced-motion implementation to the platform motion guidance, then verify the rendered interaction can be interrupted and does not delay input.
+
+The current failure mode is not too little animation everywhere; it is motion everywhere, each piece defensible alone and exhausting in aggregate. Ask the functional question: does this transition communicate a true relationship? If not, it is embellishment on the critical path, and a cut is often more honest.
 
 ## Output
 

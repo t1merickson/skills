@@ -5,11 +5,11 @@ description: Best practices for building native macOS apps, including app identi
 
 # macOS app essentials
 
-Read this early in a macOS app session. Use the current Human Interface Guidelines and platform documentation for component- or release-specific facts; do not treat this file as a frozen SDK reference.
+Read this early in a macOS app session. People expect a Mac app to behave like a Mac app from first launch; the failures here are cheap to avoid and expensive to retrofit. Use the current Human Interface Guidelines and platform documentation for component- or release-specific facts; do not treat this file as a frozen SDK reference.
 
 ## Establish the app type
 
-Decide whether the product is a regular foreground app, menu-bar utility, background agent, document app, or mixed design. Then make identity and activation policy agree:
+Decide whether the product is a regular foreground app, menu-bar utility, background agent, document app, or mixed design. The recurring generated-app failure is a detached, ownerless window: a process with no real Dock presence, menu architecture, restoration, or identity. Make identity and activation policy agree:
 
 - Regular apps use a real `.app` bundle, normal lifecycle, menu bar, Dock/App Switcher presence, and owned windows.
 - Menu-bar utilities and agents may intentionally use `LSUIElement` or accessory activation. Their discoverability, settings, quit path, and relaunch behavior need explicit design because the Dock will not provide them.
@@ -39,7 +39,11 @@ Prefer SwiftUI for new interface structure where it meets the target's needs. Us
 
 Preserve platform behavior: real windows with sensible minimum/default sizes, keyboard navigation and focus, system toolbars/sidebar patterns where appropriate, Dynamic Type/legible text, semantic colors, VoiceOver labels and order, Reduce Motion, and multi-window/restoration behavior when supported.
 
-Interface copy is short and operational. Ellipses mean more input is required before the command executes. Helper text explains hidden consequences, not the label again.
+Size windows to their contents, not to a habitual 800×600. Settings should hug their controls; document windows should reveal a useful amount of document. With split views, validate the sum of column minimums against both the window minimum and restored frames—a stale narrow frame can bypass the assumptions visible in SwiftUI layout code.
+
+Mac interfaces can carry real density. Build hierarchy from alignment, spacing, weight, and semantic color before reaching for larger type, decorative materials, or extra panels. Use SF Symbols at compatible weights and reserve motion for small, physical, interruptible state changes.
+
+Interface copy is short and operational because people learn the interface by using it, not by reading a narration beside every control. Ellipses mean more input is required before the command executes. Helper text explains hidden consequences, not the label again.
 
 When a minimal reproduction proves a framework defect, use `os-workarounds` with a repro, upstream issue, owner, and removal test. Do not hard-code a private wiki path into a portable skill.
 

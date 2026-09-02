@@ -9,6 +9,14 @@ test -n "$CODEX_BIN"
 
 Run from the repository or pass `-C <directory>`.
 
+Three CLI traps are easy to misdiagnose as a weak or hung model:
+
+- `-o <file>` captures the final answer; stdout is a progress stream. Read both for different purposes.
+- For a long brief, pass `-` and redirect a prompt file into stdin rather than fighting shell quoting.
+- When the prompt is already an argument in a non-interactive process, redirect stdin from `/dev/null`; otherwise `codex exec` may wait for additional input indefinitely.
+
+Non-trivial runs take time. Run them through the host's background mechanism when available and continue useful independent work, then collect the output file.
+
 ## Read-only consultation
 
 ```bash
@@ -45,6 +53,7 @@ Use `codex exec resume` when a focused correction benefits from the same context
 
 - `read-only` is the default for advice and evidence gathering.
 - `workspace-write` authorizes repository edits, not arbitrary machine access.
+- The directory passed with `-C` defines the practical write blast radius. Point it at the repository, never a broad parent or home directory.
 - Do not use danger-bypass flags.
 - Check the worktree before and after a writing run.
 - Capture the final response, but judge it against the actual diff and command results.

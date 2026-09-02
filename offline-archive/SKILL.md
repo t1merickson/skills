@@ -5,11 +5,13 @@ description: Preserve a legitimately accessible web page, tool, or bounded site 
 
 # Offline archive
 
-Confirm the URL, intended personal-use scope, output location, breadth, fidelity needs, and anything to omit. Omission may remove tracking or promotional chrome from content the user can legitimately access; it does not authorize bypassing paywalls, authentication, DRM, robots restrictions, or technical access controls.
+Web archives usually begin with a broad “keep this URL” and then reveal a second question: what should survive besides the core experience? Ask once, up front: **keep it whole, or strip anything such as tracking, promotional chrome, or unrelated integrations?** Confirm the URL, output location, breadth, and fidelity needs. Treat authenticated or blocked material as a stop, not an invitation to invent a bypass.
 
 ## Plan before fetching
 
-Identify the site architecture and prefer an available source repository over scraping deployed bundles. Read the site's terms and `robots.txt`; respect explicit restrictions. Stop on access denial, sustained throttling, or a scope that expands materially beyond the approved request.
+Identify the site architecture first; strategy follows from what the site is. Prefer an available source repository over scraping deployed bundles, then compare source commit and built asset hashes when possible. A static mirror, an ES-module toy, a Vite SPA, and a Next.js application fail offline for different reasons.
+
+For a bounded crawl, inspect sitemaps and `robots.txt` as planning evidence. Stop on access denial, sustained throttling, or a scope that expands materially beyond the approved request.
 
 Create a request plan and manifest before a whole-site crawl:
 
@@ -21,15 +23,17 @@ Create a request plan and manifest before a whole-site crawl:
 - user agent/contact convention where appropriate;
 - capture date and tool versions.
 
-Use low concurrency, server-directed retry delays, capped exponential backoff, and resumability. Avoid refetching unchanged assets. For evidentiary or long-lived captures, consider WARC alongside the browsable derivative.
+Use low concurrency, server-directed retry delays, capped exponential backoff, and resumability. Add jitter: a perfectly regular request cadence is conspicuously automated even when slow. Build resume state before the long run; a crawl that dies at 80% and refetches everything is the impolite outcome. Avoid refetching unchanged assets. For evidentiary or long-lived captures, consider WARC alongside the browsable derivative.
 
 ## Preserve behavior deliberately
 
-Capture HTML, styles, fonts, media, modules, JSON payloads, and other runtime assets within scope. Rewrite them to relative paths or data URLs. Live API behavior becomes an explicit captured snapshot or a clearly disabled feature; install a deny-by-default network shim rather than letting missed requests silently escape to production.
+Capture HTML, styles, fonts, media, modules, JSON payloads, service-worker references, and runtime-generated assets within scope. URLs hide inside CSS, serialized hydration data, template literals, and copied public assets—not only in HTML attributes. Rewrite them to relative paths or data URLs.
+
+Preserve the logic, not only the first paint. Live API behavior becomes an explicit captured snapshot or a clearly disabled feature; install a deny-by-default network shim before application chunks run. A page that quietly falls back to production is not an offline archive.
 
 Prefer rebuilding from source when available and record the relationship between source commit, production asset hashes, and archive build. Do not patch opaque minified code unless a smaller, testable seam is unavailable.
 
-Architecture-specific traps belong in [references/site-recipes.md](references/site-recipes.md). Verify them against the current site rather than assuming a framework from old filenames.
+Architecture-specific traps belong in [references/site-recipes.md](references/site-recipes.md). Verify them against the current site rather than assuming a framework from old filenames. When a new architecture costs real debugging, add the smallest reusable recipe so the trap is not paid for twice.
 
 ## Provenance
 
@@ -37,8 +41,8 @@ Place `SOURCE.md` beside the archive with original URL, retrieval date, scope, r
 
 ## Verify offline
 
-Serve or open the archive through its supported local route with all HTTP, HTTPS, and WebSocket traffic blocked. The verifier exits non-zero for any attempted network access, missing asset, broken image/font, console error that affects function, failed route, or required interaction/export that no longer works.
+Serve or open the archive through its supported local route with all HTTP, HTTPS, and WebSocket traffic blocked. Clear or isolate browser caches first; otherwise a broken archive can look complete because the live site's service worker is helping. The verifier exits non-zero for any attempted network access, missing asset, broken image/font, console error that affects function, failed route, or required interaction/export that no longer works.
 
-Exercise lazy content, navigation, keyboard paths, forms that are meant to remain local, downloads/exports, canvas/WebGL rendering through compositor screenshots, and refresh/deep-link behavior. Record what was not reproducible.
+Exercise lazy content after scrolling through its loading boundary, navigation, keyboard paths, forms that are meant to remain local, downloads/exports, canvas/WebGL rendering through compositor screenshots, and refresh/deep-link behavior. Do not trust a pleasant screenshot: placeholder images, dead export buttons, and live dependencies can all look fine. Record what was not reproducible.
 
-Republishing or hosting is a separate rights and deployment decision. A personal archive does not imply permission to distribute it.
+If the user later wants to extend the archived tool, look for the narrowest dependency-free seam in the original engine before patching opaque minified application code. A small verbatim engine behind a fresh local front end is usually easier to verify and keep offline.

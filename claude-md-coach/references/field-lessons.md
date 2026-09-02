@@ -11,4 +11,4 @@ Treat these as hypotheses earned from prior use, then confirm against the user's
 - Hooks are good for enforceable invariants, not a reliable cure for voice or register.
 - A trap the model cannot predict must remain resident. A procedure deliberately invoked can move to a skill with a visible pointer.
 
-Audit current transcripts only with user authorization and privacy controls. Counts support judgment; they do not replace it.
+Counts support judgment; they do not replace it.

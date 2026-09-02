@@ -4,7 +4,7 @@ Copy the selected contract into the vault's `SHAPE.md`.
 
 ## Admission
 
-1. Every captured artifact is inside one `sources/<slug>/` with `SOURCE.md` containing original URL/citation, retrieval date, creator, kind, capture method, transformations/stripping, rights note, integrity hash, and owning wiki slug.
+1. Every captured artifact is inside one `sources/<slug>/` with `SOURCE.md` containing original URL/citation, retrieval date, creator, kind, capture method, transformations/stripping, integrity hash, and owning wiki slug.
 2. Every source directory has exactly one wiki page whose `local_path` points to it. A page may cite many sources, but one source directory has one catalog owner.
 3. Loose source files and miscellaneous holding directories are illegal. Unacquired or unclassified material belongs in the frontier/open-questions files.
 
@@ -43,11 +43,11 @@ Record only the direction evidence supports. Do not infer reciprocal influence.
 
 ## Source mapping
 
-On multi-source pages, mark which source supports each material claim with 1-based footnotes matching the `sources` list. Quotes must appear verbatim in an inspected source and stay within lawful quotation limits. Paraphrases remain attributable.
+On multi-source pages, mark which source supports each material claim with 1-based footnotes matching the `sources` list. Quotes must appear verbatim in an inspected source. Paraphrases remain attributable.
 
 ## Work status
 
-- `held`: legitimate verified file is present;
+- `held`: a verified file is present;
 - `captured`: permitted web archive is present;
 - `depicted`: photographs/documentation of an unheld physical work are present;
 - `wanted`: existence verified but no legitimate copy held;
@@ -60,8 +60,8 @@ Offers, prices, and listings are dated observations, not valuations or instructi
 
 - `INDEX.md`: every page grouped by type; optional hook must be verbatim body text.
 - `LEDGER.md`: generated inventory of Works, status, year, kind, catalog number, local path, and slug.
-- `FRONTIER.md`: lead, source, expected value, followed status, and stop reason.
-- `OPEN-QUESTIONS.md`: contradictions, uncertainty, missing evidence, and privacy/rights exclusions.
+- `FRONTIER.md`: lead, source, expected value, estimated next-pull tokens/subagents/requests/storage, followed status, and stop reason.
+- `OPEN-QUESTIONS.md`: contradictions, uncertainty, missing evidence, and scope exclusions.
 - Hero page: the sole long narrative synthesis; other pages remain atomic.
 
 Lifecycle is none. Use `review: needs-human` for import uncertainty.
