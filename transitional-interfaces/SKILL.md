@@ -1,6 +1,6 @@
 ---
 name: transitional-interfaces
-description: Design the structural connection between two related interface states. Use when a static design omits how identity, containment, position, or set membership survives a state change.
+description: "Design structural continuity between two defined interface states when identity, containment, position, or set membership must survive the change. Use for an actual state-transition design problem. Do not use for general navigation architecture, motion curves or animation implementation, isolated visual polish, or static screens whose relationship is already clear."
 ---
 
 # Transitional interfaces

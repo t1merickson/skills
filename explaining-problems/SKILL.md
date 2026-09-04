@@ -1,6 +1,6 @@
 ---
 name: explaining-problems
-description: Explain a technical failure, design decision, or deployment surprise when the reader needs the mechanism and fix, not just a short answer.
+description: "Structure a causal explanation when the user asks to understand a mechanism, root cause, postmortem, surprising deployment result, or consequential design rationale beyond a short answer. Do not use merely because a task contains an error, diagnosis, design choice, or deployment step; ordinary implementation and status answers should stay direct."
 ---
 
 # explaining-problems

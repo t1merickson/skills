@@ -35,6 +35,7 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 
 | Skill | What it does |
 |---|---|
+| **[interface-integrity](interface-integrity/)** | Design and audit whether interactive product behavior is predictable, truthful, recoverable, and respectful of user control. |
 | **[macos-design](macos-design/)** | Best practices for native macOS apps: real-app behavior, menu bar, targets, AppKit vs SwiftUI, HIG design. |
 | **[ios-design](ios-design/)** | Best practices for native iOS apps: real-app setup, targets, UIKit vs SwiftUI, platform conventions. |
 | **[web-design-defaults](web-design-defaults/)** | A base direction for new web systems without rewriting an existing project's stack. |
@@ -59,6 +60,8 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 ## Install
 
 This checkout is the canonical authored source. Claude Code keeps using its native `~/.claude/skills/` convention, while Codex and other Open Agent Skills consumers use `~/.agents/skills/`. The entries in those directories are deployment links back here, not separate working copies.
+
+This repository contains authored skills only. Third-party or downloaded skills belong in a separate vendor store and may be linked into the host skill directories as unmanaged entries. Do not copy them here or add them to `skillset.toml` unless the user explicitly adopts the material as authored source after reviewing its provenance and maintenance responsibility.
 
 The manifest in [`skillset.toml`](skillset.toml) records which skills belong on which host, which modes require explicit invocation, which skills depend on one another, and which entries carry volatile host or platform facts. Most are portable; genuinely host-shaped workflows stay host-specific. In particular, `codex` is for Claude calling Codex, while `claude` is for Codex calling Claude. `claude-md-coach`, `cut-memory`, and `session-audit` remain Claude-shaped.
 

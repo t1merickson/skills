@@ -1,6 +1,6 @@
 ---
 name: ios-design
-description: Best practices for building native iOS apps — read early in any iOS app session. Real-app setup, deployment targets, UIKit vs SwiftUI, platform conventions, and HIG-grounded design.
+description: "Use when building or reviewing actual native iOS app behavior: app structure, deployment targets, UIKit/SwiftUI choices, platform conventions, accessibility, or HIG-grounded interface decisions. Do not use for general Swift questions, macOS/server/CLI work, cross-platform code without an iOS-specific decision, or a passing mention of iPhone or iPad."
 ---
 
 # iOS App Essentials

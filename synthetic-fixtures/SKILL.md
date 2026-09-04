@@ -1,6 +1,6 @@
 ---
 name: synthetic-fixtures
-description: Create deterministic synthetic media and data fixtures instead of using private user files, with property verification and provenance.
+description: "Create deterministic synthetic test media or data when a task needs a durable fixture that exercises a named property without using private user files. Do not use for ordinary mocks or stubs, sample interface copy, generic seed data, anonymizing an existing private dataset, or creating production content rather than test evidence."
 ---
 
 # Synthetic fixtures

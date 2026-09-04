@@ -1,6 +1,6 @@
 ---
 name: spatial-interfaces
-description: Model where interface contexts live, how people enter and leave them, and how much navigation complexity a product can afford. Use for information architecture, confusing navigation, or cross-size structural audits.
+description: "Map interface contexts, entry and exit routes, hierarchy, and navigation complexity when the user requests information architecture work or a product has confusing destinations, arbitrary-entry failures, or structural changes across sizes. Do not use for single-screen layout, visual styling, animation tuning, or adding a straightforward route whose place is already clear."
 ---
 
 # Spatial interfaces

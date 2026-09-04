@@ -1,6 +1,6 @@
 ---
 name: codex
-description: Consult or delegate to Codex from Claude for engineering judgment, repository investigation, implementation, review, or Codex-native capabilities.
+description: "Explicit-only: consult or delegate to Codex from Claude for a bounded second opinion, investigation, implementation lane, review, or Codex-native capability. Use only when the user asks to invoke Codex or names this skill. Do not use for routine engineering work, ordinary repository investigation, or an incidental mention of Codex."
 ---
 
 # Codex

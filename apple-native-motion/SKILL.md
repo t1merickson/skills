@@ -1,6 +1,6 @@
 ---
 name: apple-native-motion
-description: Apple's fluid-motion physics as SwiftUI and UIKit code — springs, gesture handoff, interruption, and reduced motion. Use when adding or reviewing motion in a native iOS or macOS project.
+description: "Implement or review native Apple-platform motion when the task specifically involves animation, springs, direct-manipulation gestures, interruption, or Reduce Motion behavior. Do not use for static UI work, general SwiftUI/UIKit/AppKit implementation, navigation structure without transition behavior, or visual polish that does not require motion."
 ---
 
 # Apple Native Motion

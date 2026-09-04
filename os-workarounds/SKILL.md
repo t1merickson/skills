@@ -1,6 +1,6 @@
 ---
 name: os-workarounds
-description: Tag and track code that works around OS or framework bugs, so fault, evidence, ownership, and removal conditions stay knowable.
+description: "Document and manage code that works around a confirmed upstream OS or framework defect, including reproduction evidence, ownership, and a removal condition. Use when evidence supports upstream fault or the user asks to audit tagged workarounds. Do not use for ordinary app bugs, awkward API usage, compatibility code, or speculative framework blame."
 ---
 
 # OS workarounds

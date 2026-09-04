@@ -66,7 +66,7 @@ For a concrete shape, read [references/example.md](references/example.md).
 4. Verify volatile state against the repository, running processes, and current tests. Trust checkpoints for reasons; verify them for action.
 5. Report what was reloaded, contradictions found, and the next supported action.
 
-If the project contains older state files such as `RESUME.md`, `STATE.md`, or a bare `CHECKPOINT.md`, read [references/adopting-state.md](references/adopting-state.md) before moving or normalizing anything.
+If the project contains older state files such as `RESUME.md`, `STATE.md`, or a bare `CHECKPOINT.md`, read [references/adopting-state.md](references/adopting-state.md) before moving or normalizing anything. A mixed file is split: task state moves into its own checkpoint, while durable knowledge remains in a cleaned source file.
 
 ## When not to checkpoint
 

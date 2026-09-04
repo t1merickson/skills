@@ -1,6 +1,6 @@
 ---
 name: claude
-description: Consult or delegate to Claude from Codex for independent judgment, repository investigation, implementation, synthesis, or a cross-vendor handoff.
+description: "Explicit-only: consult or delegate to Claude from Codex for a bounded second opinion, investigation, implementation lane, synthesis, or cross-vendor handoff. Use only when the user asks to invoke Claude or names this skill. Do not use for ordinary independent reasoning, routine repository work, or an incidental mention of Claude."
 ---
 
 # Claude

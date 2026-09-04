@@ -8,6 +8,8 @@ root = "~/.agents/skills"
 
 [policy]
 explicit = [
+  "claude",
+  "codex",
   "cut-memory",
   "heads-down",
   "hopper-mcp",
@@ -117,6 +119,12 @@ portable = true
 [[skills]]
 name = "hopper-mcp"
 source = "hopper-mcp"
+hosts = ["claude", "codex"]
+portable = true
+
+[[skills]]
+name = "interface-integrity"
+source = "interface-integrity"
 hosts = ["claude", "codex"]
 portable = true
 

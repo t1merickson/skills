@@ -1,6 +1,6 @@
 ---
 name: web-design-defaults
-description: "The user's base web design direction: Base UI, system fonts, no Tailwind, black-and-white minimalism."
+description: "Apply the user's baseline web visual direction—Base UI, system fonts, no Tailwind, and black-and-white minimalism—when creating a new web interface or when the user explicitly asks for these defaults. Do not use when an existing product has its own established design system, for backend-only work, native apps, or fixes that require no visual decision."
 ---
 
 # web-design-defaults
@@ -76,6 +76,8 @@ When improving an existing interface, prefer earlier moves to later ones. Most "
 ## What must survive a cleanup
 
 Restraint applied without looking is just deletion. Before a pass lands, check:
+
+Visual restraint is subordinate to interface integrity. Do not hide frequent actions, erase signs of scrollability, weaken state, shorten labels into ambiguity, or move recovery into an overflow menu merely to make a still image cleaner. If the work reveals a flow-level problem involving prediction, feedback, interruption, authority, or recovery, use `interface-integrity`; do not load it for purely visual token or spacing work.
 
 - **Brand marks stay.** A product's one recognizable color is not a tint to neutralize.
 - **Semantic color stays.** Status, focus, warning, error, success, selected, active, destructive. It is usually lost by accident: a rule about label size that also sets `color` will take the state with it, because a flag and an ordinary label are often the same element reading a different token.
