@@ -37,13 +37,19 @@ In a repository, use `.checkpoints/` at the project root. Outside one, follow th
 
 Use a stable goal-derived slug. Independent writers get independent files; never merge live desks. Checkpoints are local by default. Commit them only when the project's standing convention or the user explicitly treats task state as shared repository history.
 
-Start every file with:
+Create the file with the scaffold script, then fill it. The script owns the filename, the header line, the section order, and the `.gitignore` entry, so those never drift:
+
+```bash
+<skill-directory>/scripts/new.sh <task-slug> "<goal and altitude>" [project-root]
+```
+
+It writes this header and six empty sections in the prescribed order:
 
 ```text
 Task: <task-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <goal and altitude>
 ```
 
-Then use only the sections that have content:
+Do not substitute `Session:` for `Task:` or add fields to the header. Delete the sections that have no content; keep the rest:
 
 | Section | Lifetime | Holds |
 |---|---|---|
@@ -54,7 +60,7 @@ Then use only the sections that have content:
 | **Discards** | append | Rejected branches and cause of death. |
 | **Live wires** | rewrite | Hunches, contradictions, and calibrated uncertainty. |
 
-Keep each file small enough to read whole on resume. Append-only `Decided` and `Discards` preserve why the work moved; rewritten sections keep the live desk current. Move finished tasks to `.checkpoints/archive/`; do not delete their reasoning. A dead branch with its cause recorded can be reconsidered later. One that vanished silently gets rediscovered and retried.
+Keep each file small enough to read whole on resume; past roughly 200 lines, archive and start a fresh desk. `.checkpoints/` holds task state only; reference material and guides belong in `docs/`. Append-only `Decided` and `Discards` preserve why the work moved; rewritten sections keep the live desk current. Move finished tasks to `.checkpoints/archive/`; do not delete their decisions and discards. A dead branch with its cause recorded can be reconsidered later. One that vanished silently gets rediscovered and retried.
 
 For a concrete shape, read [references/example.md](references/example.md).
 
@@ -70,4 +76,4 @@ If the project contains older state files such as `RESUME.md`, `STATE.md`, or a 
 
 ## When not to checkpoint
 
-Do not create one for a short, obvious task with no meaningful reasoning or live state. A low-value checkpoint becomes permanent rereading cost.
+Do not create one for a short, obvious task with no decisions worth keeping and no live state. A low-value checkpoint becomes permanent rereading cost.

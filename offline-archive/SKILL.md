@@ -5,7 +5,7 @@ description: Preserve a legitimately accessible web page, tool, or bounded site 
 
 # Offline archive
 
-Web archives usually begin with a broad “keep this URL” and then reveal a second question: what should survive besides the core experience? Ask once, up front: **keep it whole, or strip anything such as tracking, promotional chrome, or unrelated integrations?** Confirm the URL, output location, breadth, and fidelity needs. Treat authenticated or blocked material as a stop, not an invitation to invent a bypass.
+Web archives usually begin with a broad “keep this URL” and then reveal a second question: what should survive besides the core experience? Ask once, up front: **keep it whole, or strip anything such as tracking, promotional chrome, or unrelated integrations?** Confirm the URL, output location, breadth, and fidelity needs. Do not assume archives belong inside the current project; resolve the user’s configured archival root first. Treat authenticated or blocked material as a stop, not an invitation to invent a bypass.
 
 ## Plan before fetching
 
@@ -22,6 +22,16 @@ Create a request plan and manifest before a whole-site crawl:
 - resume state and deduplication key;
 - user agent/contact convention where appropriate;
 - capture date and tool versions.
+
+The fetch loop is mechanical and already written. Use it rather than writing a crawler:
+
+```bash
+<skill-directory>/scripts/mirror.py --out <docroot> --host <host> [--prefix /path] <seed-urls...>
+<skill-directory>/scripts/verify.sh <docroot>            # serve locally, counts, failed URLs
+<skill-directory>/scripts/source.sh <docroot> <url> [scope]   # SOURCE.md skeleton from the manifest
+```
+
+`mirror.py` is stdlib only and does: same-origin transitive discovery through HTML, CSS, `srcset`, and quoted asset strings in JS; retry with capped backoff, jitter, and `Retry-After`; resume state and a sha256 manifest under `.mirror/`. It does not render JavaScript, follow cross-origin assets unless listed with `--host`, or rewrite paths; serve per-host docroots instead. When a site needs a headless browser or source rebuild, that is a judgment call recorded in `SOURCE.md`, and the recipe goes in `references/site-recipes.md`. Extend the script for a general gap; do not fork it per site.
 
 Use low concurrency, server-directed retry delays, capped exponential backoff, and resumability. Add jitter: a perfectly regular request cadence is conspicuously automated even when slow. Build resume state before the long run; a crawl that dies at 80% and refetches everything is the impolite outcome. Avoid refetching unchanged assets. For evidentiary or long-lived captures, consider WARC alongside the browsable derivative.
 

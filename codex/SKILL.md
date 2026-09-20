@@ -30,7 +30,13 @@ Read [references/prompting.md](references/prompting.md). Include one outcome, re
 
 ## Dispatch within Codex's conventions
 
-Read [references/cli.md](references/cli.md) and verify flags with `codex exec --help`.
+Dispatch through the wrapper so sandbox, effort, cwd, and output path stay fixed per relationship; only the brief varies:
+
+```bash
+<skill-directory>/scripts/run.sh <consult|investigate|delegate> <repo-dir> <brief-file> [model] [effort]
+```
+
+It prints the output file path. Read [references/cli.md](references/cli.md) only when the wrapper cannot express what you need (resume, review, a new flag), and verify flags with `codex exec --help`.
 
 - Use read-only sandboxing for consultation and investigation.
 - Use workspace-write only for delegated implementation.
