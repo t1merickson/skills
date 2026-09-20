@@ -41,7 +41,7 @@ ASSET_EXT = (r"js|mjs|css|json|map|png|jpe?g|gif|svg|webp|avif|ico|woff2?|ttf|ot
              r"mp4|webm|mp3|wav|ogg|csv|tsv|txt|xml|pdf|glsl|frag|vert|wasm|geojson|md")
 
 HTML_ATTR_RE = re.compile(
-    r"""(?:src|href|poster|data-src|content)\s*=\s*["']([^"'#>]+)["']""", re.I)
+    r"""\b(?:src|href|poster|data-src)\s*=\s*["']([^"'#>\s]+)["']""", re.I)
 SRCSET_RE = re.compile(r"""srcset\s*=\s*["']([^"']+)["']""", re.I)
 CSS_URL_RE = re.compile(r"""url\(\s*["']?([^"')\s]+)["']?\s*\)""", re.I)
 CSS_IMPORT_RE = re.compile(r"""@import\s+["']([^"']+)["']""", re.I)
@@ -110,6 +110,8 @@ class Mirror:
     def enqueue(self, url, referer=None):
         url = self.norm(url.strip())
         if not url or url.startswith(("data:", "mailto:", "javascript:", "tel:", "blob:")):
+            return
+        if any(ch in url for ch in " \t\n\r{}<>"):
             return
         if referer:
             url = urllib.parse.urljoin(referer, url)
