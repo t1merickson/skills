@@ -31,7 +31,7 @@ the font, the reference, the output folder and the rules, so most commands need 
 | pictures to outlines; pen centerlines | `kit trace`, `kit skeleton` |
 | what changed between two versions | `kit diff BEFORE AFTER` |
 | one glyph's points, a font's tables | `kit inspect FONT GLYPH`, `kit info FONT` |
-| fonts by name, with license | `kit fonts` |
+| fonts by name | `kit fonts` |
 | Bench views, measurement marks, review lists | `kit view`, `kit marks`, `kit review`, `kit retire` |
 
 Each report writes `report.html` for the user and `report.json` for you, side by side in `<out>/<command>/`. Read the
@@ -39,8 +39,6 @@ JSON; send the user the HTML. `--json` prints the result instead of the summary.
 
 ## Rules Kit enforces, and you keep
 
-- **License rules live in `Kit/fonts.toml`.** A `measure-only` font may be measured in memory for numbers. Never cache,
-  export, draw, trace or build from its outlines, by Kit or by hand.
 - **Glyphs packages**: close the font in Glyphs first (through the Glyphs MCP, refusing if it has unsaved edits; ask the
   user to save), `kit snapshot --reason R`, write, then `kit diff` against the snapshot. Never delete glyphs. Never
   discard the user's unsaved edits.
