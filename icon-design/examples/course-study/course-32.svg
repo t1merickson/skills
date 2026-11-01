@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Course exercise — optical redraw 32px</title><g id="small-document"><path d="M5.5 2.5H21L27.5 9V29.5H5.5Z" fill="#3978bd" stroke="#e9eef3"/>
+    <path d="M18 3C13 10 21 22 6 27V29H13C26 24 17 13 23 7Z" fill="#79a5d5" opacity=".7"/>
+    <path d="M21 3V9H27" fill="#fff" stroke="#c4cbd2" stroke-width=".6"/></g>
+    <g id="small-brush" transform="translate(7 25) rotate(-45)">
+    <path d="M0-1.2H5V1.2H0Z" fill="#d7ae61" stroke="#8f6b2d" stroke-width=".4"/>
+    <path d="M1-.5H5M1 .5H5" stroke="#fff0b4" stroke-width=".35"/>
+    <path d="M5-1.15H7.5V1.15H5Z" fill="#dbe0df" stroke="#6e7a7e" stroke-width=".35"/>
+    <path d="M7.5-1.25L31-.7Q32 0 31 .7L7.5 1.25Z" fill="#d7320b" stroke="#802003" stroke-width=".4"/>
+    <path d="M8-.6L30-.2" stroke="#ffce94" stroke-width=".7"/></g>
+    <g id="small-pencil" transform="translate(17 27) rotate(-56.6)">
+    <path d="M0 0L3.5-1H20V1H3.5Z" fill="#efb51b" stroke="#956314" stroke-width=".4"/>
+    <path d="M0 0L3.5-1V1Z" fill="#e8ca91"/><path d="M0 0L1.2-.35V.35Z" fill="#202b25"/>
+    <path d="M4-.5H18" stroke="#fff188" stroke-width=".55"/>
+    <path d="M18-1H20V1H18Z" fill="#e2e6df"/><path d="M20-1H21Q22 0 21 1H20Z" fill="#df82ca"/></g></svg>

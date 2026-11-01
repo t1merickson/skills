@@ -1,0 +1,7 @@
+{
+  "name": "agent-icon-design-renderer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local SVG raster adapter for icon-design",
+  "dependencies": {"sharp": "0.35.4"}
+}

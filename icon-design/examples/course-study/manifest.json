@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "attribution": "From-scratch study of Sebastiaan de With, Icon Resource; reference supplied by user. No embedded course pixels or extracted paths.",
+  "resources": [
+    {
+      "id": "course-512",
+      "pixels": 512,
+      "source": "course-icon.svg",
+      "alpha": "allowed"
+    },
+    {
+      "id": "course-256",
+      "pixels": 256,
+      "source": "course-icon.svg",
+      "alpha": "allowed"
+    },
+    {
+      "id": "course-128",
+      "pixels": 128,
+      "source": "course-icon.svg",
+      "alpha": "allowed"
+    },
+    {
+      "id": "course-32",
+      "pixels": 32,
+      "source": "course-32.svg",
+      "alpha": "allowed"
+    },
+    {
+      "id": "course-16",
+      "pixels": 16,
+      "source": "course-16.svg",
+      "alpha": "allowed"
+    },
+    {
+      "id": "pencil-512",
+      "pixels": 512,
+      "source": "pencil.svg",
+      "alpha": "allowed",
+      "appearance": "pencil"
+    },
+    {
+      "id": "brush-512",
+      "pixels": 512,
+      "source": "brush.svg",
+      "alpha": "allowed",
+      "appearance": "brush"
+    },
+    {
+      "id": "document-512",
+      "pixels": 512,
+      "source": "document.svg",
+      "alpha": "allowed",
+      "appearance": "document"
+    }
+  ]
+}

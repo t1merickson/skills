@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><title>Field Lens — aligned clean Composer foreground layers</title>
+<g id="01-handle" transform="translate(446 430) rotate(-45)"><rect x="-36" y="210" width="72" height="278" rx="34" fill="#a7774d"/></g>
+<g id="02-rim"><circle cx="446" cy="430" r="228" fill="#e4c38c"/></g>
+<g id="03-lens"><circle cx="446" cy="430" r="184" fill="#285b70"/></g>
+<g id="04-mountain"><path d="M305 510 L446 328 L587 510Z" fill="#dce8d4"/></g>
+</svg>

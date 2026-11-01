@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><title>Course curled document construction study</title><defs>
+<linearGradient id="backPaper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e8dcbb"/><stop offset=".55" stop-color="#dbcb9f"/><stop offset="1" stop-color="#f2e8ca"/></linearGradient>
+<linearGradient id="blueBase" x1="0" y1=".4" x2="1" y2=".55"><stop stop-color="#559bda"/><stop offset=".45" stop-color="#3976bf"/><stop offset="1" stop-color="#294b86"/></linearGradient>
+<linearGradient id="blueSweep" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#a5c9e7"/><stop offset="1" stop-color="#5b96d5"/></linearGradient>
+<linearGradient id="paperEdge" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset=".6" stop-color="#e5e6e6"/><stop offset="1" stop-color="#f9fbfe"/></linearGradient>
+<linearGradient id="curl" gradientUnits="userSpaceOnUse" x1="370" y1="24" x2="337" y2="76"><stop stop-color="#7f7f7b"/><stop offset=".27" stop-color="#ddddda"/><stop offset=".68" stop-color="#f9f9f7"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+<linearGradient id="curlEdge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fafaf6"/><stop offset="1" stop-color="#92948f"/></linearGradient>
+<linearGradient id="pencilYellow" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fbd247"/><stop offset=".2" stop-color="#ffd945"/><stop offset=".43" stop-color="#f4b900"/><stop offset=".63" stop-color="#ecad00"/><stop offset=".8" stop-color="#d69500"/><stop offset="1" stop-color="#8d5900"/></linearGradient>
+<linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d6b46f"/><stop offset=".28" stop-color="#fae2a9"/><stop offset=".5" stop-color="#e1bd7c"/><stop offset="1" stop-color="#9a743b"/></linearGradient>
+<linearGradient id="graphite" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#686c60"/><stop offset=".35" stop-color="#41453b"/><stop offset=".6" stop-color="#101812"/><stop offset="1" stop-color="#090c08"/></linearGradient>
+<linearGradient id="silver" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#737975"/><stop offset=".19" stop-color="#d7dad6"/><stop offset=".4" stop-color="#fcfff9"/><stop offset=".56" stop-color="#d0d4cf"/><stop offset=".8" stop-color="#b1b6b1"/><stop offset="1" stop-color="#707773"/></linearGradient>
+<radialGradient id="eraser" cx=".55" cy=".16" r="1"><stop stop-color="#f6c0ed"/><stop offset=".46" stop-color="#e184d2"/><stop offset="1" stop-color="#b851ae"/></radialGradient>
+<linearGradient id="redPaint" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b72e09"/><stop offset=".16" stop-color="#f36437"/><stop offset=".29" stop-color="#ff7643"/><stop offset=".5" stop-color="#e7370b"/><stop offset=".74" stop-color="#c41d04"/><stop offset="1" stop-color="#720d02"/></linearGradient>
+<linearGradient id="redHighlight" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fff8dc" stop-opacity=".98"/><stop offset=".67" stop-color="#ffe2c3" stop-opacity=".9"/><stop offset="1" stop-color="#ffca92" stop-opacity=".12"/></linearGradient>
+<linearGradient id="bristles" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a87526"/><stop offset=".2" stop-color="#e3be73"/><stop offset=".5" stop-color="#d4a64e"/><stop offset=".78" stop-color="#f1ce8e"/><stop offset="1" stop-color="#a57222"/></linearGradient>
+<linearGradient id="bristleRoot" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#73511e" stop-opacity="0"/><stop offset=".7" stop-color="#684819" stop-opacity="0"/><stop offset="1" stop-color="#684819" stop-opacity=".6"/></linearGradient>
+<filter id="broadShadow" x="-.2" y="-.2" width="1.4" height="1.4"><feGaussianBlur stdDeviation="4"/></filter>
+<filter id="toolShadow" x="-.25" y="-1" width="1.5" height="3"><feGaussianBlur stdDeviation="2.6"/></filter>
+<filter id="contact" x="-.2" y="-.5" width="1.4" height="2"><feGaussianBlur stdDeviation=".8"/></filter>
+<filter id="foldShadow" x="-.4" y="-.6" width="1.8" height="2.2"><feGaussianBlur stdDeviation="5"/></filter>
+<clipPath id="pageClip"><path d="M73 48 L290 10 C308 7 313 23 320 79 C350 72 374 65 385 67 C403 67 409 75 414 94 L475 410 L140 470Z"/></clipPath>
+<clipPath id="woodClip"><path d="M12 0 L51-12 Q55-9 52-6 Q58-3 54 0 Q58 4 53 6 Q56 10 51 12Z"/></clipPath>
+<path id="brushHair" d="M2-10 Q5-15 11-14 C32-13 53-11 80-9 L80 9 C50 10 29 15 10 15 Q4 14 2 10 L0 5 L1 1 L0-3Z"/>
+<clipPath id="hairClip"><use href="#brushHair"/></clipPath>
+</defs><g id="02-document"><path d="M69 44 L290 6 Q305 3 318 12 L398 58 Q409 64 414 91 L480 414 L137 476Z" transform="translate(1 5)" fill="#000" opacity=".5" filter="url(#broadShadow)"/><path d="M69 44 L290 6 Q305 3 318 12 L398 58 Q409 64 414 91 L480 414 L137 476Z" fill="#737775"/><path d="M70 44 L291 7 Q305 4 318 13 L397 59 Q408 65 413 91 L479 413 L138 474Z" fill="url(#paperEdge)"/>
+<g clip-path="url(#pageClip)"><path d="M64-5 H440 L492 474 H112Z" fill="url(#blueBase)"/>
+<path d="M258 5 C237 68 226 111 237 175 C254 279 221 357 128 397 L137 470 C246 458 299 379 283 277 C266 165 275 90 315 37 L316-3Z" fill="url(#blueSweep)" opacity=".65"/>
+<path d="M317 22 C277 79 270 131 279 186 C297 276 316 325 289 392 C310 355 342 318 337 264 C333 215 310 171 313 140 C313 103 342 83 366 66Z" fill="#2458ad" opacity=".52"/>
+<path d="M322 81 Q375 61 393 72 Q409 81 415 99 L401 68 Q383 52 320 74Z" fill="#081c38" opacity=".46" filter="url(#foldShadow)"/>
+</g>
+<path d="M287 8 C309 1 314 25 320 79 C341 75 365 68 379 66 C399 62 410 73 415 95 L409 72 Q407 62 397 57 L316 10 Q305 3 287 8Z" fill="url(#curl)"/>
+<path d="M299 7 Q308 4 319 12 L397 58 Q407 65 410 78" fill="none" stroke="url(#curlEdge)" stroke-width="1.1"/>
+</g></svg>

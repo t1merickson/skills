@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<title>Field Lens — machined brass and smoked glass</title>
+<desc>Lens centered at 223,215. Handle constructed on the same origin, rotated minus 45 degrees from the vertical. All axial components share x=0 in that local frame.</desc>
+<defs>
+ <linearGradient id="case" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#32676b"/><stop offset=".5" stop-color="#174248"/><stop offset="1" stop-color="#0c282f"/></linearGradient>
+ <linearGradient id="caseEdge" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#82abad"/><stop offset=".4" stop-color="#31565b"/><stop offset="1" stop-color="#061b21"/></linearGradient>
+ <radialGradient id="caseLight" cx=".15" cy=".04" r=".9"><stop stop-color="#b3d4c5" stop-opacity=".15"/><stop offset="1" stop-color="#a6d4c8" stop-opacity="0"/></radialGradient>
+ <linearGradient id="goldEdge" x1=".12" y1="0" x2=".9" y2="1"><stop stop-color="#fff4cd"/><stop offset=".23" stop-color="#bd9860"/><stop offset=".5" stop-color="#674824"/><stop offset=".74" stop-color="#e9c38b"/><stop offset="1" stop-color="#7e5b31"/></linearGradient>
+ <linearGradient id="goldFace" x1=".08" y1="0" x2=".82" y2="1"><stop stop-color="#fff2c9"/><stop offset=".32" stop-color="#d9b87e"/><stop offset=".5" stop-color="#b88b50"/><stop offset=".64" stop-color="#e6c58f"/><stop offset="1" stop-color="#967042"/></linearGradient>
+ <linearGradient id="innerBevel" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#473e2c"/><stop offset=".5" stop-color="#746340"/><stop offset="1" stop-color="#ffebba"/></linearGradient>
+ <linearGradient id="collar" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#74512b"/><stop offset=".22" stop-color="#ddba80"/><stop offset=".43" stop-color="#fff0c8"/><stop offset=".65" stop-color="#b68d52"/><stop offset="1" stop-color="#624224"/></linearGradient>
+ <linearGradient id="grip" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#281b17"/><stop offset=".2" stop-color="#694333"/><stop offset=".4" stop-color="#956747"/><stop offset=".57" stop-color="#775039"/><stop offset=".85" stop-color="#442b23"/><stop offset="1" stop-color="#241916"/></linearGradient>
+ <linearGradient id="sky" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#113b4c"/><stop offset=".55" stop-color="#3e8791"/><stop offset="1" stop-color="#a2c9c0"/></linearGradient>
+ <linearGradient id="near" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#407b80"/><stop offset="1" stop-color="#164a5d"/></linearGradient>
+ <linearGradient id="glassLight" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#e3ffff" stop-opacity=".045"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <radialGradient id="glassShade" cx=".5" cy=".5" r=".5"><stop offset=".74" stop-color="#051e2e" stop-opacity="0"/><stop offset="1" stop-color="#041823" stop-opacity=".65"/></radialGradient>
+ <filter id="ground" x="-.5" y="-2" width="2" height="5"><feGaussianBlur stdDeviation="7"/></filter>
+ <filter id="lift" x="-.3" y="-.3" width="1.6" height="1.6"><feGaussianBlur stdDeviation="5"/></filter>
+ <filter id="contact" x="-.3" y="-.3" width="1.6" height="1.6"><feGaussianBlur stdDeviation="1.5"/></filter>
+ <clipPath id="glassClip"><circle cx="223" cy="215" r="92"/></clipPath>
+ <clipPath id="gripClip"><path d="M-18 138 Q-18 130 0 130 Q18 130 18 138 L20 223 Q20 244 0 244 Q-20 244-20 223Z"/></clipPath>
+</defs>
+<g id="01-ground"><ellipse cx="256" cy="455" rx="166" ry="8" fill="#091a1f" opacity=".28" filter="url(#ground)"/></g>
+<g id="02-case"><rect x="47" y="48" width="418" height="408" rx="88" fill="#082028"/><rect x="47" y="42" width="418" height="408" rx="88" fill="url(#case)" stroke="url(#caseEdge)" stroke-width="2"/><rect x="49" y="44" width="414" height="403" rx="86" fill="url(#caseLight)"/><path d="M68 96 Q84 53 135 51 H369 Q405 51 429 75" fill="none" stroke="#b4d5ca" stroke-opacity=".24" stroke-width="1.5"/></g>
+<g id="03-object-shadow"><g transform="translate(3 10)" fill="#020f17" opacity=".48" filter="url(#lift)"><circle cx="223" cy="215" r="112"/><path d="M-19 107 H19 V224 Q19 244 0 244 Q-19 244-19 224Z" transform="translate(223 215) rotate(-45)"/></g><circle cx="223" cy="221" r="112" fill="#051b22" opacity=".55" filter="url(#contact)"/></g>
+<g id="04-handle" transform="translate(223 215) rotate(-45)">
+ <path d="M-13 103 H13 L17 144 H-17Z" fill="url(#collar)" stroke="#694c2c" stroke-width="1"/>
+ <path d="M-18 138 Q-18 130 0 130 Q18 130 18 138 L20 223 Q20 244 0 244 Q-20 244-20 223Z" fill="url(#grip)" stroke="#2b211b" stroke-width="1"/>
+ <g clip-path="url(#gripClip)" fill="none" stroke="#d9a470" stroke-width=".7" stroke-opacity=".13"><path d="M-9 135 Q-13 171-7 204 T-8 245 M-3 133 Q1 165-3 198 T0 246 M8 133 Q4 172 10 205 T10 244 M14 141 Q12 191 15 237"/></g>
+ <path d="M-18 137 Q0 142 18 137 V145 Q0 150-18 145Z" fill="url(#collar)"/>
+ <path d="M-18 138 Q0 143 18 138" fill="none" stroke="#fff0cb" stroke-opacity=".65" stroke-width="1"/>
+ <path d="M-11 154 Q-12 190-11 216 Q-11 228-4 232" fill="none" stroke="#deb287" stroke-opacity=".36" stroke-width="1.6" stroke-linecap="round"/>
+ <path d="M-18 229 Q0 244 18 229 Q16 245 0 247 Q-16 245-18 229Z" fill="url(#collar)"/>
+</g>
+<g id="05-rim"><circle cx="223" cy="218" r="114" fill="#5b442c"/><circle cx="223" cy="215" r="114" fill="url(#goldEdge)"/><circle cx="223" cy="214" r="110" fill="url(#goldFace)"/><circle cx="223" cy="214" r="107.5" fill="none" stroke="#fff2d1" stroke-opacity=".5" stroke-width=".9"/><circle cx="223" cy="215" r="99" fill="url(#innerBevel)"/><circle cx="223" cy="215" r="94" fill="#102f37"/><path d="M122 173 A109 109 0 0 1 244 107" fill="none" stroke="#fff9e7" stroke-opacity=".72" stroke-width="2" stroke-linecap="round"/></g>
+<g id="06-landscape" clip-path="url(#glassClip)"><circle cx="223" cy="215" r="92" fill="url(#sky)"/>
+ <path d="M120 257 L171 210 L190 225 L244 163 L328 260Z" fill="#8fb6b3"/>
+ <path d="M164 276 L244 163 L316 258 L316 309 H164Z" fill="#c8d8c7"/>
+ <path d="M244 163 L235 211 L252 235 L254 270 L291 279 L306 260Z" fill="#72a09e"/>
+ <path d="M213 207 L244 163 L266 192 L252 188 L243 197 L234 190Z" fill="#f0ecda"/>
+ <path d="M119 255 Q176 229 225 252 Q264 275 331 247 V310 H119Z" fill="url(#near)"/>
+ <path d="M124 280 Q176 259 224 276 Q258 289 320 267" fill="none" stroke="#8dc7c1" stroke-opacity=".68" stroke-width="2"/>
+ <circle cx="223" cy="215" r="92" fill="url(#glassShade)"/>
+</g>
+<g id="07-glass" clip-path="url(#glassClip)"><path d="M121 154 Q194 105 288 136 L160 286 Q118 250 121 154Z" fill="url(#glassLight)"/><path d="M148 174 A87 87 0 0 1 224 128" fill="none" stroke="#dcf9f3" stroke-opacity=".67" stroke-width="2.2" stroke-linecap="round"/><path d="M269 289 A87 87 0 0 0 305 244" fill="none" stroke="#a5e3df" stroke-opacity=".37" stroke-width="1.3" stroke-linecap="round"/></g>
+</svg>

@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "intent": "Original static illustration study; not a production app identity or modern Composer render.",
+  "resources": [
+    {
+      "id": "mac-16pt-1x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 16,
+      "scale": 1,
+      "pixels": 16,
+      "source": "field-lens-tiny.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-16pt-2x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 16,
+      "scale": 2,
+      "pixels": 32,
+      "source": "field-lens-tiny.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-32pt-1x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 32,
+      "scale": 1,
+      "pixels": 32,
+      "source": "field-lens-small.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-32pt-2x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 32,
+      "scale": 2,
+      "pixels": 64,
+      "source": "field-lens-small.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-128pt-1x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 128,
+      "scale": 1,
+      "pixels": 128,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-128pt-2x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 128,
+      "scale": 2,
+      "pixels": 256,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-256pt-1x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 256,
+      "scale": 1,
+      "pixels": 256,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-256pt-2x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 256,
+      "scale": 2,
+      "pixels": 512,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-512pt-1x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 512,
+      "scale": 1,
+      "pixels": 512,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    },
+    {
+      "id": "mac-512pt-2x",
+      "platform": "macos",
+      "appearance": "default",
+      "points": 512,
+      "scale": 2,
+      "pixels": 1024,
+      "source": "field-lens.svg",
+      "alpha": "allowed",
+      "reason": "Optical master selected by logical size, not only pixel dimensions."
+    }
+  ]
+}

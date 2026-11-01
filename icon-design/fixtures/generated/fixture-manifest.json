@@ -1,0 +1,84 @@
+{
+  "generator": "scripts/make_fixtures.py",
+  "schema": 1,
+  "seed": null,
+  "determinism": "No random operations. PNG bytes scoped to recorded Pillow version.",
+  "python": "3.13.15",
+  "pillow": "12.3.0",
+  "fixtures": [
+    {
+      "file": "alpha-ramp.png",
+      "dimensions": [
+        16,
+        16
+      ],
+      "mode": "RGBA",
+      "expected": "alpha extrema 0..255; 224 partial pixels",
+      "sha256": "04bbc69111b49050fc4a97f1e5f54b723c2067baf8084ef44aa9b4819b6e71fc"
+    },
+    {
+      "file": "empty.png",
+      "dimensions": [
+        16,
+        16
+      ],
+      "mode": "RGBA",
+      "expected": "empty alpha must fail build",
+      "sha256": "232c2eac760eae604f9dd43352c0b272396b7cfaf220081b54583b6d0cbc2320"
+    },
+    {
+      "file": "one-pixel.png",
+      "dimensions": [
+        1,
+        1
+      ],
+      "mode": "RGBA",
+      "expected": "valid smallest input; edge contact",
+      "sha256": "d5a51b6aed15684ec8c123e30fe5703155359d6543b6d7b47cb5766ef44939de"
+    },
+    {
+      "file": "nonsquare.png",
+      "dimensions": [
+        16,
+        8
+      ],
+      "mode": "RGBA",
+      "expected": "source rejected rather than distorted",
+      "sha256": "27b2063caa7fc6a22d6bc219508f0b4ffaaa7b6cf70cfd5c70515eefd6bb78ef"
+    },
+    {
+      "file": "full-bleed.png",
+      "dimensions": [
+        16,
+        16
+      ],
+      "mode": "RGBA",
+      "expected": "opaque; edge warning is intentional",
+      "sha256": "a9d16ac3ae1063c0e08e9db3a63ad3686cb5af8825634dd591714f2d3d47dba6"
+    },
+    {
+      "file": "transparent-border.png",
+      "dimensions": [
+        16,
+        16
+      ],
+      "mode": "RGBA",
+      "expected": "alpha bbox [3,3,13,13]; no edge",
+      "sha256": "e505b42203e4e98a6f7661e4c8728f1dab55d54c8b51065bb75acd94af90af68"
+    },
+    {
+      "file": "renderer-probe.svg",
+      "dimensions": [
+        64,
+        64
+      ],
+      "expected": "soft alpha at 7,32; clip removes 33,32 but retains 34,32",
+      "sha256": "c06b5641c7ac5003449c2e298d66fcd09e440ef525bdbb7e34bb8fa4b5bf6192"
+    },
+    {
+      "file": "malformed.svg",
+      "expected": "XML parse failure",
+      "sha256": "191b4c6976b2883929964c056b7a8cfd6c70103ddb1a586c7a775fd25f08822f"
+    }
+  ]
+}
