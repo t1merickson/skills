@@ -1,5 +1,5 @@
 ---
-name: ios-design
+name: ios-defaults
 description: "Use when building or reviewing actual native iOS app behavior: app structure, deployment targets, UIKit/SwiftUI choices, platform conventions, accessibility, or HIG-grounded interface decisions. Do not use for general Swift questions, macOS/server/CLI work, cross-platform code without an iOS-specific decision, or a passing mention of iPhone or iPad."
 ---
 
@@ -25,7 +25,7 @@ The minimum iOS version determines the Xcode version, SDK, available APIs, and a
 1. Ask which devices and iOS versions matter, and check current adoption if the answer is "most people's."
 2. List the APIs the core features need and verify availability against current documentation — never from memory.
 3. Decide the device story explicitly: iPhone-only, or iPhone and iPad with real size-class layouts.
-4. Record the decision and its reasoning in the project's AGENTS.md or other standing project documentation.
+4. Record the decision and why in the project's CLAUDE.md or other standing project docs.
 
 The decision is not permanent. A design decision can demand a newer API, and raising the floor is the right answer more often than reimplementing what the OS now gives you — record the raise and its reason alongside the original. If the project is split into packages, only raise the floors that actually need it.
 

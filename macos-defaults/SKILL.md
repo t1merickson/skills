@@ -1,5 +1,5 @@
 ---
-name: macos-design
+name: macos-defaults
 description: "Use when building or reviewing actual native macOS app behavior: identity and lifecycle, commands and menus, SwiftUI/AppKit choices, HIG-grounded interface decisions, accessibility, runtime boundaries, or stable app delivery. Do not use for general Swift questions, shell tools that merely run on macOS, cross-platform code without a Mac-specific decision, or passing mentions of .app files."
 ---
 
