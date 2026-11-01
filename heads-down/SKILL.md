@@ -1,49 +1,50 @@
 ---
 name: heads-down
-description: Run a well-scoped task with maximum autonomy and minimal dialogue while preserving ordinary permissions, safety, verification, and reporting.
+description: Run all the way to the goal with no check-ins. Use when the user invokes /heads-down or says to just go, run to the end, don't stop to ask. Do not stop for steps already in the plan or ask "go?"; stop only for what only the user can give.
 ---
 
 # Heads down
 
-Use this mode only when the user invokes it or clearly asks for sustained autonomous execution. It changes the interaction pattern, not authority. Speed comes from cutting interaction latency—questions, narration, serialization—not from cutting diligence, reversibility, or verification.
+/heads-down means run all the way to the goal. The user has already said yes to the plan. Stopping to ask for approval defeats the point.
 
-Heads-down concentrates collaboration at the edges: a clear destination at the start, independent work in the middle, and an auditable report at the end. Its counterpart is [slow-mode](../slow-mode/SKILL.md), which weaves the collaboration through the middle instead.
+This changes how often we talk, not what you're allowed to do. Permissions, verification, and safety rules stay the same.
 
-## Entry contract
+## Start
 
-Before starting, establish four things from the request and repository:
+From the request and the repo, get clear on: the outcome, what's in scope, and what proves it's done. If two readings would produce really different work, ask one tight question. Otherwise start right away. Don't restate the plan back.
 
-1. The observable outcome.
-2. The paths or systems in scope.
-3. What evidence will count as complete.
-4. The conditions that require stopping.
+## Don't stop for
 
-If two plausible readings would produce materially different work, ask one tight question before beginning. Otherwise start without restating the plan.
+- Steps already in the plan or obviously implied by it.
+- "Go?", "Should I continue?", "Want me to do the next part?" The answer is yes.
+- Choices with a convention or an obvious default. Make the call and note it for the report.
+- A failed approach. Try a genuinely different one.
+- Small fixes you find along the way that serve the goal.
 
-## Work posture
+## Stop only for
 
-- Make mechanical and convention-backed decisions without asking. Record non-obvious calls for the final report: **autonomy now, auditability after**.
-- Batch independent reads and checks. Use parallel agents only when the user and host authorize them.
-- Follow the host's required commentary cadence. Prefer milestone updates over play-by-play. A short run may need only the final report; a long run needs enough visible state that silence does not become ambiguity.
-- Treat new user input as steering, not noise. Re-aim immediately.
-- Park attractive out-of-scope work. Use the intent-stacking test: if the user would reasonably assume the extra action from the request, it may be follow-through; if it introduces a new outcome, system, or consequence, it is another task.
+- Credentials, auth, or anything security shaped.
+- Spending money or signing up for anything.
+- Anything leaving the machine: pushing to a public remote, opening a PR, posting, email.
+- Deleting outside quarantine, or a batch operation whose full effects haven't been seen.
+- Real ambiguity about what to build, where a wrong guess wastes the run or changes the product.
+- A wall: two genuinely different approaches both failed. Report the wall and the evidence. Don't force it with disabled checks, history rewrites, or destructive resets.
 
-## Guardrails
+When a stop is needed, do everything else first, then raise it once at the end, with the options.
 
-- **Permissions do not change.** Dependency installs, commits, external writes, publishing, spending, credentials, and other mutations still follow the user's request and the host's approval system.
-- **Verification does not change.** A completion claim must trace to something observed in this run.
-- **Reversibility does not change.** Preserve unrelated work, use quarantine for destructive cleanup, and apply `file-batch-safety` before a real batch.
-- **No force as problem-solving.** After two genuinely different approaches hit the same wall, report the wall and the evidence. Do not reach for permission bypasses, disabled checks, history rewrites, or destructive resets.
-- **One writer per worktree.** Parallel readers are fine; simultaneous writers are not.
-- **Leave the machine clean.** Stop processes you started and report deliberate leftovers.
+## While working
+
+- Batch independent reads and checks. Use subagents when they help; pick their model by task weight.
+- Commit as you go, one coherent change per commit, explicit paths only.
+- New messages from the user are steering. Re-aim right away.
+- Park out-of-scope ideas for the report instead of building them.
+- Stop processes you started and clean up scratch files before reporting.
 
 ## Report
 
-Lead with what landed and how to try it. Then give:
+First line: what landed and how to try it, or what didn't land and why.
 
-- **Verified:** exact checks and observed results.
-- **Calls:** non-obvious decisions actually made; empty is valid.
-- **Parked:** useful observations outside scope.
-- **Next:** one small next action, only when one is genuinely useful.
-
-If the requested outcome did not land, say that first and name the remaining blocker. The report is not ceremony; it is what makes the quiet middle trustworthy. Heads-down succeeds by concentrating interaction at the edges, never by hiding uncertainty.
+- **Verified:** the checks you ran and what you saw.
+- **Calls:** non-obvious decisions you made. Empty is fine.
+- **Parked:** useful things outside scope. Empty is fine.
+- **Needs you:** only the items from "Stop only for", if any.

@@ -1,24 +1,35 @@
 ---
 name: slice-and-review
-description: Build a larger change as coherent, testable slices with reversible persistence and adversarial review between slices.
+description: Build a larger code change as a loop of slices — build, commit, adversarial review, fix, commit, keep going. Use when the user invokes it or describes the loop in their own words ("cut work into slices", "work, commit, spawn an adversarial agent, review, commit again, keep going", "fan out", "adversarial review", "review loop", "commit-review-fix"). Not for research, writing, or analysis; adversarial review is for auditing code, not auditing research.
 ---
 
 # Slice and review
 
-Use this loop when the user invokes it or when a requested build is large enough that independent, reviewable milestones materially reduce risk. The point is to make mistakes small, legible, and cheap to correct—not to decorate a large diff with periodic ceremonies.
+The point is to keep mistakes small and cheap to fix. Run the loop through to the end of the plan without stopping to ask between slices.
 
-1. **List the slices.** Each is one coherent, testable change: small enough to review in one sitting, large enough to mean something. The list is a plan, not a promise that new evidence cannot change it.
-2. **Build one slice.** Keep its changes and verification legible on their own.
-3. **Persist reversibly.** Commit when commits are authorized. Otherwise use a staged diff, patch, checkpoint, or another repository-safe boundary.
-4. **Review adversarially.** Use an independent read-only reviewer when delegation is available and authorized. Otherwise perform a fresh local pass against the slice goal and diff. The posture is “refute this slice's claim,” not “summarize the diff.” Look for real bugs, broken edge cases, and claims the evidence does not support; omit praise and nitpicks.
-5. **Verify findings.** Reviewers invent problems. Reproduce or inspect each finding before changing code.
-6. **Fix within the slice and persist again.** Then advance.
+## The loop
+
+1. **List the slices.** Each is one coherent, testable change. Write the list once, briefly. New evidence can change it; say so when it does.
+2. **Build one slice.** Verify it with the cheapest real check: test, build, run, or rendered output.
+3. **Commit the slice.** Stage explicit paths only (`git add path/a path/b`), never `git add -A` or `git add .`. Other agents or the user may have uncommitted work in the same tree. One commit per slice; the message says what and why.
+4. **Adversarial review.** Spawn a read-only reviewer subagent on that commit's diff. Its job: refute the slice's claim. Find real bugs, broken edge cases, and claims the evidence does not back. No praise, no nitpicks. If subagents aren't available, do a fresh pass yourself with the same posture.
+5. **Check each finding.** Reviewers invent problems. Reproduce or read the code before changing anything. An empty review is a valid result.
+6. **Fix and commit again.** Then start the next slice. Don't ask "next slice?" The plan already said yes.
+
+## At the end
+
+- Re-verify the merged result on main (or the target branch): build and tests on the final state, not just each slice alone. Slices that pass alone can break together.
+- Report: one line per slice (what landed, how verified, any real review finding, commit hash), then anything parked.
 
 ## Rules
 
-- One writer per worktree. A reviewer reports; the owner edits.
-- An empty review is valid. Never manufacture findings to make the ritual look rigorous.
-- A scope change updates the remaining slice plan explicitly. A good idea found mid-slice goes into the plan or parking lot; it does not hitchhike into the current diff.
-- Verification is proportional to risk and observable: tests, builds, rendered output, or a focused manual check.
-- Report each completed slice in one line: outcome, verification, meaningful review finding, and persistence boundary.
-- If repeated reviews are clean and the rest is mechanical, drop redundant review steps. The loop serves quality, not ceremony.
+- **One writer per working tree.** Reviewers report; only the owner edits. Parallel writers need separate worktrees.
+- **No adversarial pass on research.** Research, reading, surveys, and writing get a normal check of sources, not a refute-this reviewer.
+- **Scope changes go in the plan.** A good idea found mid-slice goes into the slice list or a parked list. It doesn't ride along in the current diff.
+- **Drop ceremony that stopped paying.** If reviews keep coming back clean and the rest is mechanical, review less often and say so.
+
+## Subagents and cost
+
+- Pick model and effort per task by its weight: a light model for mechanical reads and checks, a stronger one for tricky review. Don't hard-code tiers; the user doesn't need to name them.
+- Before a big fan-out (more than a handful of subagents), state the count and what each does in one line, then go.
+- Subagents don't spawn their own subagents unless the plan calls for it. Tell them so in their prompt. A nested fan-out once burned about $200 in one run.

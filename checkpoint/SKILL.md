@@ -1,79 +1,86 @@
 ---
 name: checkpoint
-description: Save non-reconstructable task state to .checkpoints/, or reload live checkpoints before resuming work.
+description: Save in-flight task state to a visible checkpoints/ folder, or reload it before resuming. Fire when the user says they need to compact, asks to log or save anything still in flight, before a long run or risky step, or when resuming work that has checkpoint or older state files (RESUME, STATE, CHECKPOINT, COMPACTED, HANDOFF). Not for "where were we" or "catch me up" recaps; that is catch-me-up. Not for short obvious tasks with nothing live.
 ---
 
 # Checkpoint
 
-A checkpoint restores what it felt like to be mid-problem after compaction has preserved only the clean summary. It keeps the unproven hunch, the branch killed and why, the aside the user dropped that never became a task, and the work still spinning in the background.
+A checkpoint keeps what compaction drops: the unproven hunch, the branch killed and why, the aside the user dropped that never became a task, the work still running in the background.
 
-The repository is not the payload. Code, diffs, history, and durable docs can be reread. Test every proposed line with: **would someone who read the whole repo and diff still not know this?** If they would know it, cut it. If it existed only in the conversation or working mind, it may belong here.
+The repo is not the payload. Code, diffs, history, and docs can be reread. Test every line with: **would someone who read the whole repo and diff still not know this?** If they would, cut it.
+
+Saving and loading state is this skill's whole job. For a recap of where things stand, use `catch-me-up`. It may read checkpoints, but the recap lives there.
 
 ## What earns a line
 
-Before writing, ask:
-
-- What would be expensive or annoying to rediscover?
+- What would be expensive to rediscover?
 - What was tried and rejected, and what killed it?
-- Which decisions were made, with what reason?
+- Which decisions were made, and why?
 - What is running, blocked, waiting, promised, or not started?
 - Which claims are uncertain, and what would settle them?
-- What did the user say that has not reached the repository yet?
-- What would the next action be if work resumed now?
-- What did I almost say and cut for length?
-- What is nagging me that I cannot justify yet?
+- What did the user say that has not reached the repo yet?
+- What is the next action if work resumed now?
+- What did I almost say and cut for length? What is nagging me?
 
-The last two prompts often recover the highest-value material. Salience now is a poor predictor of what will be expensive to reconstruct later.
+The last prompt often recovers the most useful material. Label a hunch as a hunch and say how to check it. Do not turn uncertainty into fact.
 
-Half-formed material is welcome when calibrated. “This feels wrong and I do not know why” can be useful. Label a hunch as a hunch and record how to check it. Do not launder uncertainty into fact.
+## Rules and instructions: sourced only
 
-## Storage and ownership
+Record a rule only if the user actually stated it in this work, with where: `"no new deps" (the user, chat, 2026-10-30)`. Never write generic rules from habit or from another tool's defaults, such as "do not commit unless asked". Those contradict `~/.claude/CLAUDE.md`, which already governs and does not need copying. If unsure whether they said it, leave it out.
 
-In a repository, use `.checkpoints/` at the project root. Outside one, follow the active host's personal state convention. One file belongs to one task or independent work lane:
+## Storage
+
+In a repo, use `checkpoints/` at the project root. Visible, never dot-prefixed. Outside a repo, follow the host's personal state convention with a visible folder. One file per task or independent work lane:
 
 ```text
-<YYYY-MM-DD>-<task-slug>.md
+checkpoints/<YYYY-MM-DD>-<task-slug>.md
 ```
 
-Use a stable goal-derived slug. Independent writers get independent files; never merge live desks. Checkpoints are local by default. Commit them only when the project's standing convention or the user explicitly treats task state as shared repository history.
+Use a stable slug from the goal. Separate writers get separate files; never merge live lanes. Checkpoints are gitignored by default; commit them only if the project already tracks them or the user asks.
 
-Create the file with the scaffold script, then fill it. The script owns the filename, the header line, the section order, and the `.gitignore` entry, so those never drift:
+Create the file with the script, then fill it. The script owns the filename, header, section order, and `.gitignore` entry:
 
 ```bash
-<skill-directory>/scripts/new.sh <task-slug> "<goal and altitude>" [project-root]
+<skill-directory>/scripts/new.sh <task-slug> "<goal and scope>" [project-root]
 ```
 
-It writes this header and six empty sections in the prescribed order:
+Header, exactly:
 
 ```text
-Task: <task-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <goal and altitude>
+Task: <task-slug> · Written: <YYYY-MM-DD HH:MM> · Scope: <goal and scope>
 ```
 
-Do not substitute `Session:` for `Task:` or add fields to the header. Delete the sections that have no content; keep the rest:
+Delete empty sections; keep the rest:
 
 | Section | Lifetime | Holds |
 |---|---|---|
 | **Now** | rewrite | Current phase and next concrete action. |
 | **Plates** | rewrite | Running, waiting, blocked, promised, or necessary work. |
-| **Terrain** | rewrite/merge | Hard-won environment facts not yet durable elsewhere. |
+| **Terrain** | rewrite/merge | Hard-won environment facts not yet written down elsewhere. |
 | **Decided** | append | Decisions and their reasons. |
-| **Discards** | append | Rejected branches and cause of death. |
-| **Live wires** | rewrite | Hunches, contradictions, and calibrated uncertainty. |
+| **Discards** | append | Rejected branches and what killed them. |
+| **Live wires** | rewrite | Hunches, contradictions, open uncertainty. |
 
-Keep each file small enough to read whole on resume; past roughly 200 lines, archive and start a fresh desk. `.checkpoints/` holds task state only; reference material and guides belong in `docs/`. Append-only `Decided` and `Discards` preserve why the work moved; rewritten sections keep the live desk current. Move finished tasks to `.checkpoints/archive/`; do not delete their decisions and discards. A dead branch with its cause recorded can be reconsidered later. One that vanished silently gets rediscovered and retried.
+Keep a file readable in one pass; past roughly 200 lines, archive it and start fresh. `checkpoints/` holds task state only; guides go in `docs/`. Move finished tasks to `checkpoints/archive/`. Keep their decisions and discards: a dead branch with its cause recorded can be reconsidered, one that vanished gets retried.
 
-For a concrete shape, read [references/example.md](references/example.md).
+Shape example: [references/example.md](references/example.md).
+
+## Pre-compact save
+
+When the user says they need to compact, or asks to log what is in flight: update or create the checkpoint now, focused on Now, Plates, and Live wires. Reply with the path and one line on what was saved. No recap.
 
 ## Reload
 
-1. Find every unarchived checkpoint relevant to the current project; do not assume the newest supersedes the others.
-2. Check live task or agent ownership when the host exposes it. Do not take over another active lane.
-3. Read each relevant file whole.
-4. Verify volatile state against the repository, running processes, and current tests. Trust checkpoints for reasons; verify them for action.
-5. Report what was reloaded, contradictions found, and the next supported action.
+1. Find every unarchived file in `checkpoints/`. Also check for a legacy `.checkpoints/`; read it too, and offer once to move it to `checkpoints/` (merge archives, update `.gitignore`). Don't move it unasked.
+2. Check live task or agent ownership when the host shows it. Don't take over another active lane.
+3. Read each relevant file whole. Don't assume the newest replaces the others.
+4. Check anything volatile you are about to act on (branch, running process, test status) against the real state. Trust checkpoints for reasons; check them before acting.
+5. Say what was loaded, any contradictions, and the next action. Then continue the work.
 
-If the project contains older state files such as `RESUME.md`, `STATE.md`, or a bare `CHECKPOINT.md`, read [references/adopting-state.md](references/adopting-state.md) before moving or normalizing anything. A mixed file is split: task state moves into its own checkpoint, while durable knowledge remains in a cleaned source file.
+## Older state files
+
+Root files like `RESUME.md`, `STATE.md`, `CHECKPOINT.md`, `COMPACTED.md`, and `HANDOFF.md` are candidates to adopt. Read [references/adopting-state.md](references/adopting-state.md) first. Adopt byte-intact: never carve a file into parts or rewrite its contents.
 
 ## When not to checkpoint
 
-Do not create one for a short, obvious task with no decisions worth keeping and no live state. A low-value checkpoint becomes permanent rereading cost.
+A short, obvious task with no decisions and nothing live. A low-value checkpoint is permanent rereading cost.

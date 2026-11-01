@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Scaffold a checkpoint file with the prescribed header, filename, and section order.
 # Usage: new.sh <task-slug> "<scope: goal and altitude>" [project-root]
-# Prints the path. Refuses to overwrite. Adds .checkpoints/ to .gitignore unless the
+# Prints the path. Refuses to overwrite. Adds checkpoints/ to .gitignore unless the
 # repo already tracks checkpoints (opt-in by prior convention).
 set -euo pipefail
 
@@ -20,7 +20,7 @@ if [[ ! "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
 fi
 
 root="$(cd -- "$root" && pwd)"
-dir="$root/.checkpoints"
+dir="$root/checkpoints"
 mkdir -p "$dir/archive"
 
 date_day="$(date +%F)"
@@ -50,14 +50,14 @@ MD
 
 # gitignore unless the repo already tracks checkpoints
 if git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  if [[ -z "$(git -C "$root" ls-files .checkpoints 2>/dev/null)" ]]; then
+  if [[ -z "$(git -C "$root" ls-files checkpoints 2>/dev/null)" ]]; then
     gi="$root/.gitignore"
-    if ! grep -qxF '.checkpoints/' "$gi" 2>/dev/null; then
-      printf '.checkpoints/\n' >> "$gi"
-      echo "added .checkpoints/ to .gitignore" >&2
+    if ! grep -qxF 'checkpoints/' "$gi" 2>/dev/null; then
+      printf 'checkpoints/\n' >> "$gi"
+      echo "added checkpoints/ to .gitignore" >&2
     fi
   else
-    echo "repo tracks .checkpoints; leaving .gitignore alone" >&2
+    echo "repo tracks checkpoints; leaving .gitignore alone" >&2
   fi
 fi
 

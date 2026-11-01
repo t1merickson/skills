@@ -4,7 +4,7 @@ A synthetic one, shown mid-project so the register is visible. The thing to copy
 
 ---
 
-`.checkpoints/2026-07-24-sync-rewrite.md`
+`checkpoints/2026-07-24-sync-rewrite.md`
 
 # Checkpoint — Tessera
 
@@ -18,7 +18,7 @@ Replacing the naive last-write-wins sync with a CRDT-backed store so offline edi
 
 ## Plates
 
-- **The shim** (`Sync/LegacyDocumentBridge.swift`) — deliberately temporary, exists only so the views compile mid-migration. Three view files still depend on it. Delete it last, not first; it's load-bearing until they're all converted.
+- **The shim** (`Sync/LegacyDocumentBridge.swift`) — deliberately temporary, exists only so the views compile mid-migration. Three view files still depend on it. Delete it last, not first; the views need it until they are all converted.
 - **Waiting on the user** — asked whether merge conflicts should surface in the UI at all or resolve silently. Blocks the conflict-banner work entirely; everything else can proceed.
 - **Known-necessary, unstarted** — the migration path for existing users' local stores. Nobody has written a line of it. It is not hard, but it is not free, and it's the kind of thing that gets discovered the day before shipping.
 - **Promised** — said I'd check whether the CRDT library's `merge` is actually O(n log n) as documented before we commit to it at library scale. Haven't.
