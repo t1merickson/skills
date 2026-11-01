@@ -1,4 +1,4 @@
-# skills
+# skills-personal
 
 My live [Agent Skills](https://agentskills.io), mostly authored while using Claude Code and written neutrally where the workflow is genuinely portable. They're plain markdown; Codex, ChatGPT, Claude, another compatible agent, or a human can read the format. Skills refer to "the user" — that's whoever runs them. A few encode opinionated defaults (design taste, workflow shape); treat those as starting points and tune to your own.
 
@@ -14,9 +14,9 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | **[heads-down](heads-down/)** | Maximum autonomy with the guardrails hot. Throughput over dialogue. |
 | **[slow-mode](slow-mode/)** | Teaching-pace collaboration: one decision per beat; understanding is the deliverable. |
 | **[obsess](obsess/)** | Deep immersion on a named topic so the session runs on verified in-context knowledge. Then teach. |
+| **[prediction](prediction/)** | Resolve a forecast into testable claims, stress-test its mechanisms, and record a probability-banded verdict with falsifiers. |
 | **[explaining-problems](explaining-problems/)** | The structure for problem reports and any technical explanation longer than a few lines. |
 | **[session-audit](session-audit/)** | Audit a bounded local transcript corpus for repeated corrections, workflows, and per-model failures. |
-| **[claude-md-coach](claude-md-coach/)** | Interview-driven creation and improvement of CLAUDE.md and AGENTS.md files. |
 | **[second-loop](second-loop/)** | A human-gated improvement loop for repeated outbound work like applications and pitches. |
 
 ### Build loops
@@ -36,8 +36,8 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | Skill | What it does |
 |---|---|
 | **[interface-integrity](interface-integrity/)** | Design and audit whether interactive product behavior is predictable, truthful, recoverable, and respectful of user control. |
-| **[macos-design](macos-design/)** | Best practices for native macOS apps: real-app behavior, menu bar, targets, AppKit vs SwiftUI, HIG design. |
-| **[ios-design](ios-design/)** | Best practices for native iOS apps: real-app setup, targets, UIKit vs SwiftUI, platform conventions. |
+| **[macos-defaults](macos-defaults/)** | Best practices for native macOS apps: real-app behavior, menu bar, targets, AppKit vs SwiftUI, HIG design. |
+| **[ios-defaults](ios-defaults/)** | Best practices for native iOS apps: real-app setup, targets, UIKit vs SwiftUI, platform conventions. |
 | **[web-design-defaults](web-design-defaults/)** | A base direction for new web systems without rewriting an existing project's stack. |
 
 ### Media, files, archives
@@ -59,27 +59,35 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 
 ## Install
 
-This checkout is the canonical authored source. Claude Code keeps using its native `~/.claude/skills/` convention, while Codex and other Open Agent Skills consumers use `~/.agents/skills/`. The entries in those directories are deployment links back here, not separate working copies.
+This checkout is the canonical authored source. It contains personal skills only.
+Downloaded skills live in `../skills-vendor`, and orchestration lives in
+`../skills-brain`. Disabled and archived skills remain in their ownership
+collection but are not deployed.
 
-This repository contains authored skills only. Third-party or downloaded skills belong in a separate vendor store and may be linked into the host skill directories as unmanaged entries. Do not copy them here or add them to `skillset.toml` unless the user explicitly adopts the material as authored source after reviewing its provenance and maintenance responsibility.
+Claude Code uses `~/.claude/skills/`; Codex and other Agent Skills consumers use
+`~/.agents/skills/`. Those entries are deployment symlinks, not working copies.
 
-The manifest in [`skillset.toml`](skillset.toml) records which skills belong on which host, which modes require explicit invocation, which skills depend on one another, and which entries carry volatile host or platform facts. Most are portable; genuinely host-shaped workflows stay host-specific. In particular, `codex` is for Claude calling Codex, while `claude` is for Codex calling Claude. `claude-md-coach`, `cut-memory`, and `session-audit` remain Claude-shaped.
+The cross-collection manifest and deployment tool live in
+[`../skills-brain`](../skills-brain/README.md). They record personal, vendor,
+disabled, and archived skills together without mixing their source trees.
 
 Check the source and compare it with both installed locations:
 
 ```bash
-python3 scripts/manage-skills.py check
-python3 scripts/manage-skills.py status
+make -C ../skills-brain check
+make -C ../skills-brain status
 ```
 
 Preview a reconciliation, then apply the exact same operation after reviewing it:
 
 ```bash
-python3 scripts/manage-skills.py link --migrate-existing
-python3 scripts/manage-skills.py link --migrate-existing --apply
+make -C ../skills-brain sync
+make -C ../skills-brain sync-apply
 ```
 
-Canonical links and clean Git-tracked sources use Git as their recovery system and are not duplicated into quarantine. A diverged installed copy is moved intact to a dated directory under `~/.agent-skill-quarantine/` only when it contains state Git does not protect. Unmanaged or vendor-provided skills are never touched. For skills marked explicit, reconciliation also writes Codex's `agents/openai.yaml` policy from the repo and atomically merges missing Claude `skillOverrides.<name> = "user-invocable-only"` entries; conflicting user settings block rather than being overwritten. Restart a host session if a newly linked skill or policy does not appear immediately.
+The skills-brain reconciler changes only manifest-owned links. Unknown host entries
+are left alone. Restart a host session if a newly linked skill or policy does not
+appear immediately.
 
 Edit skills in this repository. When advice truly differs between hosts, prefer a separate host-specific skill or a neutral shared core with host-specific supporting references. Host invocation controls live in native metadata/settings rather than bracketed prose conditionals, so the installed `SKILL.md` remains ordinary, inspectable Agent Skills markdown on both sides.
 
