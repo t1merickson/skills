@@ -2,6 +2,26 @@
 
 Recheck `tools/list` and `get_guide` before relying on any field. Remove or revise an entry when current Paper behavior contradicts it.
 
+## Paper Desktop 0.5.15, `paper` CLI 0.0.1 — 2026-10-08
+
+Observed while building a 45-artboard wireframe board:
+
+- `create_artboard` ignored `left`/`top` passed in `styles` and placed the artboard in the next free spot. Setting `left`/`top` afterwards with `update_styles` moved it.
+- `duplicate_nodes` returns a `descendantIdMap` for every copied descendant. It placed copies in free space, sometimes on top of planned grid slots.
+- A free-plan account hit "Weekly MCP limit reached. It resets tomorrow." mid-build. After that every call failed, reads included. Upgrading lifted the limit immediately, with no restart.
+- `find_nodes` by a literal hex searched the whole file. It returned `matched[].styleName` (`backgroundColor`, `color`, `borderColor`), and one color matched 146 nodes.
+- `update_styles` reported `whiteSpace` under `ignoredStyles` on frames; it applied on text nodes.
+- `create_tokens` accepted `var(--other)` as an alias value and changed the file's token `contentHash`.
+- No component or instance tool appeared in the tool list.
+- Superellipse corners work through CSS `corner-shape`. `corner-shape: squircle` and `superellipse(2)` were both stored per corner as `cornerTopLeftShape` etc., and rendered visibly smoother than circular arcs at the same `border-radius`. A Figma-style `cornerSmoothing` style was silently dropped: it didn't appear in computed styles or in `ignoredStyles`. No token type exists for corner shape.
+- How the corner curve was measured, to repeat for other platforms:
+  1. Render the reference with Core Animation in a Swift script: a 400×400 CALayer with `cornerRadius 100` and `cornerCurve .continuous`, drawn at 2× with `layer.render(in:)`, black on white. Render a `.circular` copy as the control.
+  2. Render a grid of CSS candidates in headless Chrome at device scale 2: `superellipse(k)` for several k, with radius × s.
+  3. Diff the top-left corners with numpy (mean absolute difference, plus pixels off by more than 128).
+  4. Sanity check: Chrome's plain round matched Apple's circular control at 0.06.
+  5. Best fit was k=1.45, s=1.3. Paper's own 2× screenshot of that setting scored 0.35, against 0.28 for its round-vs-circular noise floor.
+- Several general-purpose subagents edited different artboards in the same file at once without conflicts.
+
 ## Paper Desktop 0.5.14, `paper` CLI 0.0.1 — 2026-09-30
 
 Setup:

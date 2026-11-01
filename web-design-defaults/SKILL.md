@@ -1,9 +1,11 @@
 ---
 name: web-design-defaults
-description: "Apply the user's baseline web visual direction—Base UI, system fonts, no Tailwind, and black-and-white minimalism—when creating a new web interface or when the user explicitly asks for these defaults. Do not use when an existing product has its own established design system, for backend-only work, native apps, or fixes that require no visual decision."
+description: "Use whenever creating any new web UI or HTML page, including throwaway viz, report, comparison, and review pages, unless the project already has its own design system. Sets the baseline: black and white only (no blue or tinted accents), SF Pro, Base UI, no Tailwind. Do not use for backend-only work, native apps, or fixes with no visual decision."
 ---
 
 # web-design-defaults
+
+**Black and white. No blue, no tinted accents, no colored links or buttons.** Near-black on white, grays from the table below. Color appears only for a real state (error, warning, success, focus). This applies to quick HTML viz and report pages too, not only products. If you reached for a default accent color, remove it.
 
 The baseline for the user's web projects. A project's own design system or an explicit direction from the user overrides all of it.
 
@@ -16,38 +18,38 @@ Quiet is not empty. Remove what is unnecessary so the primary task is obvious, t
 ## Hard rules
 
 - **No Tailwind for new systems.** Prefer plain CSS or CSS modules. If an existing product already uses Tailwind or another component system, work within it unless the user approves a migration; do not turn a scoped design change into a framework rewrite.
-- **System fonts.** `font-family: system-ui, -apple-system, sans-serif` for UI, `ui-monospace` for code. No webfont downloads unless the user asks.
+- **SF Pro, regular and medium.** `font-family: -apple-system, system-ui, sans-serif` resolves to SF Pro on Apple devices. Weights 400 and 500 only. `ui-monospace` for code. No webfont downloads unless the user asks.
 - **Base UI for new components** (base-ui.com): unstyled, accessible primitives (popovers, menus, dialogs, selects). Style them ourselves. Preserve a project's established accessible component library rather than introducing a second one for preference alone.
 - **Black and white first.** Near-black text on white, or the inverse in dark mode. Color enters only with a job: state, warning, a single accent earning its place. No decorative gradients.
 
-## Neutrals are alpha black, not gray
+## Neutrals
 
-Build intermediate tones as black over white rather than picking gray hex values — hex grays drift warm or cool and the drift compounds across a page.
+These are the tokens. All are neutral gray with no warm or cool drift, and each is within a point of black over white, so dark mode can invert them as alpha black.
 
-| Role | Light |
-| --- | --- |
-| Canvas / surface | `#ffffff` |
-| Primary ink | `#000000` (or `#111` if pure black feels harsh) |
-| Secondary ink | `rgb(0 0 0 / 64%)` |
-| Tertiary ink | `rgb(0 0 0 / 44%)` |
-| Border | `rgb(0 0 0 / 10%)` |
-| Strong border | `rgb(0 0 0 / 18%)` |
-| Hover fill | `rgb(0 0 0 / 5%)` |
-| Pressed fill | `rgb(0 0 0 / 9%)` |
+| Token | Light | Alpha black equivalent | Use |
+| --- | --- | --- | --- |
+| `subtle` | `#7F7F7F` | `rgb(0 0 0 / 50%)` | Glyphs, optional text |
+| `default` | `#5D5D5D` | `rgb(0 0 0 / 64%)` | Body and secondary text |
+| `strong` | `#292929` | `rgb(0 0 0 / 84%)` | Headings, emphasis |
+| `bg-selected` | `#F5F5F5` | `rgb(0 0 0 / 4%)` | Selected row, tab, or item |
+| `border` | `#F2F2F2` | `rgb(0 0 0 / 5%)` | Hairlines, dividers |
+
+Canvas is `#ffffff`. Other neutrals the table doesn't cover (hover and pressed fills, a stronger border) are black over white at low alpha: about 5% and 9% for fills, 18% for a strong border. Don't invent new gray hex values.
 
 Two rules that go with it:
 
 - **Set ink with alpha colors, never the `opacity` property.** On a container it fades every descendant; on a leaf it multiplies against the rung already there and quietly pushes text under readable contrast.
-- **The tertiary rung fails 4.5:1 on white.** It is for glyphs and genuinely optional text. When real reading lives there — a timestamp someone needs, a struck-through price — lift it to about 56% instead of accepting the failure. Validate contrast rather than trusting the table.
+- **`subtle` fails 4.5:1 on white (about 4.0:1).** It is for glyphs and genuinely optional text. When real reading lives there — a timestamp someone needs, a struck-through price — use `default` instead of accepting the failure. Validate contrast rather than trusting the table.
+- **`border` is very faint.** On a white canvas it is a hairline you feel more than see. Where a boundary has to be clear, use the strong border.
 - No beige, cream, blue-gray, or green-gray in interface chrome. A neutral derived from the project's own brand color and used consistently is brand, not drift.
 
 ## Defaults
 
 - Radii: small and consistent, 4 to 8px. One radius scale per project.
 - Spacing: a 4px base scale. Whitespace is the main grouping tool, boxes are the fallback.
-- Type: few sizes, real hierarchy from weight and spacing rather than size explosions. Body around 14 to 15px in dense UI.
+- Type scale: 12, 13, 14, 16, 18, 24px. 13px is the base. 24px is the biggest; nothing larger. Hierarchy comes from weight (400, 500), color token, and spacing, not from more sizes.
 - Left-align text by default, headings and labels and footers included. Centered text is a deliberate exception, never a leftover, and never mixed with left-aligned siblings in the same group.
-- One icon family, one stroke weight, monochrome on the same ink ladder as text. Emoji are not an icon family and no filter brings them onto the ladder — remove them and let labels carry the meaning. Emoji inside content (a screenshot, a post, someone's display name) are content; leave them alone.
+- Icons: Nucleo (`@nucleoicons`), 1px stroke, monochrome on the same ink ladder as text. One family, one stroke weight. Emoji are not an icon family and no filter brings them onto the ladder — remove them and let labels carry the meaning. Emoji inside content (a screenshot, a post, someone's display name) are content; leave them alone.
 - Borders over shadows; shadows only for true elevation like menus and dialogs, and subtle there.
 - Dark mode: respected from the start via `prefers-color-scheme`, same structure, inverted neutrals.
 - Motion: minimal and physical. Small distances, quick springs, nothing looping. Motion must carry meaning or improve continuity; omit it when it only decorates a frequent action.

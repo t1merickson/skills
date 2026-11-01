@@ -7,7 +7,7 @@ HTML, CSS, and JS, resume state, and a manifest with sha256 per file. It does
 not decide scope: pass seeds, allowed hosts, and an optional path prefix.
 
     mirror.py --out DOCROOT --host example.com [--host cdn.example.com]
-              [--prefix /docs] [--max-requests 2000] [--delay 0.5]
+              [--prefix /docs] [--exclude REGEX] [--max-requests 2000] [--delay 0.5]
               https://example.com/ https://example.com/about
 
 Output layout: DOCROOT/<host>/<path>, so a static server per host serves the
@@ -51,10 +51,12 @@ JS_IMPORT_RE = re.compile(r"""(?:from|import)\s*\(?\s*["']([./][^"']+)["']""")
 
 
 class Mirror:
-    def __init__(self, out, hosts, prefix, delay, max_requests, refetch, retries):
+    def __init__(self, out, hosts, prefix, delay, max_requests, refetch, retries,
+                 exclude=None):
         self.out = os.path.abspath(out)
         self.hosts = set(hosts)
         self.prefix = prefix or ""
+        self.exclude = [re.compile(p) for p in (exclude or [])]
         self.delay = delay
         self.max_requests = max_requests
         self.refetch = refetch
@@ -92,6 +94,8 @@ class Mirror:
         p = urllib.parse.urlsplit(url)
         if p.scheme not in ("http", "https") or p.hostname not in self.hosts:
             return False
+        if any(rx.search(url) for rx in self.exclude):
+            return False
         return p.path.startswith(self.prefix) or not self.prefix
 
     def local_path(self, url):
@@ -104,7 +108,10 @@ class Mirror:
         rel = path.lstrip("/")
         if p.query:
             stem, ext = os.path.splitext(rel)
-            rel = stem + "__q" + re.sub(r"[^A-Za-z0-9._-]", "_", p.query) + ext
+            q = re.sub(r"[^A-Za-z0-9._-]", "_", p.query)
+            if len(q) > 120:  # filesystems cap names at 255 bytes; keep it unique, not readable
+                q = q[:60] + "_" + hashlib.sha1(p.query.encode()).hexdigest()[:16]
+            rel = stem + "__q" + q + ext
         return os.path.join(self.out, p.hostname, rel)
 
     def enqueue(self, url, referer=None):
@@ -222,12 +229,16 @@ def main():
     ap.add_argument("--out", required=True, help="docroot directory")
     ap.add_argument("--host", action="append", required=True, help="allowed host (repeatable)")
     ap.add_argument("--prefix", default="", help="only paths under this prefix")
+    ap.add_argument("--exclude", action="append", default=[],
+                    help="skip URLs matching this regex (repeatable); use to defer "
+                         "a bulk asset class to a later pass")
     ap.add_argument("--delay", type=float, default=0.5, help="base delay between requests, seconds")
     ap.add_argument("--max-requests", type=int, default=2000)
     ap.add_argument("--retries", type=int, default=3)
     ap.add_argument("--refetch", action="store_true", help="ignore resume state")
     a = ap.parse_args()
-    m = Mirror(a.out, a.host, a.prefix, a.delay, a.max_requests, a.refetch, a.retries)
+    m = Mirror(a.out, a.host, a.prefix, a.delay, a.max_requests, a.refetch, a.retries,
+               a.exclude)
     sys.exit(m.run(a.seeds))
 
 

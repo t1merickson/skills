@@ -4,7 +4,7 @@ Copy the selected contract into the vault's `SHAPE.md`.
 
 ## Admission
 
-1. Every captured artifact is inside one `sources/<slug>/` with `SOURCE.md` containing original URL/citation, retrieval date, creator, kind, capture method, transformations/stripping, integrity hash, and owning wiki slug.
+1. Every captured artifact admitted to this hero vault is inside one `sources/<slug>/` with `SOURCE.md` containing original URL/citation, retrieval date, creator, kind, capture method, transformations/stripping, integrity hash, and owning wiki slug. Standalone archives stay outside the vault at the resolved archive root.
 2. Every source directory has exactly one wiki page whose `local_path` points to it. A page may cite many sources, but one source directory has one catalog owner.
 3. Loose source files and miscellaneous holding directories are illegal. Unacquired or unclassified material belongs in the frontier/open-questions files.
 

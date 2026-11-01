@@ -2,7 +2,9 @@
 
 ## Cursor and search
 
-Hopper tracks a current document, procedure, and address. Park it with `set_current_document` or `goto_address`, then call related info, pseudo-code, assembly, and xref tools without repeatedly resolving the same address.
+Hopper can keep multiple documents open. Start with `list_documents`, select the exact document name, and pass it as `document` to every document-scoped lookup or annotation. `current_document` reports GUI focus; `set_current_document` changes that focus but is not required to query another document. Do not rely on GUI focus as an implicit target when comparing binaries.
+
+The current procedure and address are scoped to a document. Prefer explicit `address` or `procedure` arguments for a trace; use `goto_address` with the selected `document` when cursor navigation helps. Record each result as document + address, since address values can overlap across documents. Independent searches across open documents can run concurrently, but trace and report each result in its own document context.
 
 Prefer `search_strings`, `search_procedures`, and targeted names. `list_segments` is small and useful early; full lists of strings/procedures/names can be enormous and should be fallback evidence.
 
@@ -27,7 +29,7 @@ Check common locations:
 - `Contents/Frameworks/`;
 - `Contents/PlugIns/` and extensions.
 
-Use targeted `strings` searches across candidate binaries to locate the component before loading more documents.
+Use targeted string searches across candidate binaries to locate the component. If they are already open in Hopper, search each with its explicit `document` name; otherwise use platform tools for first-pass triage before loading more documents.
 
 ## Persistent annotations
 

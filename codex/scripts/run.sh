@@ -12,7 +12,7 @@ if [[ $# -lt 3 || $# -gt 5 ]]; then
 fi
 
 mode="$1"; repo="$2"; brief="$3"
-model="${4:-${CODEX_MODEL:-gpt-5-codex}}"
+model="${4:-${CODEX_MODEL:-gpt-6.1-sol}}"
 effort="${5:-}"
 
 case "$mode" in

@@ -14,7 +14,7 @@ This composes three skills. Read each when its phase begins; do not replace thei
 | Skill | Used for | Changed here |
 |---|---|---|
 | `obsess` | the braindump-first immersion and mile markers | the hero vault replaces the ordinary obsession index |
-| `offline-archive` | substantial web capture | archives land in `sources/<slug>/` |
+| `offline-archive` | substantial web capture | hero-owned captures land in `sources/<slug>/`; standalone archives use the configured archive root |
 | `brain-wiki` | the typed vault | the vocabulary is already governed by this skill's contract |
 
 The anchor is a person, not a topic or a pile of files. Their life and work are one subject when sources connect them. Do not split the vault into unrelated “life” and “work” halves, and do not infer a connection merely because it would make a good story.
@@ -38,7 +38,7 @@ Neither lever licenses guessing. A brief run holds fewer facts, not softer ones.
 
 ## Vault layout
 
-Use an existing configured hero root when the user has one; otherwise prefer a project-local `heroes/<person-slug>/` or ask. Do not hard-code a machine-specific library.
+Resolve storage roots before creating files. When the workspace is itself the configured heroes root, place each hero directly at `<heroes-root>/<person-slug>/`; never introduce an additional `heroes/` wrapper. Put standalone source archives at `<archive-root>/<archive-slug>/`, outside the hero vault. Prefer explicit user conventions, then existing sibling layout, and only then project-local defaults or a clarification question. Do not hard-code a machine-specific library.
 
 ```text
 <vault>/
@@ -59,7 +59,7 @@ Read [references/vault-contract.md](references/vault-contract.md) when shaping t
 
 Two admission rules defend against a junk drawer:
 
-1. Every captured artifact belongs to exactly one `sources/<slug>/` with `SOURCE.md`; no loose files or miscellaneous holding directories.
+1. Every captured artifact admitted to the hero vault belongs to exactly one `sources/<slug>/` with `SOURCE.md`; no loose files or miscellaneous holding directories. Standalone archives stay at the resolved archive root instead.
 2. Every `sources/<slug>/` has exactly one owning wiki page whose `local_path` points back to it.
 
 Slugs are local to the vault unless the selected root is intentionally governed as one cross-person library. Do not silently impose a global namespace on unrelated vaults.

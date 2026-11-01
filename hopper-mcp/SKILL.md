@@ -12,11 +12,11 @@ Hopper's tools navigate an analysis database the user has open. The job is to lo
 ## Establish the target
 
 1. Confirm the binary/bundle, architecture, provenance, and question.
-2. Use `current_document` and `list_documents` to prove which Hopper document is active.
-3. Wait for Hopper's initial analysis to finish; partial analysis produces false absences.
+2. Use `list_documents` to identify the open documents and select the exact target by name. Use `current_document` only when the foreground GUI document matters; focus is not a reliable substitute for choosing a target.
+3. Pass that document name in the `document` argument of every document-scoped tool call. Wait for each target's initial analysis to finish; partial analysis produces false absences.
 4. For an app bundle, determine whether the behavior lives in the main executable, XPC service, login item, helper, framework, or extension before interpreting a missing result. The main executable is often only the UI shell.
 
-Work one document at a time and recheck it whenever results appear inconsistent.
+Inspect and compare multiple open documents when the question spans components. Keep addresses, search results, annotations, and conclusions labeled with their document; an address in one document does not identify the same code in another. Recheck the selected document and analysis state whenever results appear inconsistent.
 
 ## Search broad, trace narrow
 

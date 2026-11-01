@@ -20,7 +20,7 @@ Consultation is different from subcontracting. When your own design or diagnosis
 
 ## Select model and effort deliberately
 
-Probe the destination host rather than assuming a model identifier exists. Names, effort support, and availability change. Apply [references/routing.md](references/routing.md) after confirming the host's advertised options.
+Read [references/routing.md](references/routing.md) for the current GPT-6/GPT-6.1 model IDs, effort support, and destination verification. Start with `gpt-6.1-sol` for ordinary engineering, `gpt-6-astra` for the most demanding judgment, or `gpt-6-luna` for focused, repeatable work; `gpt-6-sol` is the previous workhorse. Confirm the destination host's advertised options before dispatch; availability and supported efforts change.
 
 Choose model tier for baseline judgment/consequence and effort for this task's obscurity. Large input alone does not justify high effort. If “done” cannot yet be written in a paragraph, clarify the outcome before spending more reasoning; otherwise the delegation merely outsources confusion.
 
