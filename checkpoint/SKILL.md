@@ -71,7 +71,7 @@ When the user says they need to compact, or asks to log what is in flight: updat
 
 ## Reload
 
-1. Find every unarchived file in `checkpoints/`. Also check for a legacy `.checkpoints/`; read it too, and offer once to move it to `checkpoints/` (merge archives, update `.gitignore`). Don't move it unasked.
+1. Find every unarchived file in `checkpoints/`. Also check for a legacy `.checkpoints/`; move it to `checkpoints/` (merge archives, update `.gitignore`), then read it. Say in one line that you moved it.
 2. Check live task or agent ownership when the host shows it. Don't take over another active lane.
 3. Read each relevant file whole. Don't assume the newest replaces the others.
 4. Check anything volatile you are about to act on (branch, running process, test status) against the real state. Trust checkpoints for reasons; check them before acting.
