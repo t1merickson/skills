@@ -70,6 +70,7 @@ class Mirror:
         self.seen = set(self.manifest) | set(self.failed)
         self.queue = []
         self.requests = 0
+        self.user_agent = UA
 
     @staticmethod
     def _load(path, default):
@@ -152,7 +153,7 @@ class Mirror:
 
     # ---- fetch --------------------------------------------------------
     def fetch(self, url, referer):
-        headers = {"User-Agent": UA, "Accept": "*/*"}
+        headers = {"User-Agent": self.user_agent, "Accept": "*/*"}
         if referer:
             headers["Referer"] = referer
         backoff = 1.0
@@ -236,9 +237,12 @@ def main():
     ap.add_argument("--max-requests", type=int, default=2000)
     ap.add_argument("--retries", type=int, default=3)
     ap.add_argument("--refetch", action="store_true", help="ignore resume state")
+    ap.add_argument("--user-agent", default=UA,
+                    help="User-Agent header; media hosts like Wikimedia ask for a descriptive one with contact info")
     a = ap.parse_args()
     m = Mirror(a.out, a.host, a.prefix, a.delay, a.max_requests, a.refetch, a.retries,
                a.exclude)
+    m.user_agent = a.user_agent
     sys.exit(m.run(a.seeds))
 
 
