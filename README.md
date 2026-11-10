@@ -46,7 +46,8 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | **[macos-defaults](macos-defaults/)** | Best practices for native macOS apps: real-app behavior, menu bar, targets, AppKit vs SwiftUI, HIG design. |
 | **[ios-defaults](ios-defaults/)** | Best practices for native iOS apps: real-app setup, targets, UIKit vs SwiftUI, platform conventions. |
 | **[apple-native-motion](apple-native-motion/)** | Native Apple motion: springs, gestures, interruption, Reduce Motion. |
-| **[apple-ui-copy](apple-ui-copy/)** | Interface text for Apple-platform apps: labels, alerts, errors, empty states, capitalization. |
+| **[apple-accessibility](apple-accessibility/)** | Native accessibility for SwiftUI, UIKit, and AppKit: VoiceOver, text size, display settings, keyboard and voice access, and testing. |
+| **[apple-ui-copy](apple-ui-copy/)** | Interface text for Apple-platform apps: labels, alerts, errors, empty states, permission prompts, capitalization. |
 | **[icon-design](icon-design/)** | Design and package macOS and iOS icons from editable SVG with optical size variants. |
 | **[web-design-defaults](web-design-defaults/)** | A base direction for new web systems without rewriting an existing project's stack. |
 

@@ -5,7 +5,7 @@ description: "Use when building or reviewing actual native iOS app behavior: app
 
 # iOS App Essentials
 
-People expect an iOS app to feel at home on their device immediately. Read this before writing code in a new iOS app session. When a specific component's rules matter, consult the current Human Interface Guidelines (developer.apple.com/design/human-interface-guidelines) rather than trusting recall.
+People expect an iOS app to feel at home on their device immediately. Read this before writing code in a new iOS app session. When a specific component's rules matter, consult the Human Interface Guidelines rather than trusting recall: the local `apple-hig` mirror when installed, otherwise developer.apple.com/design/human-interface-guidelines. Deeper topics have their own skills; see [Where to go deeper](#where-to-go-deeper).
 
 ## Be a real app
 
@@ -46,7 +46,7 @@ Prefer SwiftUI for new work. Drop to UIKit deliberately:
 - Iconography: SF Symbols at text-matching weights. No emoji in UI.
 - Haptics for meaningful moments — confirmation, boundaries, selection — not decoration.
 - Motion: physical, interruptible, and driven by gestures where possible. Reduce Motion means a designed gentler equivalent — a crossfade, a static summary — never a removal or a broken state. See `apple-native-motion` for the SwiftUI and UIKit implementation guidance.
-- VoiceOver: every interactive element needs a label, a trait, and a sane reading order.
+- VoiceOver: every interactive element needs a label, a trait, and a sane reading order. The full native pass is `apple-accessibility`.
 - Contrast passes in both Light and Dark Mode, not just one.
 - Tab bar holds 2–5 top-level sections and nothing else — no actions living in tab items.
 - Large titles on top-level screens, collapsing on scroll; detail screens stay inline.
@@ -54,7 +54,7 @@ Prefer SwiftUI for new work. Drop to UIKit deliberately:
 
 ## Interface copy
 
-Write interface text the way the HIG does: say what a thing does in a few plain words, and stop. A toggle labeled "Show grid" needs no sentence beneath it explaining why grids are useful. Labels are short verb or noun phrases; helper text is reserved for genuine consequences people can't see ("Deletes originals after import"), never for restating the label. Match platform capitalization: title case for buttons and bar items, sentence case for descriptive text. Every ellipsis means "asks for more input before acting" — use it exactly that way, nowhere else.
+Say what a thing does in a few plain words, and stop. Helper text is for consequences people can't see, never for restating the label. Capitalization, ellipses, alerts, and purpose strings have mechanical rules: use `apple-ui-copy`.
 
 ## Bug ownership
 
@@ -62,6 +62,29 @@ When a minimal repro shows the framework at fault, tag the compatibility code th
 
 ## Before calling it done
 
-Drive the built app in the simulator: safe areas respected in both orientations you support, keyboard behavior correct, Dynamic Type at a large size, Dark Mode, back-swipe working, no dead ends without a way back. Then the accessibility and performance pass: run VoiceOver through the core flow once (labels present, order sensible, nothing silent); set text to the largest accessibility size and confirm nothing clips; turn on Reduce Motion and confirm big transitions fall back to a crossfade; scroll the longest list and watch for dropped frames; if iPad is in scope, check Split View and landscape. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
+Drive the built app in the simulator (`simulator-driving` has the loop and the accessibility sweep): safe areas respected in both orientations you support, keyboard behavior correct, Dynamic Type at a large size, Dark Mode, back-swipe working, no dead ends without a way back. Then the accessibility and performance pass: run VoiceOver through the core flow once (labels present, order sensible, nothing silent); set text to the largest accessibility size and confirm nothing clips; turn on Reduce Motion and confirm big transitions fall back to a crossfade; scroll the longest list and watch for dropped frames; if iPad is in scope, check Split View and landscape. For visual direction decisions, propose options per `mock-and-pick` rather than deciding silently.
 
 For substantial or repeatedly reviewed apps, leave a documented command that builds, installs, and launches on the project-owned simulator, plus a deterministic screenshot command. For a small existing project, use its established build and test entry points instead of adding harness infrastructure solely to satisfy this skill. Report device-only gaps either way.
+
+## Where to go deeper
+
+Use these when installed. Each owns its topic; don't restate them here.
+
+| Topic | Skill |
+|---|---|
+| Component and platform rules | `apple-hig`, `native-app-design` |
+| SwiftUI API choices and code style | `swiftui-defaults` |
+| Liquid Glass | `swiftui-liquid-glass` |
+| Accessibility, VoiceOver, Dynamic Type | `apple-accessibility` |
+| UI text, capitalization, purpose strings | `apple-ui-copy` |
+| Animation, springs, gestures | `apple-native-motion` |
+| Driving the simulator, accessibility sweep | `simulator-driving` |
+| Widgets, Live Activities, App Groups | `apple-app-extensions` |
+| App Intents, Shortcuts, Siri | `app-intents` |
+| Notifications and push | `notifications` |
+| In-app purchases | `purchases` |
+| Project targets and settings | `xcodegen-targets` |
+| Apps built on TCA | `composable-architecture` |
+| App icon | `icon-design` |
+| Crash reports | `crash-debugging` |
+| TestFlight and App Store | `ship-ios` |

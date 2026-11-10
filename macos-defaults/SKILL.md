@@ -5,7 +5,7 @@ description: "Use when building or reviewing actual native macOS app behavior: i
 
 # macOS app essentials
 
-Read this early in a macOS app session. People expect a Mac app to behave like a Mac app from first launch; the failures here are cheap to avoid and expensive to retrofit. Use the current Human Interface Guidelines and platform documentation for component- or release-specific facts; do not treat this file as a frozen SDK reference.
+Read this early in a macOS app session. People expect a Mac app to behave like a Mac app from first launch; the failures here are cheap to avoid and expensive to retrofit. Use the current Human Interface Guidelines (the local `apple-hig` mirror when installed) and platform documentation for component- or release-specific facts; do not treat this file as a frozen SDK reference. Deeper topics have their own skills; see [Where to go deeper](#where-to-go-deeper).
 
 ## Establish the app type
 
@@ -37,7 +37,7 @@ Treat sandbox and hardened runtime as architecture:
 
 ## Choose interface technology deliberately
 
-Prefer SwiftUI for new interface structure where it meets the target's needs. Use AppKit for mature text systems, complex tables/outlines, fine window and responder control, drag-and-drop, or framework gaps. Bridge deliberately rather than rebuilding a proven native component for purity.
+Prefer SwiftUI for new interface structure where it meets the target's needs. Use AppKit for mature text systems, complex tables/outlines, fine window and responder control, drag-and-drop, or framework gaps. Bridge deliberately rather than rebuilding a proven native component for purity; `appkit-interop` covers picking the narrowest bridge.
 
 Preserve platform behavior: real windows with sensible minimum/default sizes, keyboard navigation and focus, system toolbars/sidebar patterns where appropriate, semantic fonts and colors, VoiceOver labels and order, Reduce Motion, and multi-window/restoration behavior when supported.
 
@@ -60,7 +60,7 @@ Read [references/visual-language.md](references/visual-language.md) when choosin
 
 Use labels or tooltips when a symbol's meaning is not immediately conventional, and always provide an accessibility label. Reserve motion for small, physical, interruptible state changes and keep a legible resting state under Reduce Motion.
 
-Interface copy is short and operational because people learn the interface by using it, not by reading a narration beside every control. Ellipses mean more input is required before the command executes. Helper text explains hidden consequences, not the label again.
+Interface copy is short and operational because people learn the interface by using it, not by reading a narration beside every control. Helper text explains hidden consequences, not the label again. Capitalization, ellipses, and alerts have mechanical rules: use `apple-ui-copy`.
 
 When a minimal reproduction proves a framework defect, use `os-workarounds` with a repro, upstream issue, owner, and removal test. Do not hard-code a private wiki path into a portable skill.
 
@@ -95,3 +95,25 @@ After the build passes verification:
 5. for distribution beyond the local development machine, produce the appropriate archived, exported, signed, and notarized artifact instead of relabeling a Debug build as distributable.
 
 For visual work, capture only the app window through `window-capture`. Keep the stable-build convention in durable project instructions so later sessions replace the same artifact and the user always knows which app is current.
+
+## Where to go deeper
+
+Use these when installed. Each owns its topic; don't restate them here.
+
+| Topic | Skill |
+|---|---|
+| Component and platform rules | `apple-hig`, `native-app-design` |
+| SwiftUI API choices and code style | `swiftui-defaults` |
+| AppKit bridges, windows, panels, responder chain | `appkit-interop` |
+| Liquid Glass and system materials | `macos-liquid-glass` |
+| Accessibility, VoiceOver, keyboard access | `apple-accessibility` |
+| UI text and capitalization | `apple-ui-copy` |
+| Animation and Reduce Motion | `apple-native-motion` |
+| Concurrency and main-thread work | `swift-concurrency` |
+| Apps built on TCA | `composable-architecture` |
+| Project targets and entitlements | `xcodegen-targets` |
+| App icon | `icon-design` |
+| Crash reports | `crash-debugging` |
+| Full audit of an existing app | `audit-macos-app` |
+| Developer ID or TestFlight release | `ship-macos` |
+| Window screenshots | `window-capture` |

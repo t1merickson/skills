@@ -75,6 +75,7 @@ Each dimension has an owner. Load the owner and apply its rules rather than reas
 | SwiftUI API choices and code style | `swiftui-defaults`, `swiftui-expert:swiftui-expert-skill` |
 | A SwiftUI/AppKit bridge — representables, `NSWindow`, panels, responder chain, menu validation | `appkit-interop` |
 | System glass surfaces and conflicting custom chrome | `macos-liquid-glass` |
+| VoiceOver, labels, keyboard access, display settings, accessibility testing | `apple-accessibility` |
 | Motion, springs, interruption, Reduce Motion | `apple-native-motion` |
 | Menu titles, button labels, alerts, capitalization | `apple-ui-copy`, then `clean-copy` for what shouldn't exist |
 | Navigation structure, window and destination map | `spatial-interfaces` |
@@ -83,10 +84,11 @@ Each dimension has an owner. Load the owner and apply its rules rather than reas
 | Actors, Sendable, `@MainActor`, data races, Swift 6 migration | `swift-concurrency` |
 | SwiftData models, queries, migrations | `swiftdata-pro` |
 | Core Data stack, contexts, merge conflicts, migrations | `core-data-expert` |
+| Reducers, `TestStore`, `@Dependency`, `@Shared` in a TCA app | `composable-architecture` |
 | Test structure, `#expect`/`#require`, XCTest migration, flaky tests | `swift-testing-expert` |
 | Slow builds — compile hotspots, project settings, SPM graph | `xcode-build-orchestrator` |
 | Widgets, extensions, App Groups | `apple-app-extensions` |
-| Permission prompts and purpose strings | `protected-resources` |
+| Permission prompts and purpose strings | `apple-ui-copy` |
 | Notifications, APNs | `notifications` |
 | iCloud sync | `cloudkit` |
 | In-app purchases | `purchases` |

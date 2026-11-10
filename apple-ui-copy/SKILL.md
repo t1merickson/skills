@@ -1,6 +1,6 @@
 ---
 name: apple-ui-copy
-description: "Use when writing or reviewing user-facing text in an Apple-platform app or game: button and menu labels, alert titles and bodies, error messages, empty states, settings labels, placeholder text, notifications, onboarding, feature and control names, and VoiceOver descriptions. Also use when deciding capitalization for any UI string. Do not use for marketing copy, App Store listings, documentation prose, or general web UX writing with no Apple platform involved."
+description: "Use when writing or reviewing user-facing text in an Apple-platform app or game: button and menu labels, alert titles and bodies, error messages, empty states, settings labels, placeholder text, notifications, permission purpose strings, onboarding, feature and control names, and VoiceOver descriptions. Also use when deciding capitalization for any UI string. Do not use for marketing copy, App Store listings, documentation prose, or general web UX writing with no Apple platform involved."
 ---
 
 # Writing UI copy for Apple platforms
@@ -192,6 +192,8 @@ Structure:
 **Text fields.** Placeholder text should show a format ("name@example.com") or describe the content ("Your name"). Show errors next to the field.
 
 **Multi-step flows.** Pick one vocabulary and hold it. "Get Started" opens, "Continue" or "Next" advances, "Done" closes. Mixing them mid-flow costs trust.
+
+**Permission purpose strings.** The `Info.plist` usage description shown in a permission prompt. Say specifically what the app does with the resource, in one complete sentence: "Your location is used to show your position on the map, get directions, and estimate travel times." Not "This app needs your location." It must be a string and under 4,000 bytes. Add more only when it helps people decide whether to share personal data.
 
 **Device verbs.** Match the input method. Never say "click" on a touch device where you mean "tap."
 

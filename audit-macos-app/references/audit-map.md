@@ -102,7 +102,7 @@ grep -rn "focusable(false)\|\.focusEffectDisabled" --include='*.swift' .
 
 ## 5. Accessibility
 
-**This skill owns this dimension — no specialist skill covers macOS accessibility.** Say that in the report.
+Route the fixes to `apple-accessibility`, which owns native accessibility implementation and testing. The checks below are what to look for during the audit.
 
 - **Every control has a label.** An icon-only button with no `accessibilityLabel` reads as "button". Use `Label`, or pass title and image and hide the text with `.labelStyle(.iconOnly)` — which keeps the label available — rather than dropping the text.
 - **Custom views are accessibility elements.** A `Canvas`, a custom chart, or a drawn control with no `accessibilityElement`, role, value, and actions is invisible to VoiceOver. An interactive canvas needs `accessibilityAction`s as an alternative to its gestures.
