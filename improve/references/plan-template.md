@@ -1,12 +1,12 @@
-# Handoff Plan Template
+# Plan template
 
-Every plan is written for an executor model that has **zero context**: it has not seen the advisor session, the audit, the other plans, or any prior conversation. It may be a smaller/cheaper model. Assume it is competent at following explicit instructions and weak at filling gaps, recovering from ambiguity, or knowing when to stop.
+Every plan is written for an executor with **zero context**. It hasn't seen the advisor session, the audit, the other plans, or any conversation. It may be a smaller, cheaper model. Assume it follows explicit instructions well and is weak at filling gaps, recovering from ambiguity, or knowing when to stop.
 
 Three properties make a plan executable by a weaker model:
 
-1. **Self-contained context** — everything needed is in the file: paths, code excerpts, conventions, commands.
-2. **Verification gates** — every step ends with a command and its expected result. The executor never has to *judge* whether it succeeded.
-3. **Hard boundaries and escape hatches** — explicit out-of-scope list, and "STOP and report" conditions instead of letting the model improvise when reality doesn't match the plan.
+1. **Self-contained context.** Everything is in the file: paths, code excerpts, conventions, commands.
+2. **Verification gates.** Every step ends with a command and its expected result. The executor never has to judge whether it worked.
+3. **Hard boundaries and escape hatches.** An explicit out-of-scope list, and STOP conditions instead of improvising when reality doesn't match the plan.
 
 File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
 
@@ -15,19 +15,17 @@ File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
 ## Template
 
 ```markdown
-# Plan NNN: <Imperative title — what will be true after this plan>
+# Plan NNN: <Imperative title: what will be true after this plan>
 
 > **Executor instructions**: Follow this plan step by step. Run every
-> verification command and confirm the expected result before moving to the
-> next step. If anything in the "STOP conditions" section occurs, stop and
-> report — do not improvise. When done, update the status row for this plan
-> in `plans/README.md` — unless a reviewer dispatched you and told you they
-> maintain the index.
+> verification command and confirm the expected result before the next step.
+> If a STOP condition occurs, stop and report; do not improvise. When done,
+> update this plan's status row in `plans/README.md`, unless a reviewer
+> dispatched you and said they maintain the index.
 >
 > **Drift check (run first)**: `git diff --stat <planned-at SHA>..HEAD -- <in-scope paths>`
 > If any in-scope file changed since this plan was written, compare the
-> "Current state" excerpts against the live code before proceeding; on a
-> mismatch, treat it as a STOP condition.
+> "Current state" excerpts with the live code. A mismatch is a STOP condition.
 
 ## Status
 
@@ -35,32 +33,39 @@ File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
 - **Effort**: S | M | L
 - **Risk**: LOW | MED | HIGH
 - **Depends on**: plans/NNN-*.md (or "none")
-- **Category**: bug | security | perf | tests | tech-debt | migration | dx | docs | direction
+- **Category**: COR | SEC | PERF | TEST | DEBT | DEP | DX | DOC | LIFE | DIR (the finding's prefix)
 - **Planned at**: commit `<short SHA>`, <YYYY-MM-DD>
-- **Issue**: <GitHub issue URL — only when published via `--issues`; omit otherwise>
+- **Issue**: <GitHub issue URL, only when published with `--issues`; omit otherwise>
 
 ## Why this matters
 
-2–5 sentences. The problem, its concrete cost, and what improves when this
-lands. Written so the executor (and a human reviewer) understands the intent —
-intent is what lets a correct judgment call happen when a detail is off.
+2 to 5 sentences: the problem, what it costs, and what improves when this
+lands. Say who gains: users, developers, agents. Intent is what lets the
+executor make the right call when a detail is off.
 
 ## Current state
 
-The facts the executor needs, inlined — never "as discussed" or "see audit":
+The facts the executor needs, inlined. Never "as discussed" or "see audit."
 
-- The relevant files, each with one line on its role:
-  - `src/orders/api.ts` — order-list endpoint; contains the N+1 (lines 130–160)
-- Excerpts of the code as it exists today (short, with `file:line` markers),
-  enough that the executor can confirm it's looking at the right thing.
-- The repo conventions that apply here, with a pointer to one exemplar file:
-  "Error handling follows the Result pattern — see `src/lib/result.ts` and its
-  use in `src/users/api.ts:40-60`. Match it."
-- Any documented vocabulary or design constraints the plan must honor, inlined
-  from the intent/design docs found in recon: the relevant `CONTEXT.md` terms
-  the executor should use in names and comments, the `DESIGN.md` tokens/components
-  to reuse, or the ADR whose decision this work must stay consistent with. Quote
-  the specific lines — the executor has not read those docs.
+- The relevant files, one line each on their role:
+  - `src/orders/api.ts`: order-list endpoint; contains the N+1 (lines 130-160)
+- Short excerpts of the code as it is today, with `file:line` markers, so the
+  executor can confirm it's in the right place.
+- The conventions that apply, with one example file:
+  "Errors use the Result pattern; see `src/lib/result.ts` and its use in
+  `src/users/api.ts:40-60`. Match it."
+- Vocabulary and constraints from intent docs, quoted: `CONTEXT.md` terms to
+  use in names, `DESIGN.md` tokens or components to reuse, the ADR this work
+  must stay consistent with. The executor hasn't read those docs.
+
+## Workflow map
+
+(Lifecycle plans only. Omit otherwise.)
+
+The states, transitions, owners, and source of truth as they are today, and
+as they will be after this plan. Same table shape as the audit's workflow
+map, with `file:line` evidence. Mark which transitions this plan adds,
+removes, guards, or moves.
 
 ## Commands you will need
 
@@ -71,58 +76,60 @@ The facts the executor needs, inlined — never "as discussed" or "see audit":
 | Tests     | `pnpm test -- <filter>`  | all pass            |
 | Lint      | `pnpm lint`              | exit 0              |
 
-(Exact commands from this repo — verified during recon, not guessed.)
+(Exact commands from this repo, verified during recon, not guessed.)
 
 ## Suggested executor toolkit
 
-(Optional — include only when relevant skills/tools plausibly exist in the
-executor's environment. Skip the section otherwise.)
+(Optional. Include only skills or docs that plausibly exist where the
+executor runs.)
 
-- Skills the executor should invoke if available, and for what:
-  "use `vercel-react-best-practices` when writing the memoization in step 3".
-- Reference docs worth reading before starting, by path or URL.
+- Skills to use if available, and for what: "use `swift-concurrency` when
+  adding the actor in step 3."
+- Docs worth reading first, by path or URL.
 
 ## Scope
 
-**In scope** (the only files you should modify):
+**In scope** (the only files you may modify):
 - `src/orders/api.ts`
 - `src/orders/api.test.ts` (create)
 
 **Out of scope** (do NOT touch, even though they look related):
-- `src/orders/legacy-api.ts` — deprecated path, scheduled for deletion;
-  changing it wastes effort and risks the v1 clients still pinned to it.
-- Any change to the public response shape — clients depend on it.
+- `src/orders/legacy-api.ts`: deprecated, scheduled for deletion; v1
+  clients still depend on it.
+- The public response shape. Clients depend on it.
 
 ## Git workflow
 
-(Filled from recon — match the repo's observed conventions.)
+(Filled in from recon. Match the repo's conventions.)
 
-- Branch: `advisor/NNN-<slug>` (or the repo's branch-naming convention if one is evident)
-- Commit per step or per logical unit; message style: <match repo, e.g. conventional commits — include an example from `git log`>
-- Do NOT push or open a PR unless the operator instructed it.
+- Branch: the repo's naming convention, or `advisor/NNN-<slug>` if none.
+- Commit per step or logical unit, in the repo's message style. Include one
+  example from `git log`.
+- Do NOT push or open a PR unless the operator said to.
 
 ## Steps
 
 ### Step 1: <imperative title>
 
-What to do, precisely. Reference exact files/symbols. Include the target code
-shape when it's load-bearing (the pattern to produce, not necessarily every
-line).
+What to do, precisely, naming files and symbols. Show the target code shape
+when it matters (the pattern to produce, not every line).
 
 **Verify**: `<command>` → <expected output>
 
 ### Step 2: ...
 
-(Each step small enough to verify independently. Order steps so the codebase
-is never broken between steps when possible — e.g. add new path, switch
-callers, then remove old path.)
+(Each step small enough to verify alone. Order them so the code never breaks
+between steps when possible: add the new path, switch callers, remove the old.)
 
 ## Test plan
 
-- New tests to write, in which file, covering which cases (list them:
-  happy path, the specific bug/regression this plan fixes, named edge cases).
-- Which existing test to use as the structural pattern:
-  "model after `src/users/api.test.ts`".
+- New tests: which file, which cases (happy path, the specific bug this plan
+  fixes, named edge cases).
+- For lifecycle plans: each allowed transition happens; each forbidden one is
+  rejected; plus the race, cancellation, retry, partial-failure, or recovery
+  case behind the finding.
+- The existing test to copy the structure from: "model after
+  `src/users/api.test.ts`."
 - Verification: `<test command>` → all pass, including N new tests.
 
 ## Done criteria
@@ -131,67 +138,67 @@ Machine-checkable. ALL must hold:
 
 - [ ] `pnpm typecheck` exits 0
 - [ ] `pnpm test` exits 0; new tests for <X> exist and pass
-- [ ] `grep -rn "<old pattern>" src/` returns no matches
-- [ ] No files outside the in-scope list are modified (`git status`)
+- [ ] `grep -rn "<old pattern>" src/` returns nothing
+- [ ] No files outside the in-scope list changed (`git status`)
 - [ ] `plans/README.md` status row updated
 
 ## STOP conditions
 
 Stop and report back (do not improvise) if:
 
-- The code at the locations in "Current state" doesn't match the excerpts
-  (the codebase has drifted since this plan was written).
+- The code at the "Current state" locations doesn't match the excerpts.
 - A step's verification fails twice after a reasonable fix attempt.
-- The fix appears to require touching an out-of-scope file.
-- You discover the assumption "<key assumption>" is false.
+- The fix seems to need an out-of-scope file.
+- The assumption "<key assumption>" turns out false.
 
 ## Maintenance notes
 
-For the human/agent who owns this code after the change lands:
+For whoever owns this code next:
 
-- What future changes will interact with this (e.g. "if pagination is added
-  to this endpoint, the batching in step 2 must be revisited").
-- What a reviewer should scrutinize in the PR.
-- Any follow-up explicitly deferred out of this plan (and why).
+- What future changes will interact with this ("if pagination is added
+  here, revisit the batching in step 2").
+- What a reviewer should look hard at.
+- Follow-ups deliberately left out of this plan, and why.
 ```
 
 ---
 
 ## Index file: `plans/README.md`
 
-Written once by the advisor after all plans, updated by executors:
+Written by the advisor after all plans; updated by executors.
 
 ```markdown
-# Implementation Plans
+# Implementation plans
 
-Generated by the improve skill on <date>. Execute in the order below unless
-dependencies say otherwise. Each executor: read the plan fully before starting,
-honor its STOP conditions, and update your row when done.
+Written by the improve skill on <date>. Execute in this order unless the
+dependencies say otherwise. Executors: read the whole plan first, honor its
+STOP conditions, and update your row when done.
 
-## Execution order & status
+## Order and status
 
 | Plan | Title | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
-| 001  | ...   | P1       | S      | —          | TODO   |
+| 001  | ...   | P1       | S      | none       | TODO   |
 | 002  | ...   | P1       | M      | 001        | TODO   |
 
-Status values: TODO | IN PROGRESS | DONE | BLOCKED (with one-line reason) | REJECTED (with one-line rationale — finding fixed independently or approach abandoned)
+Status values: TODO | IN PROGRESS | DONE | BLOCKED (one-line reason) |
+REJECTED (one-line reason: fixed independently, or approach dropped)
 
 ## Dependency notes
 
-- 002 requires 001 because <reason>.
+- 002 needs 001 because <reason>.
 
-## Findings considered and rejected
+## Considered and rejected
 
 - <finding>: not worth doing because <one line>. (So nobody re-audits it.)
 ```
 
-## Quality bar — check before finishing each plan
+## Check each plan before finishing it
 
-- Could a model that has never seen this repo execute this with only the plan file and the repo? If any step requires knowledge from the advisor session, inline that knowledge.
+- Could a model that has never seen this repo execute it with only this file and the repo? If a step needs something from the advisor session, inline it.
 - Is every verification a command with an expected result, not a judgment ("make sure it works")?
 - Does every step name exact files and symbols, not "the relevant module"?
-- Are the STOP conditions specific to this plan's actual risks, not boilerplate?
-- Would a reviewer reading only "Why this matters" + "Done criteria" understand what they're approving?
-- No secret values anywhere in the file — locations and credential types only.
-- "Planned at" SHA is filled in and the in-scope paths in the drift check match the Scope section.
+- Are the STOP conditions about this plan's real risks, not boilerplate?
+- Would a reviewer who reads only "Why this matters" and "Done criteria" know what they're approving?
+- No secret values anywhere; locations and credential types only.
+- The "Planned at" SHA is filled in, and the drift check's paths match Scope.

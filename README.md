@@ -34,6 +34,7 @@ My live [Agent Skills](https://agentskills.io), mostly authored while using Clau
 | **[crash-debugging](crash-debugging/)** | Diagnose macOS and iOS crash reports with build identity, symbolication grade, evidence, and confidence. |
 | **[os-workarounds](os-workarounds/)** | Track upstream workarounds with a repro, issue, owner, and concrete removal test. |
 | **[ship-macos](ship-macos/)** | Release a macOS app with credential gates, artifact verification, provenance, and rollback. |
+| **[improve](improve/)** | Read-only codebase audit that writes self-contained plans for other agents, including a pass for implicit state machines. Adapted from [shadcn/improve](https://github.com/shadcn/improve). |
 | **[audit-macos-app](audit-macos-app/)** | Read-only audit of an existing Mac app across code health, HIG, menus, accessibility, performance, and release readiness. |
 
 ### Design
