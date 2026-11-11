@@ -14,14 +14,9 @@ Findings still use the format in `audit-playbook.md` under `## Finding format`. 
 
 ## 1. Find the workflows
 
-Start from the workflows recon named, then search for the signals that one exists:
+Start from the workflows recon named, then look for the usual signals: several booleans about one thing, a status column checked in more than one place, callbacks and jobs that move a record forward, UI that branches on flag combinations. Two are easy to miss:
 
-- Several booleans about the same thing: `isLoading`, `isSaving`, `hasError`, `didFinish`, `isRetrying`.
-- Status strings or enums stored in a database column, plus code that checks them in more than one place.
-- Timestamps used as state: `cancelled_at`, `completed_at`, `processed_at`, where "null or not" is the real status.
-- Callbacks and listeners that set flags: `onSuccess`, `onError`, webhook handlers, delegate methods, `useEffect` cleanups.
-- Background jobs, queues, cron tasks, and retries that move a record forward.
-- UI that branches on combinations: `if (loading && !error && data)`.
+- Timestamps used as state (`cancelled_at`, `processed_at`), where "null or not" is the real status.
 - Comments like "should never happen," "guard against double submit," "hack: reset state."
 
 Rank candidates by how often users hit the workflow and how bad it is when it breaks (money, data loss, stuck accounts, lost work). Map the top ones. List the rest as "not mapped" in the coverage limits.
@@ -60,11 +55,11 @@ Go down this list for every mapped workflow:
 - **Missing transitions.** States with no way out (stuck records). Events with no handler in some states (`default:` that silently does nothing).
 - **Split ownership.** Two places that perform the same transition with different rules. A transition performed in the UI that the server never checks.
 - **More than one source of truth.** Copies that can disagree: optimistic UI, caches, a second tab, a second device. Which wins, and does the user see the conflict?
-- **Races.** Double submit, two workers taking the same job, a webhook arriving before the request that caused it returns, check-then-act without a lock or transaction.
-- **Cancellation.** What happens when the user leaves, closes the window, or presses Cancel mid-flight? Does late completion still write state? Is cleanup done?
+- **Races.** Including a webhook that arrives before the request that caused it returns, and check-then-act without a lock or transaction.
+- **Cancellation.** Does work that finishes after the user cancelled or left still write state?
 - **Retries.** Is the retried step idempotent? Is there a limit and a backoff? Can a retry run after the user cancelled?
 - **Partial failure.** Multi-step writes with no transaction or compensation: charged but not recorded, uploaded but not linked.
-- **Recovery.** After a crash or restart mid-workflow, does the app resume, roll back, or leave a zombie? Is there any way for a user or an admin to fix a stuck record?
+- **Recovery.** After a crash mid-workflow, does the app resume, roll back, or leave a stuck record? Can anyone fix one?
 
 ## 4. Confirm before reporting
 
@@ -84,20 +79,11 @@ Most fixes are one of these, in order of preference:
 4. Make the source of truth explicit and derive the other copies from it.
 5. Only then: a declared state machine, with or without a library.
 
-Every fix comes with regression tests:
-
-- each allowed transition happens;
-- each forbidden transition is rejected (or can't be expressed);
-- the race, cancellation, retry, or partial-failure case that prompted the finding;
-- recovery from the stuck or half-done state, if the finding was about one.
+Every fix comes with regression tests; the plan template lists the lifecycle cases.
 
 ## 6. Rate who it helps
 
-Each finding names who pays today and who gains from the fix:
-
-- **UX**: users see wrong status, lose work, get stuck, double-charge.
-- **DX**: developers can't tell where a transition happens or which state is real; changes need edits in several places.
-- **AX**: coding agents misread the workflow, add another flag, or "fix" one copy of a transition and miss the others. An explicit state type and one owning module are things an agent can find with a single search.
+Each finding names who pays today and who gains from the fix. UX and DX costs are usually plain. AX is easier to miss: coding agents misread a scattered workflow, add yet another flag, or fix one copy of a transition and miss the others. An explicit state type and one owning module are things an agent finds with a single search.
 
 Prefer fixes that help all three. When they pull apart, say so. Example: a declared state machine library helps DX and AX, but adds a dependency and a learning curve, and users gain nothing until a bug is fixed with it.
 
@@ -109,5 +95,3 @@ For the `states` variant, the report runs in this order:
 2. **Workflow maps** for the mapped ones. Offer `show-me` for a diagram when there are several or a map is large.
 3. **Findings**, in the standard table, each tagged confirmed or hypothesis.
 4. **Coverage limits**: workflows not mapped, code paths not traced (dynamic dispatch, external services, jobs defined outside the repo), and anything only running the app would show.
-
-This is an audit. The fixes go into plans, written only for the findings the user picks.
