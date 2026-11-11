@@ -1,6 +1,6 @@
 ---
 name: improve
-description: Survey a codebase as a senior advisor and write prioritized, self-contained implementation plans for other agents to execute. Read-only on source code; it never implements anything itself. Use when asked to audit a codebase, find improvement opportunities (bugs, security, performance, tests, tech debt, migrations, DX), find implicit state machines and lifecycle bugs, suggest where to take the project next, or write handoff plans for another agent. Not for a bug review of a diff (use code-review) or auditing a Mac app (use audit-macos-app, which builds on this skill).
+description: Survey a codebase as a senior advisor and write prioritized, self-contained implementation plans for other agents to execute. Read-only on source code; it never implements anything itself. Use when asked to audit a codebase, find improvement opportunities (bugs, security, performance, tests, tech debt, migrations, DX), map implicit models (state machines, permissions, derived data and caches), suggest where to take the project next, or write handoff plans for another agent. Not for a bug review of a diff (use code-review) or auditing a Mac app (use audit-macos-app, which builds on this skill).
 ---
 
 # Improve
@@ -29,7 +29,7 @@ Map the territory before judging it.
 - Note the repo's conventions: naming, layout, error handling, state handling. Plans tell the executor to match them, with an example file.
 - Read intent and design docs where they exist: ADRs (`docs/adr/`, `docs/decisions/`), PRDs and specs, `CONTEXT.md`, `DESIGN.md`, `PRODUCT.md`. A tradeoff recorded there is settled, not a finding. Product intent grounds the direction findings. Their vocabulary goes into the plans.
 - Check git for what is moving and what is frozen: `git log --oneline -30`, churn hotspots.
-- Note the workflows the product exists for (checkout, sync, import, onboarding, publish). The lifecycle category starts from this list.
+- Note the workflows the product exists for (checkout, sync, import, onboarding, publish). The implicit-models category starts from this list.
 
 State what the project is in two sentences before going further.
 
@@ -52,7 +52,7 @@ When a routed skill finds something, it still comes back in this skill's finding
 
 ### 3. Audit
 
-Read [references/audit-playbook.md](references/audit-playbook.md) now. Ten categories: correctness, security, performance, tests, tech debt and architecture, dependencies and migrations, DX and AX, docs, lifecycle and state, direction.
+Read [references/audit-playbook.md](references/audit-playbook.md) now. Ten categories: correctness, security, performance, tests, tech debt and architecture, dependencies and migrations, DX and AX, docs, implicit models (lifecycle, permissions, derived data), direction.
 
 Depth follows the effort level. The user picks it with `quick` or `deep` anywhere in the invocation; `standard` is the default.
 
@@ -60,7 +60,7 @@ Depth follows the effort level. The user picks it with `quick` or `deep` anywher
 |---|---|---|---|
 | Coverage | Hotspots only: highest churn, highest stakes | Hotspot-weighted, key packages | Whole repo, every package |
 | Subagents | 0 to 1 | up to 4 | up to 8, one per category |
-| Categories | correctness, security, tests | all ten; lifecycle at light depth | all ten; lifecycle at full depth |
+| Categories | correctness, security, tests | all ten; implicit models at light depth | all ten; implicit models at full depth |
 | Findings | top ~6, HIGH confidence only | full table | full table plus LOW-confidence "investigate" items |
 
 On a real-size repo, fan out to read-only subagents (Explore agents in Claude Code), one per category or cluster. Before fanning out past four, say how many and what each covers. Subagents don't spawn their own. If the host can't spawn subagents, audit the categories yourself in priority order.
@@ -68,7 +68,7 @@ On a real-size repo, fan out to read-only subagents (Explore agents in Claude Co
 Subagents inherit none of this context. Each prompt carries:
 
 - the absolute path to `references/audit-playbook.md` and the exact section headings to read, always including `## Finding format`, plus an instruction to confirm it could read the file;
-- for the lifecycle category, the absolute path to [references/lifecycle-audit.md](references/lifecycle-audit.md);
+- for implicit models, the absolute path to [references/implicit-models.md](references/implicit-models.md), naming "The method" plus the frame sections to read;
 - the recon facts that scope the search (languages, frameworks, key directories, what to skip);
 - risk hints from recon ("this CLI writes user files: watch path traversal and shell injection");
 - the settled tradeoffs from intent docs, so they aren't reported;
@@ -95,7 +95,7 @@ The finding's ID (`[SEC-02]`) carries its category. "Who pays" is UX, DX, AX (ag
 
 Then, separately:
 
-- **Workflow maps** for the lifecycle findings, in the shape from `references/lifecycle-audit.md`. When there's more than one, or a map has more than about six states, offer to draw them with `show-me`.
+- **Maps** for the implicit-model findings, in the shapes from `references/implicit-models.md`. When there are several, or one is large, offer to draw them with `show-me`.
 - **Direction**: 2 to 4 grounded suggestions, each with evidence and trade-offs in two or three sentences. These are options for the maintainer, not problems ranked against bugs.
 - **Not audited**: what was skipped and why.
 
@@ -124,8 +124,8 @@ Finish with `plans/README.md`: execution order, dependencies, and a status colum
 - **Bare** runs the full workflow.
 - **`quick` / `deep`** set the effort level. They combine with everything: `quick security`, `deep --issues`.
 - **A focus** (`security`, `perf`, `tests`, `deps`, `dx`, `docs`) runs recon, audits that category only, then plans. A focus overrides the category list in the effort table; `quick perf` means a quick pass over performance.
-- **`states`** (or `lifecycle`, `state machines`) runs recon, then the full lifecycle audit in [references/lifecycle-audit.md](references/lifecycle-audit.md). The report leads with workflow maps, then findings.
-- **`branch`** audits only the current branch: files changed since the merge-base with the default branch, plus their direct callers. Light recon, all categories (lifecycle at light depth), usually no subagents. Tag each finding `introduced` or `pre-existing`; don't blame the branch for old debt, but show what it builds on. On the default branch or with nothing ahead, say so and offer a full audit.
+- **`states`** (or `lifecycle`), **`permissions`** (or `access`), **`derived`** (or `caches`) run recon, then that frame of [references/implicit-models.md](references/implicit-models.md) in full. **`models`** runs all three. The report leads with the maps, then findings. Like a focus, these combine with `quick` (a light pass) and `deep`.
+- **`branch`** audits only the current branch: files changed since the merge-base with the default branch, plus their direct callers. Light recon, all categories (implicit models at light depth), usually no subagents. Tag each finding `introduced` or `pre-existing`; don't blame the branch for old debt, but show what it builds on. On the default branch or with nothing ahead, say so and offer a full audit.
 - **`next`** (or `features`, `roadmap`) audits direction only, deeper: 4 to 6 grounded suggestions with evidence, trade-offs, and coarse effort. Selected ones become design or spike plans, not build-everything plans.
 - **`plan <description>`** skips the audit. Recon, investigate enough to specify it honestly, write one plan. Resolve ambiguity from the codebase first. Ask only what's left, one question at a time, each with a recommended answer.
 - **`review-plan <file>`** critiques a plan against the template and tightens it. If you wrote it this session, also have a fresh subagent read it cold and list what's ambiguous. Self-review misses gaps you fill from memory.

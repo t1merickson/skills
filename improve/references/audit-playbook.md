@@ -17,7 +17,7 @@ The highest-trust category: real bugs found by reading, not guessing.
 - Type escape hatches: `any`, `as` casts, `@ts-ignore`, `try!` clusters. Each is a place the compiler was overruled.
 - Resource leaks: unclosed handles, connections, subscriptions; missing `finally` or `defer`.
 
-Lifecycle bugs (impossible state combinations, races between steps, retries, cancellation) belong to section 9.
+Lifecycle bugs (impossible state combinations, races between steps, retries, cancellation) and stale derived data belong to section 9.
 
 ## 2. Security
 
@@ -29,7 +29,7 @@ Report only what code evidence supports. Frame findings as defensive maintenance
 
 - Credential hygiene: hardcoded keys, tokens, passwords; credentials in committed `.env` files; credentials logged or stored in history. Name the type and location, then recommend removal, rotation, and a safer config path.
 - Data reaching interpreters or privileged APIs: SQL or shell built from request data, HTML sinks fed user content, dynamic execution on runtime input, file paths derived from request data. Describe the safer API or validation boundary.
-- Access control: endpoints or server actions with no server-side identity check, authorization enforced only in the client, object access by ID without an ownership or tenant check, state-changing routes without CSRF protection.
+- Access control: endpoints or server actions with no server-side identity check, authorization enforced only in the client, object access by ID without an ownership or tenant check, state-changing routes without CSRF protection. To map the whole access model, use the permissions frame in section 9.
 - Input contracts: request bodies trusted without schema validation, uploads with no type, size, or storage limits, request data assigned wholesale into persistence models.
 - Dependencies: run the ecosystem's audit (`npm audit`, `pip-audit`, `cargo audit`) read-only. Report only critical or high advisories that reach runtime or build paths.
 - Production config: broad CORS with credentials, missing CSP where sensitive browser surfaces exist, cookies missing `HttpOnly` / `Secure` / `SameSite`, debug behavior enabled in production.
@@ -96,16 +96,11 @@ Lowest default priority. Flag only where absence has a concrete cost:
 - Decisions nobody can reconstruct (why X over Y) in areas people keep arguing about.
 - Docs that are actively wrong: setup steps or examples that no longer work. Worse than missing.
 
-## 9. Lifecycle and state
+## 9. Implicit models
 
-Implicit state machines: workflow rules spread across flags, callbacks, UI, database records, and background jobs. The method, the workflow map, and the restraint rules are in [lifecycle-audit.md](lifecycle-audit.md). Read it before auditing this category.
+Rules the app follows but never wrote down in one place, spread across UI, server code, database records, and jobs. Three frames: **lifecycle** (states and transitions of a workflow), **permissions** (who may do what to which object), and **derived data** (caches, counters, indexes, and when they go stale). The method, maps, checks, and restraint rules are in [implicit-models.md](implicit-models.md). Read "The method" and the frames you're auditing first.
 
-At light depth (the `standard` default):
-
-- List the product's important workflows and the signals that each is an implicit state machine: clusters of booleans about one thing, status columns checked in several places, timestamps used as status, callbacks that set flags.
-- Map the top one or two, using the workflow map format.
-- Report impossible states the types allow and a code path can reach, transitions with split owners or no server-side check, and retries or cancellations that can corrupt state.
-- List the workflows you didn't map under coverage limits.
+At light depth (the `standard` default), per frame: list the candidates, map the top one, report what's confirmed broken, and list the rest under coverage limits.
 
 ## 10. Direction: features and where to take this next
 
@@ -129,10 +124,10 @@ Every finding, from every category and subagent, comes back in this shape. The I
 |---|---|---|---|---|
 | `COR` | 1. Correctness | | `DX` | 7. DX and AX |
 | `SEC` | 2. Security | | `DOC` | 8. Docs |
-| `PERF` | 3. Performance | | `LIFE` | 9. Lifecycle and state |
-| `TEST` | 4. Test coverage | | `DIR` | 10. Direction |
-| `DEBT` | 5. Tech debt | | | |
-| `DEP` | 6. Dependencies | | | |
+| `PERF` | 3. Performance | | `LIFE` | 9. Implicit models: lifecycle |
+| `TEST` | 4. Test coverage | | `PERM` | 9. Implicit models: permissions |
+| `DEBT` | 5. Tech debt | | `DATA` | 9. Implicit models: derived data |
+| `DEP` | 6. Dependencies | | `DIR` | 10. Direction |
 
 ```markdown
 ### [PREFIX-NN] Short imperative title
@@ -142,7 +137,7 @@ Every finding, from every category and subagent, comes back in this shape. The I
 - **Who pays**: UX (users), DX (developers), AX (coding agents), or a mix. One clause each on how. If the fix helps one and costs another, say so.
 - **Effort**: S (hours) / M (about a day) / L (several days), for the fix including tests.
 - **Risk**: what the fix could break. LOW / MED / HIGH plus one line why.
-- **Confidence**: HIGH (read the code, traced the path, certain) / MED (strong signal, needs verification) / LOW (smell, needs investigation). Lifecycle findings also say **confirmed** or **hypothesis**. LOW findings get an "investigate" plan, not a fix plan.
+- **Confidence**: HIGH (read the code, traced the path, certain) / MED (strong signal, needs verification) / LOW (smell, needs investigation). Implicit-model findings also say **confirmed** or **hypothesis**. LOW findings get an "investigate" plan, not a fix plan.
 - **Fix sketch**: 1 to 3 sentences. Not the plan; just enough to judge effort honestly.
 ```
 
@@ -151,7 +146,7 @@ Every finding, from every category and subagent, comes back in this shape. The I
 Order by **leverage: impact ÷ effort, discounted by confidence and fix risk**. Tiebreakers:
 
 1. Anything that unblocks other findings (a verification baseline, characterization tests) moves up.
-2. HIGH-confidence security findings rank above non-security findings of equal leverage.
+2. HIGH-confidence security findings (including `PERM` holes that expose or change someone else's data) rank above non-security findings of equal leverage.
 3. Findings that help users, developers, and agents at once rank above ones that help one.
 4. Prefer fixes with a clean verification story. Executors succeed at those.
 5. "Not worth doing" is a valid verdict. Record it with one line of reasoning so the user knows it was considered.

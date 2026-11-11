@@ -33,7 +33,7 @@ File naming: `plans/NNN-short-slug.md`, numbered in recommended execution order.
 - **Effort**: S | M | L
 - **Risk**: LOW | MED | HIGH
 - **Depends on**: plans/NNN-*.md (or "none")
-- **Category**: COR | SEC | PERF | TEST | DEBT | DEP | DX | DOC | LIFE | DIR (the finding's prefix)
+- **Category**: COR | SEC | PERF | TEST | DEBT | DEP | DX | DOC | LIFE | PERM | DATA | DIR (the finding's prefix)
 - **Planned at**: commit `<short SHA>`, <YYYY-MM-DD>
 - **Issue**: <GitHub issue URL, only when published with `--issues`; omit otherwise>
 
@@ -58,14 +58,14 @@ The facts the executor needs, inlined. Never "as discussed" or "see audit."
   use in names, `DESIGN.md` tokens or components to reuse, the ADR this work
   must stay consistent with. The executor hasn't read those docs.
 
-## Workflow map
+## Model map
 
-(Lifecycle plans only. Omit otherwise.)
+(LIFE, PERM, and DATA plans only. Omit otherwise.)
 
-The states, transitions, owners, and source of truth as they are today, and
-as they will be after this plan. Same table shape as the audit's workflow
-map, with `file:line` evidence. Mark which transitions this plan adds,
-removes, guards, or moves.
+The relevant map as it is today and as it will be after this plan, in the
+same table shape as the audit (states and transitions, access rows, or
+derived values), with the source of truth and `file:line` evidence. Mark
+which rows this plan adds, removes, guards, or moves.
 
 ## Commands you will need
 
@@ -125,9 +125,13 @@ between steps when possible: add the new path, switch callers, remove the old.)
 
 - New tests: which file, which cases (happy path, the specific bug this plan
   fixes, named edge cases).
-- For lifecycle plans: each allowed transition happens; each forbidden one is
+- LIFE plans: each allowed transition happens; each forbidden one is
   rejected; plus the race, cancellation, retry, partial-failure, or recovery
   case behind the finding.
+- PERM plans: for each entry point in scope, an allowed actor succeeds and a
+  disallowed one (another tenant, a removed member, a lower role) is refused.
+- DATA plans: every write path in scope refreshes the copy; a delete removes
+  it; the rebuild, if added, matches the source.
 - The existing test to copy the structure from: "model after
   `src/users/api.test.ts`."
 - Verification: `<test command>` → all pass, including N new tests.
